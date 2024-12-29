@@ -19,6 +19,8 @@ def parse_date(x):
         return datetime.strptime(x, '%Y-%m-%d %H:%M:%S%z')
     return x
 
+def 
+
 # Iterate over the files in the input directory
 for file_name in os.listdir(input_directory):
     try:
@@ -48,11 +50,13 @@ for file_name in os.listdir(input_directory):
             close_array = new_data['Close'].values
             high_array = new_data['High'].values
             low_array = new_data['Low'].values
+            open_array = new_data['Open'].values
 
             # Ensure the arrays are 1D
             close_array = close_array.reshape(-1)
             high_array = high_array.reshape(-1)
             low_array = low_array.reshape(-1)
+            open_array = new_data.reshape(-1)
 
             # Calculate EMA 5, 21, 26, and ATR 50 using numpy arrays
             for period in [5, 21, 26]:
