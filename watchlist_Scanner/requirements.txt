@@ -1,0 +1,6 @@
+pandas
+numpy
+yfinance
+stock_indicators
+pytz
+ta.trend
