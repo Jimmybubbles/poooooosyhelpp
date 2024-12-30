@@ -5,10 +5,10 @@ from datetime import datetime, timedelta
 from pytz import timezone
 
 # Path to stock ticker list
-ticker_file_path = "squeezescan/CSV/testMarketTickers.csv"
+ticker_file_path = r"poooooosyhelpp\watchlist_Scanner\CSV\5000.csv"
 
 # Directory to save CSV files
-output_dir = "Squeezescan/CSV/results"
+output_dir = r"poooooosyhelpp\watchlist_Scanner\results"
 
 
 # Create output directory if it doesn't exist

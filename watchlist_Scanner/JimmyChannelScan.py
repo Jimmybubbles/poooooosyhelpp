@@ -4,7 +4,7 @@ import talib
 from datetime import datetime, timedelta
 
 # Directory path
-input_directory = 'Squeezescan/CSV/updatedResults'
+input_directory = r'poooooosyhelpp\watchlist_Scanner\updatedResults'
 
 # output to textfile
 output_file_name = "scan_results_text"
@@ -68,7 +68,7 @@ for file_name in os.listdir(input_directory):
                 write_to_file(f"BUY {ticker_symbol} {date_of_event.strftime('%m/%d/%Y')} : Upside Breakout {data['Close'].iloc[1].round(3)} " )
             elif not pd.isna(SqLdn.iloc[i-1]) and pd.isna(SqLdn.iloc[i]) and data['Close'].iloc[i] <= SqLdn.iloc[i-1]:
                 # print(f"{ticker_symbol} channel forming")
-                write_to_file(f"SELL {ticker_symbol} {date_of_event.strftime('%m/%d/%Y')} : Downside Breakdown  {data['Close'].iloc[1].round(3)}")
+                print(f"SELL {ticker_symbol} {date_of_event.strftime('%m/%d/%Y')} : Downside Breakdown  {data['Close'].iloc[1].round(3)}")
         # use print for console and use write to file for file
 
 
