@@ -5,10 +5,10 @@ from datetime import datetime, timedelta
 from pytz import timezone
 
 # Path to stock ticker list
-ticker_file_path = r"poooooosyhelpp\watchlist_Scanner\CSV\5000.csv"
+ticker_file_path = r"watchlist_Scanner\CSV\small100Test.csv"
 
 # Directory to save CSV files
-output_dir = r"poooooosyhelpp\watchlist_Scanner\results"
+output_dir = r"watchlist_Scanner\results"
 
 
 # Create output directory if it doesn't exist
@@ -33,12 +33,12 @@ key_error_tickers = []
 for ticker_symbol in tickers:
     try:
         # Download the data with 1-day interval
-        stock_data = yf.download(ticker_symbol, start=start_date, end=end_date, interval="1d")
+        stock_data = yf.download(ticker_symbol, start=start_date, end=end_date, interval="1d", auto_adjust=True)
 
         # Check if the download was successful
         if isinstance(stock_data, pd.DataFrame) and isinstance(stock_data.index, pd.DatetimeIndex):
             # Localize the index to UTC and then convert to Eastern Standard Time
-            stock_data.index = stock_data.index.tz_convert(eastern)
+            stock_data.index = stock_data.index.tz_localize('UTC').tz_convert(eastern)
             
             # Select the required columns
             stock_data = stock_data[['Open', 'High', 'Low', 'Close', 'Volume']]
