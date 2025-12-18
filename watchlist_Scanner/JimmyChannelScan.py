@@ -17,7 +17,7 @@ atr_per = 50
 atr_mult = 0.4
 
 # Get the date for one month ago
-# one_month_ago = datetime.now() - timedelta(days=30)
+one_month_ago = datetime.now() - timedelta(days=30)
 
 # Get the date for one week ago
 one_week_ago = datetime.now() - timedelta(days=7)
@@ -51,17 +51,16 @@ for file_name in os.listdir(input_directory):
 
         # Check for channel breakouts over last month
         
-        # for i in range(3, len(data)):
-        #     date_of_event = data.index[i].replace(tzinfo=None)  # Convert to offset-naive datetime
-        #     if date_of_event < one_month_ago:
-        #         continue
-        
+        for i in range(3, len(data)):
+            date_of_event = pd.Timestamp(data.index[i]).tz_localize(None) if pd.Timestamp(data.index[i]).tzinfo else pd.Timestamp(data.index[i])
+            if date_of_event < two_days_ago:
+                continue
 
         # Check for channel breakouts over last week
-        for i in range(3, len(data)):
-            date_of_event = data.index[i].replace(tzinfo=None)  # Convert to offset-naive datetime
-            if date_of_event < one_week_ago:
-                continue
+        # for i in range(3, len(data)):
+        #     date_of_event = data.index[i].replace(tzinfo=None)  # Convert to offset-naive datetime
+        #     if date_of_event < one_week_ago:
+        #         continue
 
             if not pd.isna(SqLup.iloc[i-1]) and pd.isna(SqLup.iloc[i]) and data['Close'].iloc[i] >= SqLup.iloc[i-1]:
                 # print(f"{ticker_symbol} channel forming")

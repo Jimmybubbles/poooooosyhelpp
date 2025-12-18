@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime, timedelta
 
 # Directory paths
-input_directory = r'poooooosyhelpp\watchlist_Scanner\results'
+input_directory = r'watchlist_Scanner\results'
 output_directory = r'poooooosyhelpp\watchlist_Scanner\updatedResults'
 
 # Create output directory if it doesn't exist
@@ -37,12 +37,16 @@ for file_name in os.listdir(input_directory):
             end_date = datetime.now().strftime('%Y-%m-%d')
 
             # Download new data with 1-day interval
-            new_data = yf.download(ticker_symbol, start=start_date, end=end_date, interval="1d")
+            new_data = yf.download(ticker_symbol, start=start_date, end=end_date, interval="1d", auto_adjust=True)
 
             # Check if the DataFrame is empty
             if new_data.empty:
                 print(f"No new data found for {ticker_symbol} in the specified date range.")
                 continue
+
+            # Flatten column names if they are multi-index
+            if isinstance(new_data.columns, pd.MultiIndex):
+                new_data.columns = new_data.columns.get_level_values(0)
 
             # Convert DataFrame columns to numpy arrays for TA-Lib
             close_array = new_data['Close'].values
@@ -58,6 +62,9 @@ for file_name in os.listdir(input_directory):
             for period in [5, 21, 26]:
                 new_data[f'EMA{period}'] = talib.EMA(close_array, timeperiod=period)
             new_data['ATR50'] = talib.ATR(high_array, low_array, close_array, timeperiod=50)
+
+            # Keep only the columns that exist in existing_data
+            new_data = new_data[existing_data.columns]
 
             # Append the new data to the existing data
             combined_data = pd.concat([existing_data, new_data])

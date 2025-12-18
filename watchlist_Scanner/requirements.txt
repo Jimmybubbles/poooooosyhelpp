@@ -3,4 +3,5 @@ numpy
 yfinance
 stock_indicators
 pytz
-ta.trend
+talib
+requests
