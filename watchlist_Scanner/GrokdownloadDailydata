@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from pytz import timezone
 
 # Path to stock ticker list
-ticker_file_path = r"watchlist_Scanner\CSV\small100Test.csv"
+ticker_file_path = r"watchlist_Scanner\CSV\5000.csv"
 
 # Directory to save CSV files
 output_dir = r"watchlist_Scanner\results"

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 # Directory paths
 input_directory = r'watchlist_Scanner\results'
-output_directory = r'poooooosyhelpp\watchlist_Scanner\updatedResults'
+output_directory = r'watchlist_Scanner\updated_Results_for_scan'
 
 # Create output directory if it doesn't exist
 if not os.path.exists(output_directory):

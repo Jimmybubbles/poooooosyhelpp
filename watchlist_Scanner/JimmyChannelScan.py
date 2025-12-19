@@ -4,7 +4,7 @@ import talib
 from datetime import datetime, timedelta
 
 # Directory path
-input_directory = r'poooooosyhelpp\watchlist_Scanner\updatedResults'
+input_directory = r'watchlist_Scanner\updated_Results_for_scan'
 
 # output to textfile
 output_file_name = "scan_results_text"
@@ -53,7 +53,7 @@ for file_name in os.listdir(input_directory):
         
         for i in range(3, len(data)):
             date_of_event = pd.Timestamp(data.index[i]).tz_localize(None) if pd.Timestamp(data.index[i]).tzinfo else pd.Timestamp(data.index[i])
-            if date_of_event < two_days_ago:
+            if date_of_event < one_month_ago:
                 continue
 
         # Check for channel breakouts over last week
