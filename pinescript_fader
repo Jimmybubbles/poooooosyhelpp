@@ -1,0 +1,47 @@
+//@version=4
+study("Fader", overlay=true)
+
+
+//Session Toggles
+show_zerolag_ma= input(defval=true, title="fader") 
+rainbowprc = input(close)
+fmal_zl = input(1, "Rainbow Length 1")
+smal_zl = input(1, "Rainbow Length 2")
+
+length_jma = input(title="JMA Smoothing Length", defval=7)
+phase = input(title="JMA Smoothing Phase", step=0.01, defval=126)
+power = input(title="JMA Smoothing Power", step=0.01,  defval=0.89144)
+src_jma = input(title="JMA Smoothing Source", defval=close)
+highlightMovements = input(title="Smoothing Highlight Movements ?", defval=true)
+
+
+
+/////fader/////
+
+tmal_zl = fmal_zl + smal_zl
+Fmal_zl = smal_zl + tmal_zl
+Ftmal_zl = tmal_zl + Fmal_zl
+Smal_zl = Fmal_zl + Ftmal_zl
+M1_zl = wma(rainbowprc, fmal_zl)
+M2_zl = wma(M1_zl, smal_zl)
+M3_zl = wma(M2_zl, tmal_zl)
+M4_zl = wma(M3_zl, Fmal_zl)
+M5_zl = wma(M4_zl, Ftmal_zl)
+MAVW_zl = hma(M5_zl, Smal_zl)
+phaseRatio = phase < -100 ? 0.5 : phase > 100 ? 2.5 : phase / 100 + 1.5
+beta = 0.45 * (length_jma - 1) / (0.45 * (length_jma - 1) + 2)
+alpha = pow(beta, power)
+jma_2 = 0.0,e0 = 0.0,e1 = 0.0,e2 = 0.0
+e0 := (1 - alpha) * src_jma + alpha * nz(e0[1])
+e1 := (src_jma - e0) * (1 - beta) + beta * nz(e1[1])
+e2 := (e0 + phaseRatio * e1 - nz(jma_2[1])) * pow(1 - alpha, 2) + pow(alpha, 2) * nz(e2[1])
+jma_2 := e2 + nz(jma_2[1])
+signal = (MAVW_zl + jma_2)/2
+signalColor = highlightMovements ? (signal > signal[1] ? color.green : color.red) : #6d1e7f
+
+
+
+// ALERTS /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+plot(show_zerolag_ma ? signal :na, color=signalColor, linewidth=3, transp=15)

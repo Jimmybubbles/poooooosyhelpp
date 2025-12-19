@@ -2,9 +2,9 @@ import re
 import os
 
 # Input file path
-input_file_path = r"poooooosyhelpp\watchlist_Scanner\buylist\scan_results_text.txt"
+input_file_path = r"watchlist_Scanner\buylist\scan_results_text"
 # Output file path for sorted data
-output_file_path = r"poooooosyhelpp\watchlist_Scanner\buylist\sorted_scan_results.txt"
+output_file_path = r"watchlist_Scanner\buylist\sorted_scan_results.txt"
 
 # Function to extract ticker and price
 def extract_info(line):
