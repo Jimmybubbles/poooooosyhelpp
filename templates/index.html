@@ -303,6 +303,44 @@
                 <div class="last-run" id="lastrun-append_data"></div>
                 <div class="results-box" id="results-append_data"></div>
             </div>
+
+            <!-- Backtest Fader Scanner -->
+            <div class="scanner-card">
+                <h2>Backtest Fader Signals</h2>
+                <p>Analyzes PnL for Fader scan signals - shows profitable vs losing positions</p>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="runScan('backtest_fader')" id="btn-backtest_fader">
+                        Run Backtest
+                    </button>
+                    <button class="btn-secondary" onclick="viewResults('backtest_fader')">
+                        View Saved Results
+                    </button>
+                </div>
+                <div class="status idle" id="status-backtest_fader">
+                    Status: Idle
+                </div>
+                <div class="last-run" id="lastrun-backtest_fader"></div>
+                <div class="results-box" id="results-backtest_fader"></div>
+            </div>
+
+            <!-- Backtest Channel Scanner -->
+            <div class="scanner-card">
+                <h2>Backtest Channel Signals</h2>
+                <p>Analyzes PnL for Channel 3-Week scan (BUY & SELL signals)</p>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="runScan('backtest_channel')" id="btn-backtest_channel">
+                        Run Backtest
+                    </button>
+                    <button class="btn-secondary" onclick="viewResults('backtest_channel')">
+                        View Saved Results
+                    </button>
+                </div>
+                <div class="status idle" id="status-backtest_channel">
+                    Status: Idle
+                </div>
+                <div class="last-run" id="lastrun-backtest_channel"></div>
+                <div class="results-box" id="results-backtest_channel"></div>
+            </div>
         </div>
 
         <!-- Results Viewer -->
@@ -314,6 +352,12 @@
                 </button>
                 <button class="btn-secondary" onclick="quickView('fader')">
                     Fader Results
+                </button>
+                <button class="btn-secondary" onclick="quickView('backtest_fader')">
+                    Fader Backtest
+                </button>
+                <button class="btn-secondary" onclick="quickView('backtest_channel')">
+                    Channel Backtest
                 </button>
                 <button class="btn-secondary" onclick="quickView('tradingview_list')">
                     TradingView List
@@ -337,7 +381,7 @@
 
     <script>
         // Poll for scan status every 2 seconds
-        const scanTypes = ['channel_3week', 'fader', 'append_data'];
+        const scanTypes = ['channel_3week', 'fader', 'append_data', 'backtest_fader', 'backtest_channel'];
 
         function updateStatus(scanType) {
             fetch(`/scan_status/${scanType}`)

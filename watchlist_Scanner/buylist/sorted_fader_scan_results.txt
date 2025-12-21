@@ -1,25 +1,26 @@
 ================================================================================
-FADER GREEN + CHANNEL FORMING SIGNALS (63 total)
+FADER GREEN + CHANNEL FORMING SIGNALS (58 total)
 ================================================================================
 Conditions: Channel forming (squeeze) + Fader turned RED to GREEN yesterday
 Timeframe: Daily | Scanning last week for Fader turning green while in a channel
 ================================================================================
 BUY ARDS 12/16/2025 : 3 day channel breakout - Price: 0.002 - Fader: 0.001
+BUY VIRX 12/17/2025 : 98 day channel breakout - Price: 0.01 - Fader: 0.01
 BUY TTOO 12/15/2025 : 40 day channel breakout - Price: 0.013 - Fader: 0.012
 BUY CARM 12/18/2025 : 13 day channel breakout - Price: 0.052 - Fader: 0.053
-BUY HEPA 12/14/2025 : 154 day channel breakout - Price: 0.08 - Fader: 0.072
-BUY LTCH 12/14/2025 : 45 day channel breakout - Price: 0.14 - Fader: 0.128
 BUY JOB 12/17/2025 : 13 day channel breakout - Price: 0.2 - Fader: 0.19
 BUY VXRT 12/15/2025 : 16 day channel breakout - Price: 0.37 - Fader: 0.365
 BUY VYNE 12/15/2025 : 56 day channel breakout - Price: 0.403 - Fader: 0.382
-BUY SMSI 12/14/2025 : 6 day channel breakout - Price: 0.62 - Fader: 0.61
+BUY VCNX 12/17/2025 : 23 day channel breakout - Price: 0.69 - Fader: 0.617
 BUY AGL 12/17/2025 : 11 day channel breakout - Price: 0.699 - Fader: 0.69
 BUY HOOK 12/16/2025 : 78 day channel breakout - Price: 0.9 - Fader: 0.877
 BUY TELA 12/15/2025 : 7 day channel breakout - Price: 1.18 - Fader: 1.149
+BUY VANI 12/18/2025 : 10 day channel breakout - Price: 1.38 - Fader: 1.397
+BUY ZNTL 12/18/2025 : 17 day channel breakout - Price: 1.42 - Fader: 1.399
 BUY ALXO 12/16/2025 : 8 day channel breakout - Price: 1.45 - Fader: 1.43
+BUY USIO 12/17/2025 : 15 day channel breakout - Price: 1.46 - Fader: 1.442
 BUY SKIN 12/16/2025 : 7 day channel breakout - Price: 1.5 - Fader: 1.467
 BUY LCTX 12/15/2025 : 8 day channel breakout - Price: 1.8 - Fader: 1.707
-BUY TRUE 12/14/2025 : 18 day channel breakout - Price: 2.19 - Fader: 2.153
 BUY OBLG 12/18/2025 : 12 day channel breakout - Price: 2.23 - Fader: 2.23
 BUY SPRO 12/18/2025 : 9 day channel breakout - Price: 2.29 - Fader: 2.293
 BUY IOVA 12/16/2025 : 12 day channel breakout - Price: 2.52 - Fader: 2.245
@@ -28,22 +29,18 @@ BUY TTGT 12/17/2025 : 3 day channel breakout - Price: 5.56 - Fader: 5.395
 BUY ILPT 12/17/2025 : 5 day channel breakout - Price: 5.77 - Fader: 5.659
 BUY BOOM 12/18/2025 : 9 day channel breakout - Price: 6.39 - Fader: 6.449
 BUY PGRE 12/17/2025 : 36 day channel breakout - Price: 6.6 - Fader: 6.592
-BUY SCOR 12/14/2025 : 11 day channel breakout - Price: 7.1 - Fader: 6.79
 BUY ORC 12/15/2025 : 4 day channel breakout - Price: 7.28 - Fader: 7.214
 BUY MBI 12/17/2025 : 13 day channel breakout - Price: 7.72 - Fader: 7.515
 BUY STHO 12/18/2025 : 10 day channel breakout - Price: 7.79 - Fader: 7.638
 BUY PUBM 12/18/2025 : 5 day channel breakout - Price: 9.02 - Fader: 9.016
 BUY IAS 12/15/2025 : 8 day channel breakout - Price: 10.28 - Fader: 10.265
-BUY HGTY 12/14/2025 : 6 day channel breakout - Price: 12.97 - Fader: 12.826
 BUY HGTY 12/18/2025 : 10 day channel breakout - Price: 13.03 - Fader: 12.814
 BUY PHAT 12/15/2025 : 5 day channel breakout - Price: 15.24 - Fader: 14.721
-BUY PSTL 12/14/2025 : 9 day channel breakout - Price: 15.47 - Fader: 15.278
 BUY NMRK 12/17/2025 : 8 day channel breakout - Price: 17.71 - Fader: 17.37
 BUY AKR 12/16/2025 : 10 day channel breakout - Price: 20.27 - Fader: 19.961
 BUY GME 12/16/2025 : 4 day channel breakout - Price: 23.03 - Fader: 22.555
 BUY NCNO 12/16/2025 : 5 day channel breakout - Price: 25.39 - Fader: 24.958
 BUY FLGT 12/18/2025 : 8 day channel breakout - Price: 28.06 - Fader: 27.421
-BUY TTEK 12/14/2025 : 4 day channel breakout - Price: 34.44 - Fader: 34.269
 BUY VZ 12/15/2025 : 5 day channel breakout - Price: 40.75 - Fader: 40.693
 BUY NWN 12/18/2025 : 3 day channel breakout - Price: 47.46 - Fader: 46.913
 BUY RDVT 12/17/2025 : 20 day channel breakout - Price: 55.87 - Fader: 54.557
@@ -53,20 +50,18 @@ BUY CTVA 12/16/2025 : 7 day channel breakout - Price: 66.43 - Fader: 65.922
 BUY DOCU 12/18/2025 : 15 day channel breakout - Price: 69.4 - Fader: 68.963
 BUY APTV 12/18/2025 : 7 day channel breakout - Price: 77.59 - Fader: 77.741
 BUY NHI 12/18/2025 : 7 day channel breakout - Price: 78.35 - Fader: 77.72
-BUY SWX 12/14/2025 : 6 day channel breakout - Price: 81.73 - Fader: 80.476
 BUY NFG 12/17/2025 : 15 day channel breakout - Price: 82.16 - Fader: 82.131
 BUY FTNT 12/15/2025 : 4 day channel breakout - Price: 82.47 - Fader: 82.875
 BUY EBAY 12/17/2025 : 6 day channel breakout - Price: 83.66 - Fader: 82.926
 BUY EW 12/17/2025 : 6 day channel breakout - Price: 84.8 - Fader: 84.593
 BUY SXT 12/16/2025 : 4 day channel breakout - Price: 96.56 - Fader: 94.271
-BUY CPT 12/14/2025 : 5 day channel breakout - Price: 103.608 - Fader: 103.305
 BUY UFPT 12/15/2025 : 9 day channel breakout - Price: 217.74 - Fader: 216.373
 BUY TTWO 12/18/2025 : 14 day channel breakout - Price: 246.65 - Fader: 245.896
+BUY WING 12/18/2025 : 3 day channel breakout - Price: 254.53 - Fader: 249.398
 BUY FSLR 12/18/2025 : 5 day channel breakout - Price: 261.79 - Fader: 259.145
 BUY ESS 12/16/2025 : 3 day channel breakout - Price: 262.45 - Fader: 257.658
 BUY HIFS 12/18/2025 : 5 day channel breakout - Price: 295.76 - Fader: 293.403
-BUY AON 12/14/2025 : 8 day channel breakout - Price: 354.1 - Fader: 346.656
-BUY MCO 12/14/2025 : 3 day channel breakout - Price: 487.5 - Fader: 487.471
+BUY WSO 12/18/2025 : 7 day channel breakout - Price: 348.34 - Fader: 348.46
 
 ================================================================================
 Scan process completed

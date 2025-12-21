@@ -12,7 +12,9 @@ app = Flask(__name__)
 scan_status = {
     'channel_3week': {'running': False, 'last_run': None, 'results': ''},
     'fader': {'running': False, 'last_run': None, 'results': ''},
-    'append_data': {'running': False, 'last_run': None, 'results': ''}
+    'append_data': {'running': False, 'last_run': None, 'results': ''},
+    'backtest_fader': {'running': False, 'last_run': None, 'results': ''},
+    'backtest_channel': {'running': False, 'last_run': None, 'results': ''}
 }
 
 def read_file_contents(file_path):
@@ -75,7 +77,9 @@ def run_scan(scan_type):
     scripts = {
         'channel_3week': 'watchlist_Scanner/JimmyChannelScan_3week_test.py',
         'fader': 'watchlist_Scanner/ChannelFaderScan.py',
-        'append_data': 'watchlist_Scanner/AppendDailyData.py'
+        'append_data': 'watchlist_Scanner/AppendDailyData.py',
+        'backtest_fader': 'watchlist_Scanner/BacktestFaderScan.py',
+        'backtest_channel': 'watchlist_Scanner/BacktestChannelScan.py'
     }
 
     if scan_type not in scripts:
@@ -115,7 +119,9 @@ def view_results(result_type):
     files = {
         'channel_3week': 'watchlist_Scanner/buylist/sorted_scan_results_3week.txt',
         'fader': 'watchlist_Scanner/buylist/sorted_fader_scan_results.txt',
-        'tradingview_list': 'watchlist_Scanner/buylist/tradingview_fader_list.txt'
+        'tradingview_list': 'watchlist_Scanner/buylist/tradingview_fader_list.txt',
+        'backtest_fader': 'watchlist_Scanner/buylist/backtest_fader_results.txt',
+        'backtest_channel': 'watchlist_Scanner/buylist/backtest_channel_results.txt'
     }
 
     if result_type not in files:

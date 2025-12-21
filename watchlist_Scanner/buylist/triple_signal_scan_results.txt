@@ -1,0 +1,2149 @@
+================================================================================
+TRIPLE SIGNAL SCANNER - ULTIMATE BUY SETUP RESULTS
+================================================================================
+Scan Date: 2025-12-21 19:35:17
+
+SIGNAL CRITERIA (ALL MUST BE TRUE):
+  1. In Channel: Price within 3-week range (consolidating)
+  2. Price Zone: In buy zone (0-35% of range)
+  3. EFI Momentum: Maroon or orange (oversold)
+  4. Trend: Uptrend confirmed
+
+Total TRIPLE SIGNALS Found: 124
+================================================================================
+
+TRIPLE SIGNAL SETUPS (Sorted by Range Position - Lower = Better):
+--------------------------------------------------------------------------------
+Ticker   Date         Price      Range        Pos %    EFI      Force Idx   
+--------------------------------------------------------------------------------
+GTN      12/18/2025   $5.00      $5-$6        0.0    % MAROON         -0.02
+ELOX     12/18/2025   $0.00      $0-$1        0.0    % ORANGE         -0.00
+INVA     12/18/2025   $20.07     $20-$30      0.7    % ORANGE         -0.90
+KROS     12/18/2025   $20.13     $20-$30      1.3    % MAROON         -0.60
+HLIT     12/18/2025   $10.15     $10-$20      1.5    % MAROON         -0.02
+GRTX     12/18/2025   $0.02      $0-$1        2.3    % MAROON         -0.00
+FSLY     12/18/2025   $10.25     $10-$20      2.5    % ORANGE         -0.66
+IAS      12/18/2025   $10.26     $10-$20      2.6    % MAROON         -0.01
+ORA      12/18/2025   $110.31    $110-$120    3.1    % ORANGE         -2.52
+SPXC     12/18/2025   $210.34    $210-$220    3.4    % ORANGE         -6.06
+KO       12/18/2025   $70.36     $70-$80      3.6    % MAROON         -0.32
+CMPX     12/18/2025   $5.04      $5-$6        4.0    % ORANGE         -0.26
+VZ       12/18/2025   $40.41     $40-$50      4.1    % MAROON         -0.60
+IRON     12/18/2025   $90.44     $90-$100     4.4    % ORANGE         -1.70
+TER      12/18/2025   $190.45    $190-$200    4.5    % ORANGE         -2.22
+ORN      12/18/2025   $10.45     $10-$20      4.5    % ORANGE         -0.21
+IBM      12/18/2025   $300.45    $300-$310    4.5    % MAROON        -11.08
+MAT      12/18/2025   $20.46     $20-$30      4.6    % ORANGE         -0.05
+UPWK     12/18/2025   $20.47     $20-$30      4.7    % ORANGE         -0.06
+WEX      12/18/2025   $150.47    $150-$160    4.7    % ORANGE         -0.82
+ALT      12/18/2025   $5.05      $5-$6        5.0    % MAROON         -0.21
+PUMP     12/18/2025   $9.05      $9-$10       5.0    % ORANGE         -2.02
+ILMN     12/18/2025   $130.51    $130-$140    5.1    % ORANGE         -0.55
+FLXS     12/18/2025   $40.53     $40-$50      5.3    % MAROON         -0.90
+LAZ      12/18/2025   $50.53     $50-$60      5.3    % ORANGE         -0.57
+TRNO     12/18/2025   $60.58     $60-$70      5.8    % MAROON         -0.78
+SVRA     12/18/2025   $6.06      $6-$7        6.0    % MAROON         -0.39
+KODK     12/18/2025   $8.06      $8-$9        6.0    % MAROON         -0.78
+CMI      12/18/2025   $500.61    $500-$510    6.1    % ORANGE         -9.61
+HOFT     12/18/2025   $10.68     $10-$20      6.8    % ORANGE         -0.10
+NXTC     12/18/2025   $10.70     $10-$20      7.0    % ORANGE         -1.37
+SPRU     12/18/2025   $5.08      $5-$6        8.0    % ORANGE         -0.03
+GHM      12/18/2025   $60.84     $60-$70      8.4    % MAROON         -0.97
+TALO     12/18/2025   $10.85     $10-$20      8.5    % MAROON         -0.86
+DVAX     12/18/2025   $10.87     $10-$20      8.7    % ORANGE         -0.04
+XPO      12/18/2025   $140.92    $140-$150    9.2    % MAROON         -6.51
+PLTK     12/18/2025   $4.10      $4-$5        10.0   % ORANGE         -0.13
+SMTC     12/18/2025   $71.01     $70-$80      10.1   % ORANGE         -4.60
+MUR      12/18/2025   $31.04     $30-$40      10.4   % MAROON         -2.20
+NBR      12/18/2025   $51.14     $50-$60      11.4   % ORANGE         -3.67
+PLXS     12/18/2025   $151.16    $150-$160    11.6   % ORANGE         -2.79
+CCS      12/18/2025   $61.19     $60-$70      11.9   % MAROON         -2.17
+DY       12/18/2025   $341.19    $340-$350    11.9   % ORANGE        -10.13
+SEE      12/18/2025   $41.26     $40-$50      12.6   % MAROON         -0.81
+HLLY     12/18/2025   $4.13      $4-$5        13.0   % ORANGE         -0.04
+DHI      12/18/2025   $151.40    $150-$160    14.0   % MAROON         -5.54
+NUVL     12/18/2025   $101.41    $100-$110    14.1   % ORANGE         -6.23
+FICO     12/18/2025   $1761.41   $1760-$1770  14.1   % ORANGE        -39.45
+TMHC     12/18/2025   $61.44     $60-$70      14.4   % ORANGE         -0.66
+MTSI     12/18/2025   $171.47    $170-$180    14.7   % ORANGE        -10.46
+RLMD     12/18/2025   $4.15      $4-$5        15.0   % ORANGE         -0.07
+NAII     12/18/2025   $3.15      $3-$4        15.0   % ORANGE         -0.18
+CORT     12/18/2025   $81.54     $80-$90      15.4   % MAROON         -3.39
+OMER     12/18/2025   $9.16      $9-$10       16.0   % ORANGE         -1.15
+VRDN     12/18/2025   $31.60     $30-$40      16.0   % MAROON         -0.68
+SOHO     12/18/2025   $2.16      $2-$3        16.0   % MAROON         -0.03
+ROK      12/18/2025   $391.62    $390-$400    16.2   % ORANGE        -12.79
+MD       12/18/2025   $21.64     $20-$30      16.4   % MAROON         -1.47
+NEO      12/18/2025   $11.68     $10-$20      16.8   % ORANGE         -0.11
+OKE      12/18/2025   $71.69     $70-$80      16.9   % MAROON         -2.56
+TWI      12/18/2025   $8.17      $8-$9        17.0   % ORANGE         -0.09
+ONTO     12/18/2025   $151.73    $150-$160    17.3   % ORANGE         -3.08
+RIGL     12/18/2025   $41.77     $40-$50      17.7   % ORANGE         -2.65
+NGS      12/18/2025   $31.78     $30-$40      17.8   % MAROON         -1.09
+NSC      12/18/2025   $291.83    $290-$300    18.3   % MAROON         -2.97
+STEL     12/18/2025   $31.84     $30-$40      18.4   % MAROON         -0.02
+STOK     12/18/2025   $31.93     $30-$40      19.3   % MAROON         -0.16
+ATRO     12/18/2025   $51.94     $50-$60      19.4   % ORANGE         -0.01
+SBCF     12/18/2025   $31.95     $30-$40      19.5   % MAROON         -0.34
+RCUS     12/18/2025   $21.99     $20-$30      19.9   % MAROON         -2.71
+AGYS     12/18/2025   $122.01    $120-$130    20.1   % ORANGE         -3.22
+VCYT     12/18/2025   $42.04     $40-$50      20.4   % ORANGE         -3.02
+LIVN     12/18/2025   $62.08     $60-$70      20.8   % MAROON         -0.76
+NXPI     12/18/2025   $222.08    $220-$230    20.8   % MAROON         -0.97
+TRVI     12/18/2025   $12.19     $10-$20      21.9   % ORANGE         -1.01
+AAPL     12/18/2025   $272.19    $270-$280    21.9   % ORANGE         -7.62
+COP      12/18/2025   $92.23     $90-$100     22.3   % MAROON         -1.58
+FN       12/18/2025   $452.46    $450-$460    24.6   % ORANGE        -22.74
+GOOGL    12/18/2025   $302.46    $300-$310    24.6   % ORANGE        -12.13
+COCO     12/18/2025   $52.48     $50-$60      24.8   % ORANGE         -0.56
+IQV      12/18/2025   $222.52    $220-$230    25.2   % ORANGE         -1.25
+DDS      12/18/2025   $652.55    $650-$660    25.5   % ORANGE        -10.97
+FRSH     12/18/2025   $12.59     $10-$20      25.9   % ORANGE         -0.02
+IRWD     12/18/2025   $3.26      $3-$4        26.0   % MAROON         -0.44
+MRKR     12/18/2025   $1.26      $1-$2        26.0   % MAROON         -0.12
+NOG      12/17/2025   $22.62     $20-$30      26.2   % ORANGE         -0.79
+ATXS     12/18/2025   $12.71     $10-$20      27.1   % ORANGE         -0.20
+KBH      12/18/2025   $62.75     $60-$70      27.5   % MAROON         -1.43
+GSHD     12/18/2025   $72.79     $70-$80      27.9   % ORANGE         -2.15
+KBR      12/18/2025   $42.80     $40-$50      28.0   % MAROON         -0.24
+HASI     12/18/2025   $32.83     $30-$40      28.3   % ORANGE         -0.22
+TCBI     12/18/2025   $92.86     $90-$100     28.6   % MAROON         -1.39
+CSPI     12/18/2025   $12.87     $10-$20      28.7   % ORANGE         -0.68
+HRTX     12/18/2025   $1.29      $1-$2        29.0   % ORANGE         -0.01
+BCRX     12/18/2025   $7.29      $7-$8        29.0   % ORANGE         -0.28
+IVVD     12/18/2025   $2.29      $2-$3        29.0   % ORANGE         -0.06
+SRRK     12/18/2025   $42.93     $40-$50      29.3   % MAROON         -2.08
+MAX      12/18/2025   $12.94     $10-$20      29.4   % ORANGE         -0.00
+QLYS     12/18/2025   $142.95    $140-$150    29.5   % ORANGE         -6.27
+MS       12/18/2025   $172.96    $170-$180    29.6   % MAROON         -3.86
+FG       12/18/2025   $32.97     $30-$40      29.7   % ORANGE         -0.68
+OCUL     12/18/2025   $12.98     $10-$20      29.8   % MAROON         -1.58
+TPH      12/18/2025   $32.98     $30-$40      29.8   % ORANGE         -0.56
+JPM      12/18/2025   $313.00    $310-$320    30.0   % MAROON         -0.56
+MHO      12/18/2025   $133.00    $130-$140    30.0   % MAROON         -1.32
+STGW     12/18/2025   $5.30      $5-$6        30.0   % ORANGE         -0.42
+WNC      12/18/2025   $9.30      $9-$10       30.0   % MAROON         -0.05
+SFBS     12/18/2025   $73.01     $70-$80      30.1   % MAROON         -0.84
+LSCC     12/18/2025   $73.03     $70-$80      30.3   % ORANGE         -2.39
+DOW      12/18/2025   $23.04     $20-$30      30.4   % ORANGE         -0.56
+STEP     12/18/2025   $63.04     $60-$70      30.4   % ORANGE         -0.55
+DMAC     12/18/2025   $8.31      $8-$9        31.0   % ORANGE         -0.61
+STC      12/18/2025   $73.15     $70-$80      31.5   % ORANGE         -1.22
+ST       12/18/2025   $33.22     $30-$40      32.2   % ORANGE         -0.86
+OWLT     12/18/2025   $13.23     $10-$20      32.3   % ORANGE         -0.33
+PESI     12/18/2025   $13.24     $10-$20      32.4   % ORANGE         -0.52
+IDYA     12/18/2025   $33.26     $30-$40      32.6   % MAROON         -1.41
+COHU     12/18/2025   $23.30     $20-$30      33.0   % ORANGE         -1.26
+PIPR     12/18/2025   $343.31    $340-$350    33.1   % ORANGE         -7.01
+CWBC     12/18/2025   $23.31     $20-$30      33.1   % ORANGE         -0.13
+F        12/18/2025   $13.32     $10-$20      33.2   % ORANGE         -0.08
+HXL      12/18/2025   $73.36     $70-$80      33.6   % ORANGE         -1.60
+CLRO     12/18/2025   $5.35      $5-$6        35.0   % ORANGE         -0.02
+AMAT     12/18/2025   $253.50    $250-$260    35.0   % ORANGE         -9.27
+
+================================================================================
+
+DETAILED BREAKDOWN:
+--------------------------------------------------------------------------------
+
+TICKER: GTN
+  Date: 2025-12-18
+  Price: $5.00
+  Range: $5-$6
+  Position in Range: 0.0%
+  Buy Zone (25%): $5.25
+  EFI Color: MAROON
+  Force Index: -0.02
+  Normalized Price: 0.04
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ELOX
+  Date: 2025-12-18
+  Price: $0.00
+  Range: $0-$1
+  Position in Range: 0.0%
+  Buy Zone (25%): $0.25
+  EFI Color: ORANGE
+  Force Index: -0.00
+  Normalized Price: 0.00
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: INVA
+  Date: 2025-12-18
+  Price: $20.07
+  Range: $20-$30
+  Position in Range: 0.7%
+  Buy Zone (25%): $22.50
+  EFI Color: ORANGE
+  Force Index: -0.90
+  Normalized Price: 0.11
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: KROS
+  Date: 2025-12-18
+  Price: $20.13
+  Range: $20-$30
+  Position in Range: 1.3%
+  Buy Zone (25%): $22.50
+  EFI Color: MAROON
+  Force Index: -0.60
+  Normalized Price: 2.70
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: HLIT
+  Date: 2025-12-18
+  Price: $10.15
+  Range: $10-$20
+  Position in Range: 1.5%
+  Buy Zone (25%): $12.50
+  EFI Color: MAROON
+  Force Index: -0.02
+  Normalized Price: 0.21
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: GRTX
+  Date: 2025-12-18
+  Price: $0.02
+  Range: $0-$1
+  Position in Range: 2.3%
+  Buy Zone (25%): $0.25
+  EFI Color: MAROON
+  Force Index: -0.00
+  Normalized Price: 0.00
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: FSLY
+  Date: 2025-12-18
+  Price: $10.25
+  Range: $10-$20
+  Position in Range: 2.5%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.66
+  Normalized Price: 0.51
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: IAS
+  Date: 2025-12-18
+  Price: $10.26
+  Range: $10-$20
+  Position in Range: 2.6%
+  Buy Zone (25%): $12.50
+  EFI Color: MAROON
+  Force Index: -0.01
+  Normalized Price: 0.30
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ORA
+  Date: 2025-12-18
+  Price: $110.31
+  Range: $110-$120
+  Position in Range: 3.1%
+  Buy Zone (25%): $112.50
+  EFI Color: ORANGE
+  Force Index: -2.52
+  Normalized Price: 4.38
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SPXC
+  Date: 2025-12-18
+  Price: $210.34
+  Range: $210-$220
+  Position in Range: 3.4%
+  Buy Zone (25%): $212.50
+  EFI Color: ORANGE
+  Force Index: -6.06
+  Normalized Price: 7.51
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: KO
+  Date: 2025-12-18
+  Price: $70.36
+  Range: $70-$80
+  Position in Range: 3.6%
+  Buy Zone (25%): $72.50
+  EFI Color: MAROON
+  Force Index: -0.32
+  Normalized Price: 0.88
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: CMPX
+  Date: 2025-12-18
+  Price: $5.04
+  Range: $5-$6
+  Position in Range: 4.0%
+  Buy Zone (25%): $5.25
+  EFI Color: ORANGE
+  Force Index: -0.26
+  Normalized Price: 0.58
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: VZ
+  Date: 2025-12-18
+  Price: $40.41
+  Range: $40-$50
+  Position in Range: 4.1%
+  Buy Zone (25%): $42.50
+  EFI Color: MAROON
+  Force Index: -0.60
+  Normalized Price: -0.53
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: IRON
+  Date: 2025-12-18
+  Price: $90.44
+  Range: $90-$100
+  Position in Range: 4.4%
+  Buy Zone (25%): $92.50
+  EFI Color: ORANGE
+  Force Index: -1.70
+  Normalized Price: 7.95
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TER
+  Date: 2025-12-18
+  Price: $190.45
+  Range: $190-$200
+  Position in Range: 4.5%
+  Buy Zone (25%): $192.50
+  EFI Color: ORANGE
+  Force Index: -2.22
+  Normalized Price: 26.59
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ORN
+  Date: 2025-12-18
+  Price: $10.45
+  Range: $10-$20
+  Position in Range: 4.5%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.21
+  Normalized Price: 0.93
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: IBM
+  Date: 2025-12-18
+  Price: $300.45
+  Range: $300-$310
+  Position in Range: 4.5%
+  Buy Zone (25%): $302.50
+  EFI Color: MAROON
+  Force Index: -11.08
+  Normalized Price: 7.19
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MAT
+  Date: 2025-12-18
+  Price: $20.46
+  Range: $20-$30
+  Position in Range: 4.6%
+  Buy Zone (25%): $22.50
+  EFI Color: ORANGE
+  Force Index: -0.05
+  Normalized Price: 1.09
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: UPWK
+  Date: 2025-12-18
+  Price: $20.47
+  Range: $20-$30
+  Position in Range: 4.7%
+  Buy Zone (25%): $22.50
+  EFI Color: ORANGE
+  Force Index: -0.06
+  Normalized Price: 2.31
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: WEX
+  Date: 2025-12-18
+  Price: $150.47
+  Range: $150-$160
+  Position in Range: 4.7%
+  Buy Zone (25%): $152.50
+  EFI Color: ORANGE
+  Force Index: -0.82
+  Normalized Price: -1.73
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ALT
+  Date: 2025-12-18
+  Price: $5.05
+  Range: $5-$6
+  Position in Range: 5.0%
+  Buy Zone (25%): $5.25
+  EFI Color: MAROON
+  Force Index: -0.21
+  Normalized Price: 0.49
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: PUMP
+  Date: 2025-12-18
+  Price: $9.05
+  Range: $9-$10
+  Position in Range: 5.0%
+  Buy Zone (25%): $9.25
+  EFI Color: ORANGE
+  Force Index: -2.02
+  Normalized Price: 0.51
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ILMN
+  Date: 2025-12-18
+  Price: $130.51
+  Range: $130-$140
+  Position in Range: 5.1%
+  Buy Zone (25%): $132.50
+  EFI Color: ORANGE
+  Force Index: -0.55
+  Normalized Price: 14.19
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: FLXS
+  Date: 2025-12-18
+  Price: $40.53
+  Range: $40-$50
+  Position in Range: 5.3%
+  Buy Zone (25%): $42.50
+  EFI Color: MAROON
+  Force Index: -0.90
+  Normalized Price: 0.90
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: LAZ
+  Date: 2025-12-18
+  Price: $50.53
+  Range: $50-$60
+  Position in Range: 5.3%
+  Buy Zone (25%): $52.50
+  EFI Color: ORANGE
+  Force Index: -0.57
+  Normalized Price: 0.04
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TRNO
+  Date: 2025-12-18
+  Price: $60.58
+  Range: $60-$70
+  Position in Range: 5.8%
+  Buy Zone (25%): $62.50
+  EFI Color: MAROON
+  Force Index: -0.78
+  Normalized Price: 1.07
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SVRA
+  Date: 2025-12-18
+  Price: $6.06
+  Range: $6-$7
+  Position in Range: 6.0%
+  Buy Zone (25%): $6.25
+  EFI Color: MAROON
+  Force Index: -0.39
+  Normalized Price: 1.27
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: KODK
+  Date: 2025-12-18
+  Price: $8.06
+  Range: $8-$9
+  Position in Range: 6.0%
+  Buy Zone (25%): $8.25
+  EFI Color: MAROON
+  Force Index: -0.78
+  Normalized Price: 0.68
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: CMI
+  Date: 2025-12-18
+  Price: $500.61
+  Range: $500-$510
+  Position in Range: 6.1%
+  Buy Zone (25%): $502.50
+  EFI Color: ORANGE
+  Force Index: -9.61
+  Normalized Price: 43.04
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: HOFT
+  Date: 2025-12-18
+  Price: $10.68
+  Range: $10-$20
+  Position in Range: 6.8%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.10
+  Normalized Price: 0.46
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NXTC
+  Date: 2025-12-18
+  Price: $10.70
+  Range: $10-$20
+  Position in Range: 7.0%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -1.37
+  Normalized Price: 1.02
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SPRU
+  Date: 2025-12-18
+  Price: $5.08
+  Range: $5-$6
+  Position in Range: 8.0%
+  Buy Zone (25%): $5.25
+  EFI Color: ORANGE
+  Force Index: -0.03
+  Normalized Price: 1.24
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: GHM
+  Date: 2025-12-18
+  Price: $60.84
+  Range: $60-$70
+  Position in Range: 8.4%
+  Buy Zone (25%): $62.50
+  EFI Color: MAROON
+  Force Index: -0.97
+  Normalized Price: 3.15
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TALO
+  Date: 2025-12-18
+  Price: $10.85
+  Range: $10-$20
+  Position in Range: 8.5%
+  Buy Zone (25%): $12.50
+  EFI Color: MAROON
+  Force Index: -0.86
+  Normalized Price: 0.44
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: DVAX
+  Date: 2025-12-18
+  Price: $10.87
+  Range: $10-$20
+  Position in Range: 8.7%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.04
+  Normalized Price: 0.19
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: XPO
+  Date: 2025-12-18
+  Price: $140.92
+  Range: $140-$150
+  Position in Range: 9.2%
+  Buy Zone (25%): $142.50
+  EFI Color: MAROON
+  Force Index: -6.51
+  Normalized Price: 4.71
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: PLTK
+  Date: 2025-12-18
+  Price: $4.10
+  Range: $4-$5
+  Position in Range: 10.0%
+  Buy Zone (25%): $4.25
+  EFI Color: ORANGE
+  Force Index: -0.13
+  Normalized Price: 0.12
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SMTC
+  Date: 2025-12-18
+  Price: $71.01
+  Range: $70-$80
+  Position in Range: 10.1%
+  Buy Zone (25%): $72.50
+  EFI Color: ORANGE
+  Force Index: -4.60
+  Normalized Price: 2.99
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MUR
+  Date: 2025-12-18
+  Price: $31.04
+  Range: $30-$40
+  Position in Range: 10.4%
+  Buy Zone (25%): $32.50
+  EFI Color: MAROON
+  Force Index: -2.20
+  Normalized Price: 1.63
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NBR
+  Date: 2025-12-18
+  Price: $51.14
+  Range: $50-$60
+  Position in Range: 11.4%
+  Buy Zone (25%): $52.50
+  EFI Color: ORANGE
+  Force Index: -3.67
+  Normalized Price: 3.72
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: PLXS
+  Date: 2025-12-18
+  Price: $151.16
+  Range: $150-$160
+  Position in Range: 11.6%
+  Buy Zone (25%): $152.50
+  EFI Color: ORANGE
+  Force Index: -2.79
+  Normalized Price: 6.45
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: CCS
+  Date: 2025-12-18
+  Price: $61.19
+  Range: $60-$70
+  Position in Range: 11.9%
+  Buy Zone (25%): $62.50
+  EFI Color: MAROON
+  Force Index: -2.17
+  Normalized Price: -0.36
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: DY
+  Date: 2025-12-18
+  Price: $341.19
+  Range: $340-$350
+  Position in Range: 11.9%
+  Buy Zone (25%): $342.50
+  EFI Color: ORANGE
+  Force Index: -10.13
+  Normalized Price: 32.39
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SEE
+  Date: 2025-12-18
+  Price: $41.26
+  Range: $40-$50
+  Position in Range: 12.6%
+  Buy Zone (25%): $42.50
+  EFI Color: MAROON
+  Force Index: -0.81
+  Normalized Price: 3.26
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: HLLY
+  Date: 2025-12-18
+  Price: $4.13
+  Range: $4-$5
+  Position in Range: 13.0%
+  Buy Zone (25%): $4.25
+  EFI Color: ORANGE
+  Force Index: -0.04
+  Normalized Price: 0.51
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: DHI
+  Date: 2025-12-18
+  Price: $151.40
+  Range: $150-$160
+  Position in Range: 14.0%
+  Buy Zone (25%): $152.50
+  EFI Color: MAROON
+  Force Index: -5.54
+  Normalized Price: -1.90
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NUVL
+  Date: 2025-12-18
+  Price: $101.41
+  Range: $100-$110
+  Position in Range: 14.1%
+  Buy Zone (25%): $102.50
+  EFI Color: ORANGE
+  Force Index: -6.23
+  Normalized Price: 4.77
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: FICO
+  Date: 2025-12-18
+  Price: $1761.41
+  Range: $1760-$1770
+  Position in Range: 14.1%
+  Buy Zone (25%): $1762.50
+  EFI Color: ORANGE
+  Force Index: -39.45
+  Normalized Price: 57.98
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TMHC
+  Date: 2025-12-18
+  Price: $61.44
+  Range: $60-$70
+  Position in Range: 14.4%
+  Buy Zone (25%): $62.50
+  EFI Color: ORANGE
+  Force Index: -0.66
+  Normalized Price: -0.67
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MTSI
+  Date: 2025-12-18
+  Price: $171.47
+  Range: $170-$180
+  Position in Range: 14.7%
+  Buy Zone (25%): $172.50
+  EFI Color: ORANGE
+  Force Index: -10.46
+  Normalized Price: 13.85
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: RLMD
+  Date: 2025-12-18
+  Price: $4.15
+  Range: $4-$5
+  Position in Range: 15.0%
+  Buy Zone (25%): $4.25
+  EFI Color: ORANGE
+  Force Index: -0.07
+  Normalized Price: 1.05
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NAII
+  Date: 2025-12-18
+  Price: $3.15
+  Range: $3-$4
+  Position in Range: 15.0%
+  Buy Zone (25%): $3.25
+  EFI Color: ORANGE
+  Force Index: -0.18
+  Normalized Price: -0.02
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: CORT
+  Date: 2025-12-18
+  Price: $81.54
+  Range: $80-$90
+  Position in Range: 15.4%
+  Buy Zone (25%): $82.50
+  EFI Color: MAROON
+  Force Index: -3.39
+  Normalized Price: 2.95
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: OMER
+  Date: 2025-12-18
+  Price: $9.16
+  Range: $9-$10
+  Position in Range: 16.0%
+  Buy Zone (25%): $9.25
+  EFI Color: ORANGE
+  Force Index: -1.15
+  Normalized Price: 1.38
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: VRDN
+  Date: 2025-12-18
+  Price: $31.60
+  Range: $30-$40
+  Position in Range: 16.0%
+  Buy Zone (25%): $32.50
+  EFI Color: MAROON
+  Force Index: -0.68
+  Normalized Price: 4.95
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SOHO
+  Date: 2025-12-18
+  Price: $2.16
+  Range: $2-$3
+  Position in Range: 16.0%
+  Buy Zone (25%): $2.25
+  EFI Color: MAROON
+  Force Index: -0.03
+  Normalized Price: 0.43
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ROK
+  Date: 2025-12-18
+  Price: $391.62
+  Range: $390-$400
+  Position in Range: 16.2%
+  Buy Zone (25%): $392.50
+  EFI Color: ORANGE
+  Force Index: -12.79
+  Normalized Price: 18.83
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MD
+  Date: 2025-12-18
+  Price: $21.64
+  Range: $20-$30
+  Position in Range: 16.4%
+  Buy Zone (25%): $22.50
+  EFI Color: MAROON
+  Force Index: -1.47
+  Normalized Price: 1.51
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NEO
+  Date: 2025-12-18
+  Price: $11.68
+  Range: $10-$20
+  Position in Range: 16.8%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.11
+  Normalized Price: 1.34
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: OKE
+  Date: 2025-12-18
+  Price: $71.69
+  Range: $70-$80
+  Position in Range: 16.9%
+  Buy Zone (25%): $72.50
+  EFI Color: MAROON
+  Force Index: -2.56
+  Normalized Price: -0.02
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TWI
+  Date: 2025-12-18
+  Price: $8.17
+  Range: $8-$9
+  Position in Range: 17.0%
+  Buy Zone (25%): $8.25
+  EFI Color: ORANGE
+  Force Index: -0.09
+  Normalized Price: 0.11
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ONTO
+  Date: 2025-12-18
+  Price: $151.73
+  Range: $150-$160
+  Position in Range: 17.3%
+  Buy Zone (25%): $152.50
+  EFI Color: ORANGE
+  Force Index: -3.08
+  Normalized Price: 14.65
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: RIGL
+  Date: 2025-12-18
+  Price: $41.77
+  Range: $40-$50
+  Position in Range: 17.7%
+  Buy Zone (25%): $42.50
+  EFI Color: ORANGE
+  Force Index: -2.65
+  Normalized Price: 3.74
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NGS
+  Date: 2025-12-18
+  Price: $31.78
+  Range: $30-$40
+  Position in Range: 17.8%
+  Buy Zone (25%): $32.50
+  EFI Color: MAROON
+  Force Index: -1.09
+  Normalized Price: 2.35
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NSC
+  Date: 2025-12-18
+  Price: $291.83
+  Range: $290-$300
+  Position in Range: 18.3%
+  Buy Zone (25%): $292.50
+  EFI Color: MAROON
+  Force Index: -2.97
+  Normalized Price: 5.78
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: STEL
+  Date: 2025-12-18
+  Price: $31.84
+  Range: $30-$40
+  Position in Range: 18.4%
+  Buy Zone (25%): $32.50
+  EFI Color: MAROON
+  Force Index: -0.02
+  Normalized Price: 1.18
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: STOK
+  Date: 2025-12-18
+  Price: $31.93
+  Range: $30-$40
+  Position in Range: 19.3%
+  Buy Zone (25%): $32.50
+  EFI Color: MAROON
+  Force Index: -0.16
+  Normalized Price: 4.11
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ATRO
+  Date: 2025-12-18
+  Price: $51.94
+  Range: $50-$60
+  Position in Range: 19.4%
+  Buy Zone (25%): $52.50
+  EFI Color: ORANGE
+  Force Index: -0.01
+  Normalized Price: 4.25
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SBCF
+  Date: 2025-12-18
+  Price: $31.95
+  Range: $30-$40
+  Position in Range: 19.5%
+  Buy Zone (25%): $32.50
+  EFI Color: MAROON
+  Force Index: -0.34
+  Normalized Price: 1.07
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: RCUS
+  Date: 2025-12-18
+  Price: $21.99
+  Range: $20-$30
+  Position in Range: 19.9%
+  Buy Zone (25%): $22.50
+  EFI Color: MAROON
+  Force Index: -2.71
+  Normalized Price: 2.57
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: AGYS
+  Date: 2025-12-18
+  Price: $122.01
+  Range: $120-$130
+  Position in Range: 20.1%
+  Buy Zone (25%): $122.50
+  EFI Color: ORANGE
+  Force Index: -3.22
+  Normalized Price: 2.72
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: VCYT
+  Date: 2025-12-18
+  Price: $42.04
+  Range: $40-$50
+  Position in Range: 20.4%
+  Buy Zone (25%): $42.50
+  EFI Color: ORANGE
+  Force Index: -3.02
+  Normalized Price: 2.66
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: LIVN
+  Date: 2025-12-18
+  Price: $62.08
+  Range: $60-$70
+  Position in Range: 20.8%
+  Buy Zone (25%): $62.50
+  EFI Color: MAROON
+  Force Index: -0.76
+  Normalized Price: 5.18
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NXPI
+  Date: 2025-12-18
+  Price: $222.08
+  Range: $220-$230
+  Position in Range: 20.8%
+  Buy Zone (25%): $222.50
+  EFI Color: MAROON
+  Force Index: -0.97
+  Normalized Price: 7.78
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TRVI
+  Date: 2025-12-18
+  Price: $12.19
+  Range: $10-$20
+  Position in Range: 21.9%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -1.01
+  Normalized Price: 1.14
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: AAPL
+  Date: 2025-12-18
+  Price: $272.19
+  Range: $270-$280
+  Position in Range: 21.9%
+  Buy Zone (25%): $272.50
+  EFI Color: ORANGE
+  Force Index: -7.62
+  Normalized Price: 8.94
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: COP
+  Date: 2025-12-18
+  Price: $92.23
+  Range: $90-$100
+  Position in Range: 22.3%
+  Buy Zone (25%): $92.50
+  EFI Color: MAROON
+  Force Index: -1.58
+  Normalized Price: 1.40
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: FN
+  Date: 2025-12-18
+  Price: $452.46
+  Range: $450-$460
+  Position in Range: 24.6%
+  Buy Zone (25%): $452.50
+  EFI Color: ORANGE
+  Force Index: -22.74
+  Normalized Price: 32.65
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: GOOGL
+  Date: 2025-12-18
+  Price: $302.46
+  Range: $300-$310
+  Position in Range: 24.6%
+  Buy Zone (25%): $302.50
+  EFI Color: ORANGE
+  Force Index: -12.13
+  Normalized Price: 24.70
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: COCO
+  Date: 2025-12-18
+  Price: $52.48
+  Range: $50-$60
+  Position in Range: 24.8%
+  Buy Zone (25%): $52.50
+  EFI Color: ORANGE
+  Force Index: -0.56
+  Normalized Price: 6.34
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: IQV
+  Date: 2025-12-18
+  Price: $222.52
+  Range: $220-$230
+  Position in Range: 25.2%
+  Buy Zone (25%): $222.50
+  EFI Color: ORANGE
+  Force Index: -1.25
+  Normalized Price: 10.55
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: DDS
+  Date: 2025-12-18
+  Price: $652.55
+  Range: $650-$660
+  Position in Range: 25.5%
+  Buy Zone (25%): $652.50
+  EFI Color: ORANGE
+  Force Index: -10.97
+  Normalized Price: 55.88
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: FRSH
+  Date: 2025-12-18
+  Price: $12.59
+  Range: $10-$20
+  Position in Range: 25.9%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.02
+  Normalized Price: 0.31
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: IRWD
+  Date: 2025-12-18
+  Price: $3.26
+  Range: $3-$4
+  Position in Range: 26.0%
+  Buy Zone (25%): $3.25
+  EFI Color: MAROON
+  Force Index: -0.44
+  Normalized Price: 0.72
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MRKR
+  Date: 2025-12-18
+  Price: $1.26
+  Range: $1-$2
+  Position in Range: 26.0%
+  Buy Zone (25%): $1.25
+  EFI Color: MAROON
+  Force Index: -0.12
+  Normalized Price: 0.11
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: NOG
+  Date: 2025-12-17
+  Price: $22.62
+  Range: $20-$30
+  Position in Range: 26.2%
+  Buy Zone (25%): $22.50
+  EFI Color: ORANGE
+  Force Index: -0.79
+  Normalized Price: -0.66
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ATXS
+  Date: 2025-12-18
+  Price: $12.71
+  Range: $10-$20
+  Position in Range: 27.1%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.20
+  Normalized Price: 1.49
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: KBH
+  Date: 2025-12-18
+  Price: $62.75
+  Range: $60-$70
+  Position in Range: 27.5%
+  Buy Zone (25%): $62.50
+  EFI Color: MAROON
+  Force Index: -1.43
+  Normalized Price: 0.77
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: GSHD
+  Date: 2025-12-18
+  Price: $72.79
+  Range: $70-$80
+  Position in Range: 27.9%
+  Buy Zone (25%): $72.50
+  EFI Color: ORANGE
+  Force Index: -2.15
+  Normalized Price: -1.97
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: KBR
+  Date: 2025-12-18
+  Price: $42.80
+  Range: $40-$50
+  Position in Range: 28.0%
+  Buy Zone (25%): $42.50
+  EFI Color: MAROON
+  Force Index: -0.24
+  Normalized Price: -1.14
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: HASI
+  Date: 2025-12-18
+  Price: $32.83
+  Range: $30-$40
+  Position in Range: 28.3%
+  Buy Zone (25%): $32.50
+  EFI Color: ORANGE
+  Force Index: -0.22
+  Normalized Price: 1.73
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TCBI
+  Date: 2025-12-18
+  Price: $92.86
+  Range: $90-$100
+  Position in Range: 28.6%
+  Buy Zone (25%): $92.50
+  EFI Color: MAROON
+  Force Index: -1.39
+  Normalized Price: 4.87
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: CSPI
+  Date: 2025-12-18
+  Price: $12.87
+  Range: $10-$20
+  Position in Range: 28.7%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.68
+  Normalized Price: 0.55
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: HRTX
+  Date: 2025-12-18
+  Price: $1.29
+  Range: $1-$2
+  Position in Range: 29.0%
+  Buy Zone (25%): $1.25
+  EFI Color: ORANGE
+  Force Index: -0.01
+  Normalized Price: 0.01
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: BCRX
+  Date: 2025-12-18
+  Price: $7.29
+  Range: $7-$8
+  Position in Range: 29.0%
+  Buy Zone (25%): $7.25
+  EFI Color: ORANGE
+  Force Index: -0.28
+  Normalized Price: -0.17
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: IVVD
+  Date: 2025-12-18
+  Price: $2.29
+  Range: $2-$3
+  Position in Range: 29.0%
+  Buy Zone (25%): $2.25
+  EFI Color: ORANGE
+  Force Index: -0.06
+  Normalized Price: 0.39
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SRRK
+  Date: 2025-12-18
+  Price: $42.93
+  Range: $40-$50
+  Position in Range: 29.3%
+  Buy Zone (25%): $42.50
+  EFI Color: MAROON
+  Force Index: -2.08
+  Normalized Price: 5.18
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MAX
+  Date: 2025-12-18
+  Price: $12.94
+  Range: $10-$20
+  Position in Range: 29.4%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.00
+  Normalized Price: 0.72
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: QLYS
+  Date: 2025-12-18
+  Price: $142.95
+  Range: $140-$150
+  Position in Range: 29.5%
+  Buy Zone (25%): $142.50
+  EFI Color: ORANGE
+  Force Index: -6.27
+  Normalized Price: 3.29
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MS
+  Date: 2025-12-18
+  Price: $172.96
+  Range: $170-$180
+  Position in Range: 29.6%
+  Buy Zone (25%): $172.50
+  EFI Color: MAROON
+  Force Index: -3.86
+  Normalized Price: 9.34
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: FG
+  Date: 2025-12-18
+  Price: $32.97
+  Range: $30-$40
+  Position in Range: 29.7%
+  Buy Zone (25%): $32.50
+  EFI Color: ORANGE
+  Force Index: -0.68
+  Normalized Price: 1.00
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: OCUL
+  Date: 2025-12-18
+  Price: $12.98
+  Range: $10-$20
+  Position in Range: 29.8%
+  Buy Zone (25%): $12.50
+  EFI Color: MAROON
+  Force Index: -1.58
+  Normalized Price: 0.65
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: TPH
+  Date: 2025-12-18
+  Price: $32.98
+  Range: $30-$40
+  Position in Range: 29.8%
+  Buy Zone (25%): $32.50
+  EFI Color: ORANGE
+  Force Index: -0.56
+  Normalized Price: 0.01
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: JPM
+  Date: 2025-12-18
+  Price: $313.00
+  Range: $310-$320
+  Position in Range: 30.0%
+  Buy Zone (25%): $312.50
+  EFI Color: MAROON
+  Force Index: -0.56
+  Normalized Price: 6.97
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: MHO
+  Date: 2025-12-18
+  Price: $133.00
+  Range: $130-$140
+  Position in Range: 30.0%
+  Buy Zone (25%): $132.50
+  EFI Color: MAROON
+  Force Index: -1.32
+  Normalized Price: -0.29
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: STGW
+  Date: 2025-12-18
+  Price: $5.30
+  Range: $5-$6
+  Position in Range: 30.0%
+  Buy Zone (25%): $5.25
+  EFI Color: ORANGE
+  Force Index: -0.42
+  Normalized Price: 0.00
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: WNC
+  Date: 2025-12-18
+  Price: $9.30
+  Range: $9-$10
+  Position in Range: 30.0%
+  Buy Zone (25%): $9.25
+  EFI Color: MAROON
+  Force Index: -0.05
+  Normalized Price: 0.19
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: SFBS
+  Date: 2025-12-18
+  Price: $73.01
+  Range: $70-$80
+  Position in Range: 30.1%
+  Buy Zone (25%): $72.50
+  EFI Color: MAROON
+  Force Index: -0.84
+  Normalized Price: -1.50
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: LSCC
+  Date: 2025-12-18
+  Price: $73.03
+  Range: $70-$80
+  Position in Range: 30.3%
+  Buy Zone (25%): $72.50
+  EFI Color: ORANGE
+  Force Index: -2.39
+  Normalized Price: 3.72
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: DOW
+  Date: 2025-12-18
+  Price: $23.04
+  Range: $20-$30
+  Position in Range: 30.4%
+  Buy Zone (25%): $22.50
+  EFI Color: ORANGE
+  Force Index: -0.56
+  Normalized Price: -0.14
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: STEP
+  Date: 2025-12-18
+  Price: $63.04
+  Range: $60-$70
+  Position in Range: 30.4%
+  Buy Zone (25%): $62.50
+  EFI Color: ORANGE
+  Force Index: -0.55
+  Normalized Price: 0.79
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: DMAC
+  Date: 2025-12-18
+  Price: $8.31
+  Range: $8-$9
+  Position in Range: 31.0%
+  Buy Zone (25%): $8.25
+  EFI Color: ORANGE
+  Force Index: -0.61
+  Normalized Price: 0.97
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: STC
+  Date: 2025-12-18
+  Price: $73.15
+  Range: $70-$80
+  Position in Range: 31.5%
+  Buy Zone (25%): $72.50
+  EFI Color: ORANGE
+  Force Index: -1.22
+  Normalized Price: 0.91
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: ST
+  Date: 2025-12-18
+  Price: $33.22
+  Range: $30-$40
+  Position in Range: 32.2%
+  Buy Zone (25%): $32.50
+  EFI Color: ORANGE
+  Force Index: -0.86
+  Normalized Price: 1.37
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: OWLT
+  Date: 2025-12-18
+  Price: $13.23
+  Range: $10-$20
+  Position in Range: 32.3%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.33
+  Normalized Price: 2.34
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: PESI
+  Date: 2025-12-18
+  Price: $13.24
+  Range: $10-$20
+  Position in Range: 32.4%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.52
+  Normalized Price: 0.73
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: IDYA
+  Date: 2025-12-18
+  Price: $33.26
+  Range: $30-$40
+  Position in Range: 32.6%
+  Buy Zone (25%): $32.50
+  EFI Color: MAROON
+  Force Index: -1.41
+  Normalized Price: 2.32
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: COHU
+  Date: 2025-12-18
+  Price: $23.30
+  Range: $20-$30
+  Position in Range: 33.0%
+  Buy Zone (25%): $22.50
+  EFI Color: ORANGE
+  Force Index: -1.26
+  Normalized Price: 0.61
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: PIPR
+  Date: 2025-12-18
+  Price: $343.31
+  Range: $340-$350
+  Position in Range: 33.1%
+  Buy Zone (25%): $342.50
+  EFI Color: ORANGE
+  Force Index: -7.01
+  Normalized Price: 8.39
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: CWBC
+  Date: 2025-12-18
+  Price: $23.31
+  Range: $20-$30
+  Position in Range: 33.1%
+  Buy Zone (25%): $22.50
+  EFI Color: ORANGE
+  Force Index: -0.13
+  Normalized Price: 1.44
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: F
+  Date: 2025-12-18
+  Price: $13.32
+  Range: $10-$20
+  Position in Range: 33.2%
+  Buy Zone (25%): $12.50
+  EFI Color: ORANGE
+  Force Index: -0.08
+  Normalized Price: 0.68
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: HXL
+  Date: 2025-12-18
+  Price: $73.36
+  Range: $70-$80
+  Position in Range: 33.6%
+  Buy Zone (25%): $72.50
+  EFI Color: ORANGE
+  Force Index: -1.60
+  Normalized Price: 3.90
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: CLRO
+  Date: 2025-12-18
+  Price: $5.35
+  Range: $5-$6
+  Position in Range: 35.0%
+  Buy Zone (25%): $5.25
+  EFI Color: ORANGE
+  Force Index: -0.02
+  Normalized Price: 0.02
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+TICKER: AMAT
+  Date: 2025-12-18
+  Price: $253.50
+  Range: $250-$260
+  Position in Range: 35.0%
+  Buy Zone (25%): $252.50
+  EFI Color: ORANGE
+  Force Index: -9.27
+  Normalized Price: 22.58
+  Trend: UPTREND
+  ✓ In Channel: YES (consolidating)
+  ✓ Price Zone: BUY ZONE
+  ✓ EFI Momentum: OVERSOLD
+  ✓ Trend: UPTREND
+--------------------------------------------------------------------------------
+
+================================================================================
+
+TRADING STRATEGY:
+  Entry: At current price (all signals aligned)
+  Stop Loss: Below range floor (below support)
+  Target 1: 25% zone → 75% zone (range midpoint)
+  Target 2: Top of range (range ceiling)
+  Exit Signal: When EFI turns lime (strong bullish)
+
+LEGEND:
+  Ticker: Stock symbol
+  Date: Most recent trading date
+  Price: Current stock price
+  Range: $1 increment range (e.g., $2-$3)
+  Pos %: Position within range (lower = more room to run)
+  EFI: Force Index color (MAROON=strong bearish, ORANGE=weak bearish)
+  Force Idx: Force Index value (negative = bearish momentum)
