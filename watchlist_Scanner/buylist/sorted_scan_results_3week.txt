@@ -1,5 +1,5 @@
 ================================================================================
-BUY SIGNALS (55 total)
+BUY SIGNALS (56 total)
 ================================================================================
 BUY NAVB 12/14/2025 : Upside Breakout after 37 days channel - Price: 0.001
 BUY AFIB 12/04/2025 : Upside Breakout after 89 days channel - Price: 0.002
@@ -13,10 +13,9 @@ BUY CCCC 11/27/2025 : Upside Breakout after 29 days channel - Price: 2.71
 BUY FBIO 12/07/2025 : Upside Breakout after 15 days channel - Price: 2.89
 BUY MQ 12/10/2025 : Upside Breakout after 21 days channel - Price: 4.99
 BUY NVFY 12/08/2025 : Upside Breakout after 17 days channel - Price: 6.14
-BUY SITC 12/17/2025 : Upside Breakout after 15 days channel - Price: 6.4
 BUY KPTI 12/09/2025 : Upside Breakout after 16 days channel - Price: 6.48
+BUY BLMN 12/18/2025 : Upside Breakout after 16 days channel - Price: 7.18
 BUY EOLS 12/15/2025 : Upside Breakout after 18 days channel - Price: 7.22
-BUY TNGX 11/19/2025 : Upside Breakout after 19 days channel - Price: 8.9
 BUY SHCO 12/11/2025 : Upside Breakout after 15 days channel - Price: 8.93
 BUY MTEX 11/23/2025 : Upside Breakout after 28 days channel - Price: 9.84
 BUY CTLP 11/25/2025 : Upside Breakout after 31 days channel - Price: 10.69
@@ -34,9 +33,11 @@ BUY BXMT 11/23/2025 : Upside Breakout after 22 days channel - Price: 18.73
 BUY ALRS 12/02/2025 : Upside Breakout after 15 days channel - Price: 22.13
 BUY GCBC 12/03/2025 : Upside Breakout after 28 days channel - Price: 23.15
 BUY NOG 12/02/2025 : Upside Breakout after 15 days channel - Price: 23.9
+BUY UNB 12/17/2025 : Upside Breakout after 15 days channel - Price: 24.2
 BUY BRZE 12/02/2025 : Upside Breakout after 29 days channel - Price: 29.38
 BUY SCHL 11/24/2025 : Upside Breakout after 15 days channel - Price: 29.81
 BUY KFRC 12/09/2025 : Upside Breakout after 15 days channel - Price: 30.56
+BUY TRS 12/18/2025 : Upside Breakout after 15 days channel - Price: 34.65
 BUY APEI 12/10/2025 : Upside Breakout after 19 days channel - Price: 37.01
 BUY HUBG 11/23/2025 : Upside Breakout after 22 days channel - Price: 37.053
 BUY SPFI 12/02/2025 : Upside Breakout after 16 days channel - Price: 38.71
@@ -58,7 +59,7 @@ BUY BIO 11/24/2025 : Upside Breakout after 15 days channel - Price: 332.21
 BUY SPGI 12/16/2025 : Upside Breakout after 22 days channel - Price: 510.59
 
 ================================================================================
-SELL SIGNALS (34 total)
+SELL SIGNALS (30 total)
 ================================================================================
 SELL VRSN 12/09/2025 : Downside Breakdown after 17 days channel - Price: 242.32
 SELL WDFC 12/04/2025 : Downside Breakdown after 28 days channel - Price: 190.73
@@ -69,17 +70,13 @@ SELL MIRM 12/07/2025 : Downside Breakdown after 17 days channel - Price: 67.9
 SELL WPC 12/07/2025 : Downside Breakdown after 20 days channel - Price: 65.15
 SELL OXY 12/14/2025 : Downside Breakdown after 21 days channel - Price: 40.19
 SELL NNN 12/07/2025 : Downside Breakdown after 17 days channel - Price: 39.73
-SELL TDS 11/19/2025 : Downside Breakdown after 29 days channel - Price: 37.65
-SELL MBIN 11/19/2025 : Downside Breakdown after 23 days channel - Price: 30.336
 SELL CPB 12/01/2025 : Downside Breakdown after 15 days channel - Price: 29.89
 SELL DBX 12/09/2025 : Downside Breakdown after 15 days channel - Price: 27.2
 SELL T 12/07/2025 : Downside Breakdown after 16 days channel - Price: 24.84
 SELL PRA 12/03/2025 : Downside Breakdown after 25 days channel - Price: 23.86
 SELL TIPT 12/07/2025 : Downside Breakdown after 22 days channel - Price: 17.47
-SELL AES 12/17/2025 : Downside Breakdown after 34 days channel - Price: 13.48
 SELL HE 12/02/2025 : Downside Breakdown after 22 days channel - Price: 11.17
 SELL GPRE 12/15/2025 : Downside Breakdown after 20 days channel - Price: 9.51
-SELL TWO 11/19/2025 : Downside Breakdown after 25 days channel - Price: 9.45
 SELL ARKR 11/25/2025 : Downside Breakdown after 30 days channel - Price: 6.97
 SELL AQMS 12/14/2025 : Downside Breakdown after 15 days channel - Price: 6.05
 SELL CSBR 11/30/2025 : Downside Breakdown after 38 days channel - Price: 6.0
@@ -88,11 +85,11 @@ SELL PLCE 12/16/2025 : Downside Breakdown after 15 days channel - Price: 4.64
 SELL BRY 12/16/2025 : Downside Breakdown after 25 days channel - Price: 3.26
 SELL XFOR 12/01/2025 : Downside Breakdown after 15 days channel - Price: 3.195
 SELL LIDR 12/15/2025 : Downside Breakdown after 15 days channel - Price: 2.26
-SELL BTAI 12/17/2025 : Downside Breakdown after 16 days channel - Price: 1.8
-SELL NDLS 11/19/2025 : Downside Breakdown after 15 days channel - Price: 0.64
-SELL WORX 11/19/2025 : Downside Breakdown after 61 days channel - Price: 0.233
+SELL IBRX 12/18/2025 : Downside Breakdown after 15 days channel - Price: 2.09
+SELL BTAI 12/17/2025 : Downside Breakdown after 16 days channel - Price: 1.83
+SELL RMCF 12/18/2025 : Downside Breakdown after 16 days channel - Price: 1.51
 SELL ORGS 12/09/2025 : Downside Breakdown after 21 days channel - Price: 0.15
-SELL BPTH 11/27/2025 : Downside Breakdown after 17 days channel - Price: 0.07
+SELL BPTH 11/25/2025 : Downside Breakdown after 15 days channel - Price: 0.07
 SELL ENSV 12/02/2025 : Downside Breakdown after 44 days channel - Price: 0.001
 
 ================================================================================

@@ -1,0 +1,103 @@
+================================================================================
+FADER SCAN BACKTEST RESULTS
+================================================================================
+Analysis Date: 2025-12-21 16:43:33
+Total Signals Analyzed: 71
+Profitable Positions: 32 (45.1%)
+Losing Positions: 39 (54.9%)
+Average PnL: -1.17%
+================================================================================
+
+PERFORMANCE BY PRICE RANGE:
+================================================================================
+Range           Total    Wins     Losses   Win Rate     Avg PnL   
+--------------------------------------------------------------------------------
+$0-$1           14       5        9        35.7       % -5.45%
+$1-$5           12       6        6        50.0       % -1.31%
+$5-$10          9        3        6        33.3       % -1.53%
+$10-$20         6        4        2        66.7       % +3.32%
+$20-$50         7        3        4        42.9       % -0.76%
+$50-$100        13       5        8        38.5       % -0.34%
+$100-$500       10       6        4        60.0       % +1.29%
+================================================================================
+
+PROFITABLE POSITIONS:
+--------------------------------------------------------------------------------
+VYNE   | Signal: 12/15/2025   | Buy: $    0.40 | Current: $    0.59 | PnL:  +45.41%
+PHAT   | Signal: 12/15/2025   | Buy: $   15.24 | Current: $   17.53 | PnL:  +15.03%
+VCNX   | Signal: 12/17/2025   | Buy: $    0.69 | Current: $    0.79 | PnL:  +14.49%
+UFPT   | Signal: 12/15/2025   | Buy: $  217.74 | Current: $  229.40 | PnL:   +5.36%
+AGL    | Signal: 12/17/2025   | Buy: $    0.70 | Current: $    0.74 | PnL:   +5.15%
+PSTL   | Signal: 12/14/2025   | Buy: $   15.47 | Current: $   16.13 | PnL:   +4.27%
+CPT    | Signal: 12/14/2025   | Buy: $  103.61 | Current: $  107.28 | PnL:   +3.54%
+MCO    | Signal: 12/14/2025   | Buy: $  487.50 | Current: $  503.08 | PnL:   +3.20%
+SKIN   | Signal: 12/16/2025   | Buy: $    1.50 | Current: $    1.53 | PnL:   +2.00%
+FSLR   | Signal: 12/18/2025   | Buy: $  261.79 | Current: $  266.98 | PnL:   +1.98%
+WING   | Signal: 12/18/2025   | Buy: $  254.53 | Current: $  259.20 | PnL:   +1.83%
+AKR    | Signal: 12/16/2025   | Buy: $   20.27 | Current: $   20.60 | PnL:   +1.63%
+OBLG   | Signal: 12/18/2025   | Buy: $    2.23 | Current: $    2.26 | PnL:   +1.35%
+SPRO   | Signal: 12/18/2025   | Buy: $    2.29 | Current: $    2.32 | PnL:   +1.31%
+HGTY   | Signal: 12/14/2025   | Buy: $   12.97 | Current: $   13.13 | PnL:   +1.23%
+EBAY   | Signal: 12/17/2025   | Buy: $   83.66 | Current: $   84.66 | PnL:   +1.20%
+NCNO   | Signal: 12/16/2025   | Buy: $   25.39 | Current: $   25.68 | PnL:   +1.14%
+EW     | Signal: 12/17/2025   | Buy: $   84.80 | Current: $   85.66 | PnL:   +1.01%
+APTV   | Signal: 12/18/2025   | Buy: $   77.59 | Current: $   78.29 | PnL:   +0.90%
+DOCU   | Signal: 12/18/2025   | Buy: $   69.40 | Current: $   69.98 | PnL:   +0.84%
+ORC    | Signal: 12/15/2025   | Buy: $    7.28 | Current: $    7.34 | PnL:   +0.82%
+HGTY   | Signal: 12/18/2025   | Buy: $   13.03 | Current: $   13.13 | PnL:   +0.77%
+VANI   | Signal: 12/18/2025   | Buy: $    1.38 | Current: $    1.39 | PnL:   +0.72%
+SNOA   | Signal: 12/16/2025   | Buy: $    3.55 | Current: $    3.57 | PnL:   +0.56%
+SCOR   | Signal: 12/14/2025   | Buy: $    7.10 | Current: $    7.14 | PnL:   +0.56%
+TTWO   | Signal: 12/18/2025   | Buy: $  246.65 | Current: $  247.40 | PnL:   +0.30%
+SXT    | Signal: 12/16/2025   | Buy: $   96.56 | Current: $   96.75 | PnL:   +0.20%
+BOOM   | Signal: 12/18/2025   | Buy: $    6.39 | Current: $    6.40 | PnL:   +0.16%
+TTEK   | Signal: 12/14/2025   | Buy: $   34.44 | Current: $   34.45 | PnL:   +0.03%
+ALXO   | Signal: 12/16/2025   | Buy: $    1.45 | Current: $    1.45 | PnL:   +0.00%
+TTOO   | Signal: 12/15/2025   | Buy: $    0.01 | Current: $    0.01 | PnL:   +0.00%
+LTCH   | Signal: 12/14/2025   | Buy: $    0.14 | Current: $    0.14 | PnL:   +0.00%
+
+LOSING POSITIONS:
+--------------------------------------------------------------------------------
+TTGT   | Signal: 12/17/2025   | Buy: $    5.56 | Current: $    5.56 | PnL:   -0.00%
+PGRE   | Signal: 12/17/2025   | Buy: $    6.60 | Current: $    6.60 | PnL:   -0.00%
+HIFS   | Signal: 12/18/2025   | Buy: $  295.76 | Current: $  295.54 | PnL:   -0.07%
+FNF    | Signal: 12/16/2025   | Buy: $   55.90 | Current: $   55.83 | PnL:   -0.13%
+WSO    | Signal: 12/18/2025   | Buy: $  348.34 | Current: $  347.83 | PnL:   -0.15%
+CTVA   | Signal: 12/16/2025   | Buy: $   66.43 | Current: $   66.31 | PnL:   -0.18%
+IAS    | Signal: 12/15/2025   | Buy: $   10.28 | Current: $   10.26 | PnL:   -0.19%
+NHI    | Signal: 12/18/2025   | Buy: $   78.35 | Current: $   77.84 | PnL:   -0.65%
+EQR    | Signal: 12/16/2025   | Buy: $   61.98 | Current: $   61.37 | PnL:   -0.98%
+AON    | Signal: 12/14/2025   | Buy: $  354.10 | Current: $  350.04 | PnL:   -1.15%
+STHO   | Signal: 12/18/2025   | Buy: $    7.79 | Current: $    7.70 | PnL:   -1.16%
+NMRK   | Signal: 12/17/2025   | Buy: $   17.71 | Current: $   17.50 | PnL:   -1.19%
+RDVT   | Signal: 12/17/2025   | Buy: $   55.87 | Current: $   55.20 | PnL:   -1.20%
+SWX    | Signal: 12/14/2025   | Buy: $   81.73 | Current: $   80.63 | PnL:   -1.35%
+NFG    | Signal: 12/17/2025   | Buy: $   82.16 | Current: $   81.04 | PnL:   -1.36%
+ZNTL   | Signal: 12/18/2025   | Buy: $    1.42 | Current: $    1.40 | PnL:   -1.41%
+IOVA   | Signal: 12/16/2025   | Buy: $    2.52 | Current: $    2.48 | PnL:   -1.59%
+FLGT   | Signal: 12/18/2025   | Buy: $   28.06 | Current: $   27.61 | PnL:   -1.60%
+ESS    | Signal: 12/16/2025   | Buy: $  262.45 | Current: $  257.39 | PnL:   -1.93%
+NWN    | Signal: 12/18/2025   | Buy: $   47.46 | Current: $   46.52 | PnL:   -1.98%
+PUBM   | Signal: 12/18/2025   | Buy: $    9.02 | Current: $    8.83 | PnL:   -2.11%
+VIRX   | Signal: 12/14/2025   | Buy: $    0.01 | Current: $    0.01 | PnL:   -2.20%
+VIRX   | Signal: 12/17/2025   | Buy: $    0.01 | Current: $    0.01 | PnL:   -2.20%
+HOOK   | Signal: 12/16/2025   | Buy: $    0.90 | Current: $    0.88 | PnL:   -2.22%
+GME    | Signal: 12/16/2025   | Buy: $   23.03 | Current: $   22.51 | PnL:   -2.26%
+VZ     | Signal: 12/15/2025   | Buy: $   40.75 | Current: $   39.82 | PnL:   -2.28%
+TRUE   | Signal: 12/14/2025   | Buy: $    2.19 | Current: $    2.14 | PnL:   -2.28%
+FTNT   | Signal: 12/15/2025   | Buy: $   82.47 | Current: $   80.24 | PnL:   -2.70%
+TELA   | Signal: 12/15/2025   | Buy: $    1.18 | Current: $    1.13 | PnL:   -4.24%
+JOB    | Signal: 12/17/2025   | Buy: $    0.20 | Current: $    0.19 | PnL:   -5.00%
+VXRT   | Signal: 12/15/2025   | Buy: $    0.37 | Current: $    0.35 | PnL:   -5.41%
+USIO   | Signal: 12/17/2025   | Buy: $    1.46 | Current: $    1.38 | PnL:   -5.48%
+ILPT   | Signal: 12/17/2025   | Buy: $    5.77 | Current: $    5.44 | PnL:   -5.72%
+MBI    | Signal: 12/17/2025   | Buy: $    7.72 | Current: $    7.23 | PnL:   -6.35%
+LCTX   | Signal: 12/15/2025   | Buy: $    1.80 | Current: $    1.68 | PnL:   -6.67%
+CARM   | Signal: 12/18/2025   | Buy: $    0.05 | Current: $    0.05 | PnL:   -7.69%
+SMSI   | Signal: 12/14/2025   | Buy: $    0.62 | Current: $    0.54 | PnL:  -12.90%
+HEPA   | Signal: 12/14/2025   | Buy: $    0.08 | Current: $    0.07 | PnL:  -13.75%
+ARDS   | Signal: 12/16/2025   | Buy: $    0.00 | Current: $    0.00 | PnL:  -90.00%
+
+================================================================================
+END OF BACKTEST REPORT
+================================================================================

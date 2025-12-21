@@ -3,11 +3,15 @@ import pandas as pd
 import os
 from datetime import datetime, timedelta
 
+# Get the directory where this script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(script_dir)
+
 # Directory where CSV files are stored
-results_directory = r'watchlist_Scanner\updated_Results_for_scan'
+results_directory = os.path.join(project_root, 'watchlist_Scanner', 'updated_Results_for_scan')
 
 # Ticker list file (same as your main download script)
-ticker_file = r'watchlist_Scanner\CSV\5000.csv'
+ticker_file = os.path.join(project_root, 'watchlist_Scanner', 'CSV', '5000.csv')
 
 def read_ticker_list(file_path):
     """Read ticker symbols from file"""

@@ -1,0 +1,67 @@
+================================================================================
+EFI + PRICE ZONE SCANNER - TRADINGVIEW WATCHLIST (BUY SIGNALS)
+================================================================================
+Generated: 2025-12-21 18:56:39
+Total symbols: 51
+================================================================================
+
+Copy the line below and paste into TradingView watchlist:
+--------------------------------------------------------------------------------
+
+GTN,KROS,HLIT,GRTX,IAS,KO,VZ,IBM,ALT,FLXS,TRNO,SVRA,KODK,GHM,TALO,XPO,MUR,EWTX,CCS,SEE,ARVN,DHI,CORT,VRDN,SOHO,MD,OKE,NGS,NSC,STEL,STOK,GOLF,SBCF,RCUS,LIVN,NXPI,COP,IRWD,MRKR,CENT,KBH,KBR,TCBI,SRRK,MS,OCUL,JPM,MHO,WNC,SFBS,IDYA
+
+--------------------------------------------------------------------------------
+
+Individual symbols (one per line):
+--------------------------------------------------------------------------------
+GTN
+KROS
+HLIT
+GRTX
+IAS
+KO
+VZ
+IBM
+ALT
+FLXS
+TRNO
+SVRA
+KODK
+GHM
+TALO
+XPO
+MUR
+EWTX
+CCS
+SEE
+ARVN
+DHI
+CORT
+VRDN
+SOHO
+MD
+OKE
+NGS
+NSC
+STEL
+STOK
+GOLF
+SBCF
+RCUS
+LIVN
+NXPI
+COP
+IRWD
+MRKR
+CENT
+KBH
+KBR
+TCBI
+SRRK
+MS
+OCUL
+JPM
+MHO
+WNC
+SFBS
+IDYA

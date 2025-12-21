@@ -1,0 +1,36 @@
+//@version=4
+study(title="glaz DMI Stoch", shorttitle="glaz DMI Stoch", overlay=false)
+// Inputs
+DMIlength = input(32, title = "DMI Length")
+Stolength = input(50, title = "DMI Stochastic Length")
+os = input (10, title = "Oversold")
+halfline = input(50, title = "Mid")
+ob = input (90, title = "Overbought")
+
+
+// DMI
+[diplus, diminus, adx] = dmi(DMIlength, 1)
+osc = diplus-diminus
+// DMI Stochastic
+Stoch = sma(stoch(osc,osc,osc,Stolength),9)
+
+
+//DSL 
+SignalPeriod = input(9,title="B6 SignalPeriod")
+alpha = 2.0/(1.0+SignalPeriod)
+val = Stoch
+var levelu=0.0 , var leveld=0.0
+if val>50 
+    levelu := levelu[1]+alpha*(val-levelu[1])
+if val<50
+    leveld := leveld[1]+alpha*(val-leveld[1])
+plot(levelu,color=color.white)
+plot(leveld,color=color.white)
+//END
+
+
+clr = crossunder(Stoch, ob) ? color.red : crossover(Stoch,os) ? color.green : color.blue
+plot(Stoch, color = clr, title = 'Stochastic', linewidth = 2, style = plot.style_line, transp=2)
+plot (ob, color = color.gray, linewidth = 1, title = 'Over Bought')
+plot (halfline, color = color.red, linewidth = 1, title ='midline')
+plot (os, color = color.gray, linewidth = 1, title = 'Over Sold')

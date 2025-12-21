@@ -19,8 +19,8 @@ if not os.path.exists(output_dir):
 tickers_df = pd.read_csv(ticker_file_path)
 tickers = tickers_df['Ticker'].tolist()
 
-# Define the time period (last 365 days)
-start_date = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d')
+# Define the time period (last 5 years - approximately 1825 days)
+start_date = (datetime.now() - timedelta(days=1825)).strftime('%Y-%m-%d')
 end_date = datetime.now().strftime('%Y-%m-%d')
 
 # Define Eastern Standard Time
