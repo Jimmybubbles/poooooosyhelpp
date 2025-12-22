@@ -1,0 +1,27 @@
+================================================================================
+TRIPLE SIGNAL MULTI-TIMEFRAME BACKTEST RESULTS
+================================================================================
+Analysis Date: 2025-12-21 22:42:03
+
+STRATEGY:
+  Entry: When all 4 Triple Signal conditions are met
+  Exit: Automatic after specified hold period
+
+================================================================================
+PERFORMANCE COMPARISON ACROSS TIMEFRAMES
+================================================================================
+
+Period       Total    Win%       Avg%       Med%       Best%      Worst%     PF      
+--------------------------------------------------------------------------------
+
+================================================================================
+
+KEY INSIGHTS & RECOMMENDATIONS:
+--------------------------------------------------------------------------------
+
+NOTES:
+  - PF = Profit Factor (Total Profits / Total Losses)
+  - Win% = Percentage of profitable trades
+  - Med% = Median return (less affected by outliers)
+  - Does not account for: slippage, commissions, or taxes
+  - Past performance does not guarantee future results
