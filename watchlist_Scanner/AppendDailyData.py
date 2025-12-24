@@ -14,24 +14,45 @@ results_directory = os.path.join(project_root, 'watchlist_Scanner', 'updated_Res
 ticker_file = os.path.join(project_root, 'watchlist_Scanner', 'CSV', '5000.csv')
 
 def read_ticker_list(file_path):
-    """Read ticker symbols from file"""
-    with open(file_path, 'r') as file:
-        tickers = [line.strip() for line in file if line.strip()]
-    return tickers
+    """Read ticker symbols from CSV file"""
+    try:
+        df = pd.read_csv(file_path)
+        # Extract just the ticker column
+        if 'Ticker' in df.columns:
+            tickers = df['Ticker'].tolist()
+        else:
+            # Fallback: assume first column is ticker
+            tickers = df.iloc[:, 0].tolist()
+        return tickers
+    except Exception as e:
+        print(f"Error reading ticker file: {e}")
+        return []
 
 def get_last_date_in_csv(file_path):
     """Get the last date from an existing CSV file"""
     try:
-        df = pd.read_csv(file_path, index_col=0, parse_dates=True)
+        df = pd.read_csv(file_path, index_col=0)
         if len(df) > 0:
+            # Convert index to datetime with flexible parsing
+            df.index = pd.to_datetime(df.index, errors='coerce', utc=True)
+
+            # Remove any rows with invalid dates
+            df = df[df.index.notna()]
+
+            if len(df) == 0:
+                return None
+
             last_date = df.index[-1]
-            # Convert to timezone-naive datetime if needed
-            if hasattr(last_date, 'tz_localize'):
-                last_date = last_date.tz_localize(None) if last_date.tzinfo else last_date
-            return last_date
+
+            # Convert to timezone-naive datetime
+            if last_date.tzinfo is not None:
+                last_date = last_date.tz_localize(None)
+
+            # Convert Timestamp to Python datetime
+            return last_date.to_pydatetime()
         return None
     except Exception as e:
-        print(f"Error reading {file_path}: {e}")
+        print(f"Error reading file: {str(e)[:50]}")
         return None
 
 def append_new_data(ticker):
@@ -40,13 +61,13 @@ def append_new_data(ticker):
 
     # Check if file exists
     if not os.path.exists(file_path):
-        print(f"{ticker}: File doesn't exist, skipping (use main download script first)")
+        print("File not found, skipping")
         return False
 
     # Get the last date in the file
     last_date = get_last_date_in_csv(file_path)
     if last_date is None:
-        print(f"{ticker}: Could not read last date, skipping")
+        print("Could not read last date")
         return False
 
     # Calculate start date (day after last date in file)
@@ -55,20 +76,32 @@ def append_new_data(ticker):
 
     # Check if we need to download anything
     if start_date >= today:
-        print(f"{ticker}: Already up to date (last date: {last_date.strftime('%Y-%m-%d')})")
+        print(f"Up to date")
         return True
 
     try:
         # Download new data
-        print(f"{ticker}: Downloading from {start_date.strftime('%Y-%m-%d')} to today...")
-        new_data = yf.download(ticker, start=start_date, end=today, progress=False)
+        new_data = yf.download(ticker, start=start_date, end=today, progress=False, auto_adjust=True)
 
         if new_data.empty:
-            print(f"{ticker}: No new data available")
+            print("No new data")
             return True
 
         # Read existing data
-        existing_data = pd.read_csv(file_path, index_col=0, parse_dates=True)
+        existing_data = pd.read_csv(file_path, index_col=0)
+        existing_data.index = pd.to_datetime(existing_data.index, errors='coerce', utc=True)
+
+        # Convert to timezone-naive
+        if existing_data.index.tz is not None:
+            existing_data.index = existing_data.index.tz_localize(None)
+
+        # Flatten multi-index columns if present in new_data
+        if isinstance(new_data.columns, pd.MultiIndex):
+            new_data.columns = new_data.columns.get_level_values(0)
+
+        # Ensure new_data index is also timezone-naive
+        if hasattr(new_data.index, 'tz') and new_data.index.tz is not None:
+            new_data.index = new_data.index.tz_localize(None)
 
         # Combine existing and new data
         combined_data = pd.concat([existing_data, new_data])
@@ -82,11 +115,11 @@ def append_new_data(ticker):
         # Save back to file
         combined_data.to_csv(file_path)
 
-        print(f"{ticker}: Added {len(new_data)} new rows (last date: {last_date.strftime('%Y-%m-%d')} -> {combined_data.index[-1].strftime('%Y-%m-%d')})")
+        print(f"Added {len(new_data)} new rows")
         return True
 
     except Exception as e:
-        print(f"{ticker}: Error - {str(e)}")
+        print(f"Error: {str(e)[:50]}")
         return False
 
 # Main execution
@@ -108,7 +141,7 @@ if __name__ == "__main__":
 
     # Process each ticker
     for i, ticker in enumerate(tickers, 1):
-        print(f"[{i}/{len(tickers)}] Processing {ticker}...")
+        print(f"[{i}/{len(tickers)}] Processing {ticker}...", end=" ")
         result = append_new_data(ticker)
 
         if result:
@@ -116,7 +149,10 @@ if __name__ == "__main__":
         else:
             error_count += 1
 
-        print()
+        # Show progress every 100 tickers
+        if i % 100 == 0:
+            print(f"\nProgress: {i}/{len(tickers)} processed ({success_count} updated, {error_count} errors)")
+            print()
 
     # Summary
     print("=" * 80)

@@ -1,0 +1,486 @@
+================================================================================
+MOMENTUM REVERSAL SCANNER - RESULTS
+================================================================================
+Scan Date: 2025-12-23 13:05:42
+
+STRATEGY CRITERIA:
+  1. Normalized Price crosses above 0 (was <= 0, now > 0)
+  2. EFI Histogram changes from RED to GREEN (momentum turn)
+
+STRENGTH SCORE:
+  Based on normalized price level, EFI strength, volume
+  Higher score = stronger reversal signal
+
+Total Momentum Reversals Found: 33
+================================================================================
+
+TOP MOMENTUM REVERSALS (sorted by strength score):
+--------------------------------------------------------------------------------
+Ticker   Score   Price      Norm Prev  Norm Now   EFI         
+--------------------------------------------------------------------------------
+MBI      54      $7.72      -0.37      0.71       RED->GREEN  
+GNE      51      $14.40     -0.33      0.77       RED->GREEN  
+UA       49      $4.36      -0.28      0.55       RED->GREEN  
+PCT      47      $8.90      -0.98      0.27       RED->GREEN  
+ZNTL     46      $1.42      -0.40      0.40       RED->GREEN  
+RDVT     45      $55.87     -0.04      0.40       RED->GREEN  
+UAA      45      $4.54      -0.16      0.44       RED->GREEN  
+STHO     43      $7.79      -0.51      0.29       RED->GREEN  
+QUIK     42      $6.43      -0.26      0.24       RED->GREEN  
+AXTI     38      $14.01     -0.07      0.32       RED->GREEN  
+RNGR     34      $13.63     -0.19      0.03       RED->GREEN  
+ZWS      31      $47.36     -0.06      0.21       RED->GREEN  
+ATRO     30      $51.94     -0.03      0.25       RED->GREEN  
+TTWO     29      $246.65    -0.09      0.46       RED->GREEN  
+FSS      26      $111.20    -0.19      0.13       RED->GREEN  
+PEG      25      $80.66     -0.23      0.05       RED->GREEN  
+SIF      17      $6.99      -0.02      0.57       RED->GREEN  
+HAYW     17      $15.99     -0.12      0.11       RED->GREEN  
+MSA      14      $160.56    -0.23      0.05       RED->GREEN  
+NVAX     14      $6.68      -0.23      0.12       RED->GREEN  
+KEX      9       $111.72    -0.13      0.27       RED->GREEN  
+OSK      7       $128.47    -0.09      0.17       RED->GREEN  
+BLDR     6       $105.62    -0.17      0.03       RED->GREEN  
+TDS      6       $39.03     -0.30      0.18       RED->GREEN  
+RKT      5       $18.65     -0.08      0.14       RED->GREEN  
+RBBN     5       $2.91      -0.15      0.15       RED->GREEN  
+SHLS     4       $8.64      -0.06      0.11       RED->GREEN  
+RUM      3       $6.74      -0.12      0.11       RED->GREEN  
+RITM     3       $11.23     -0.10      0.08       RED->GREEN  
+AMPH     3       $26.50     -0.21      0.08       RED->GREEN  
+OBLG     2       $2.23      -0.35      0.07       RED->GREEN  
+SAM      2       $198.83    -0.01      0.05       RED->GREEN  
+LVS      2       $66.96     -0.09      0.04       RED->GREEN  
+
+================================================================================
+DETAILED SIGNALS:
+================================================================================
+
+SIGNAL #1 - MBI - Strength Score: 54/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $7.72
+  Normalized Price (prev):  -0.365
+  Normalized Price (now):   0.714 (CROSSED ABOVE 0)
+  Force Index (prev):       -5305.02 (RED)
+  Force Index (now):        18082.25 (GREEN)
+
+  REVERSAL: MBI momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 54/100
+
+SIGNAL #2 - GNE - Strength Score: 51/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $14.40
+  Normalized Price (prev):  -0.329
+  Normalized Price (now):   0.766 (CROSSED ABOVE 0)
+  Force Index (prev):       -15046.21 (RED)
+  Force Index (now):        1617.23 (GREEN)
+
+  REVERSAL: GNE momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 51/100
+
+SIGNAL #3 - UA - Strength Score: 49/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $4.36
+  Normalized Price (prev):  -0.283
+  Normalized Price (now):   0.547 (CROSSED ABOVE 0)
+  Force Index (prev):       -64421.59 (RED)
+  Force Index (now):        150502.43 (GREEN)
+
+  REVERSAL: UA momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 49/100
+
+SIGNAL #4 - PCT - Strength Score: 47/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $8.90
+  Normalized Price (prev):  -0.978
+  Normalized Price (now):   0.274 (CROSSED ABOVE 0)
+  Force Index (prev):       -940014.56 (RED)
+  Force Index (now):        928970.15 (GREEN)
+
+  REVERSAL: PCT momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 47/100
+
+SIGNAL #5 - ZNTL - Strength Score: 46/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $1.42
+  Normalized Price (prev):  -0.400
+  Normalized Price (now):   0.400 (CROSSED ABOVE 0)
+  Force Index (prev):       -8089.81 (RED)
+  Force Index (now):        45756.12 (GREEN)
+
+  REVERSAL: ZNTL momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 46/100
+
+SIGNAL #6 - RDVT - Strength Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $55.87
+  Normalized Price (prev):  -0.043
+  Normalized Price (now):   0.401 (CROSSED ABOVE 0)
+  Force Index (prev):       -6630.78 (RED)
+  Force Index (now):        21935.91 (GREEN)
+
+  REVERSAL: RDVT momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 45/100
+
+SIGNAL #7 - UAA - Strength Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $4.54
+  Normalized Price (prev):  -0.158
+  Normalized Price (now):   0.439 (CROSSED ABOVE 0)
+  Force Index (prev):       -57209.15 (RED)
+  Force Index (now):        274988.58 (GREEN)
+
+  REVERSAL: UAA momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 45/100
+
+SIGNAL #8 - STHO - Strength Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $7.79
+  Normalized Price (prev):  -0.515
+  Normalized Price (now):   0.290 (CROSSED ABOVE 0)
+  Force Index (prev):       -453.15 (RED)
+  Force Index (now):        7125.59 (GREEN)
+
+  REVERSAL: STHO momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 43/100
+
+SIGNAL #9 - QUIK - Strength Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $6.43
+  Normalized Price (prev):  -0.263
+  Normalized Price (now):   0.243 (CROSSED ABOVE 0)
+  Force Index (prev):       -6622.09 (RED)
+  Force Index (now):        27937.05 (GREEN)
+
+  REVERSAL: QUIK momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 42/100
+
+SIGNAL #10 - AXTI - Strength Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $14.01
+  Normalized Price (prev):  -0.073
+  Normalized Price (now):   0.317 (CROSSED ABOVE 0)
+  Force Index (prev):       -147391.48 (RED)
+  Force Index (now):        921485.53 (GREEN)
+
+  REVERSAL: AXTI momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 38/100
+
+SIGNAL #11 - RNGR - Strength Score: 34/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $13.63
+  Normalized Price (prev):  -0.190
+  Normalized Price (now):   0.030 (CROSSED ABOVE 0)
+  Force Index (prev):       -7032.79 (RED)
+  Force Index (now):        6106.48 (GREEN)
+
+  REVERSAL: RNGR momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 34/100
+
+SIGNAL #12 - ZWS - Strength Score: 31/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $47.36
+  Normalized Price (prev):  -0.059
+  Normalized Price (now):   0.207 (CROSSED ABOVE 0)
+  Force Index (prev):       -29245.15 (RED)
+  Force Index (now):        90060.92 (GREEN)
+
+  REVERSAL: ZWS momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 31/100
+
+SIGNAL #13 - ATRO - Strength Score: 30/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $51.94
+  Normalized Price (prev):  -0.032
+  Normalized Price (now):   0.251 (CROSSED ABOVE 0)
+  Force Index (prev):       -153297.49 (RED)
+  Force Index (now):        20141.90 (GREEN)
+
+  REVERSAL: ATRO momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 30/100
+
+SIGNAL #14 - TTWO - Strength Score: 29/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $246.65
+  Normalized Price (prev):  -0.088
+  Normalized Price (now):   0.458 (CROSSED ABOVE 0)
+  Force Index (prev):       -1034687.58 (RED)
+  Force Index (now):        663394.04 (GREEN)
+
+  REVERSAL: TTWO momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 29/100
+
+SIGNAL #15 - FSS - Strength Score: 26/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $111.20
+  Normalized Price (prev):  -0.189
+  Normalized Price (now):   0.128 (CROSSED ABOVE 0)
+  Force Index (prev):       -171264.41 (RED)
+  Force Index (now):        34041.26 (GREEN)
+
+  REVERSAL: FSS momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 26/100
+
+SIGNAL #16 - PEG - Strength Score: 25/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $80.66
+  Normalized Price (prev):  -0.232
+  Normalized Price (now):   0.055 (CROSSED ABOVE 0)
+  Force Index (prev):       -36512.09 (RED)
+  Force Index (now):        387000.35 (GREEN)
+
+  REVERSAL: PEG momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 25/100
+
+SIGNAL #17 - SIF - Strength Score: 17/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $6.99
+  Normalized Price (prev):  -0.025
+  Normalized Price (now):   0.575 (CROSSED ABOVE 0)
+  Force Index (prev):       -984.43 (RED)
+  Force Index (now):        6.48 (GREEN)
+
+  REVERSAL: SIF momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 17/100
+
+SIGNAL #18 - HAYW - Strength Score: 17/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $15.99
+  Normalized Price (prev):  -0.123
+  Normalized Price (now):   0.107 (CROSSED ABOVE 0)
+  Force Index (prev):       -5442.60 (RED)
+  Force Index (now):        45974.93 (GREEN)
+
+  REVERSAL: HAYW momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 17/100
+
+SIGNAL #19 - MSA - Strength Score: 14/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $160.56
+  Normalized Price (prev):  -0.234
+  Normalized Price (now):   0.049 (CROSSED ABOVE 0)
+  Force Index (prev):       -53814.00 (RED)
+  Force Index (now):        42214.36 (GREEN)
+
+  REVERSAL: MSA momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 14/100
+
+SIGNAL #20 - NVAX - Strength Score: 14/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $6.68
+  Normalized Price (prev):  -0.233
+  Normalized Price (now):   0.116 (CROSSED ABOVE 0)
+  Force Index (prev):       -97530.53 (RED)
+  Force Index (now):        580.05 (GREEN)
+
+  REVERSAL: NVAX momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 14/100
+
+SIGNAL #21 - KEX - Strength Score: 9/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $111.72
+  Normalized Price (prev):  -0.130
+  Normalized Price (now):   0.275 (CROSSED ABOVE 0)
+  Force Index (prev):       -132277.87 (RED)
+  Force Index (now):        71127.00 (GREEN)
+
+  REVERSAL: KEX momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 9/100
+
+SIGNAL #22 - OSK - Strength Score: 7/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $128.47
+  Normalized Price (prev):  -0.089
+  Normalized Price (now):   0.175 (CROSSED ABOVE 0)
+  Force Index (prev):       -38820.99 (RED)
+  Force Index (now):        144388.70 (GREEN)
+
+  REVERSAL: OSK momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 7/100
+
+SIGNAL #23 - BLDR - Strength Score: 6/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $105.62
+  Normalized Price (prev):  -0.166
+  Normalized Price (now):   0.026 (CROSSED ABOVE 0)
+  Force Index (prev):       -676524.87 (RED)
+  Force Index (now):        96527.45 (GREEN)
+
+  REVERSAL: BLDR momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 6/100
+
+SIGNAL #24 - TDS - Strength Score: 6/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $39.03
+  Normalized Price (prev):  -0.301
+  Normalized Price (now):   0.183 (CROSSED ABOVE 0)
+  Force Index (prev):       -115530.82 (RED)
+  Force Index (now):        5746.71 (GREEN)
+
+  REVERSAL: TDS momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 6/100
+
+SIGNAL #25 - RKT - Strength Score: 5/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $18.65
+  Normalized Price (prev):  -0.076
+  Normalized Price (now):   0.140 (CROSSED ABOVE 0)
+  Force Index (prev):       -1205158.88 (RED)
+  Force Index (now):        265807.07 (GREEN)
+
+  REVERSAL: RKT momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 5/100
+
+SIGNAL #26 - RBBN - Strength Score: 5/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $2.91
+  Normalized Price (prev):  -0.152
+  Normalized Price (now):   0.152 (CROSSED ABOVE 0)
+  Force Index (prev):       -5103.80 (RED)
+  Force Index (now):        311.76 (GREEN)
+
+  REVERSAL: RBBN momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 5/100
+
+SIGNAL #27 - SHLS - Strength Score: 4/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $8.64
+  Normalized Price (prev):  -0.063
+  Normalized Price (now):   0.111 (CROSSED ABOVE 0)
+  Force Index (prev):       -49250.38 (RED)
+  Force Index (now):        70636.09 (GREEN)
+
+  REVERSAL: SHLS momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 4/100
+
+SIGNAL #28 - RUM - Strength Score: 3/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $6.74
+  Normalized Price (prev):  -0.124
+  Normalized Price (now):   0.109 (CROSSED ABOVE 0)
+  Force Index (prev):       -108305.91 (RED)
+  Force Index (now):        2017.70 (GREEN)
+
+  REVERSAL: RUM momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 3/100
+
+SIGNAL #29 - RITM - Strength Score: 3/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $11.23
+  Normalized Price (prev):  -0.095
+  Normalized Price (now):   0.084 (CROSSED ABOVE 0)
+  Force Index (prev):       -27325.44 (RED)
+  Force Index (now):        27409.00 (GREEN)
+
+  REVERSAL: RITM momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 3/100
+
+SIGNAL #30 - AMPH - Strength Score: 3/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $26.50
+  Normalized Price (prev):  -0.212
+  Normalized Price (now):   0.082 (CROSSED ABOVE 0)
+  Force Index (prev):       -1942.35 (RED)
+  Force Index (now):        19270.00 (GREEN)
+
+  REVERSAL: AMPH momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 3/100
+
+SIGNAL #31 - OBLG - Strength Score: 2/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $2.23
+  Normalized Price (prev):  -0.347
+  Normalized Price (now):   0.069 (CROSSED ABOVE 0)
+  Force Index (prev):       -2109.71 (RED)
+  Force Index (now):        41.09 (GREEN)
+
+  REVERSAL: OBLG momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 2/100
+
+SIGNAL #32 - SAM - Strength Score: 2/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $198.83
+  Normalized Price (prev):  -0.006
+  Normalized Price (now):   0.054 (CROSSED ABOVE 0)
+  Force Index (prev):       -7057.38 (RED)
+  Force Index (now):        4988.55 (GREEN)
+
+  REVERSAL: SAM momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 2/100
+
+SIGNAL #33 - LVS - Strength Score: 2/100
+--------------------------------------------------------------------------------
+  Date:                     12/18/2025
+  Current Price:            $66.96
+  Normalized Price (prev):  -0.094
+  Normalized Price (now):   0.036 (CROSSED ABOVE 0)
+  Force Index (prev):       -165885.45 (RED)
+  Force Index (now):        185101.18 (GREEN)
+
+  REVERSAL: LVS momentum turned positive!
+            Normalized price crossed above 0, EFI turned GREEN.
+            Strength score: 2/100

@@ -1,0 +1,9 @@
+================================================================================
+MOMENTUM REVERSAL SCANNER - TRADINGVIEW WATCHLIST
+================================================================================
+Generated: 2025-12-23 13:05:42
+Total symbols: 33
+
+Copy the comma-separated line below into TradingView:
+--------------------------------------------------------------------------------
+MBI,GNE,UA,PCT,ZNTL,RDVT,UAA,STHO,QUIK,AXTI,RNGR,ZWS,ATRO,TTWO,FSS,PEG,SIF,HAYW,MSA,NVAX,KEX,OSK,BLDR,TDS,RKT,RBBN,SHLS,RUM,RITM,AMPH,OBLG,SAM,LVS

@@ -234,7 +234,10 @@ def run_triple_signal_backtest(hold_days=63):
             print(f"Progress: {i + 1}/{len(tickers)} tickers backtested...")
 
         trades = backtest_triple_signal(ticker, results_dir, hold_days)
-        all_trades.extend(trades)
+
+        # Keep only the FIRST signal per ticker (most recent)
+        if trades:
+            all_trades.append(trades[0])  # Add only the first trade
 
     print()
     print(f"Backtest complete!")
