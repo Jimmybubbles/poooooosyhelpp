@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triple Signal Maroon Scanner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #764ba2;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], input[type="number"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .criteria-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .criteria-info h3 {
+            margin-bottom: 10px;
+            color: #764ba2;
+        }
+
+        .criteria-info ul {
+            margin-left: 20px;
+        }
+
+        .criteria-info li {
+            margin: 5px 0;
+        }
+
+        .results {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c00;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            background: #e7f3ff;
+            border: 2px solid #b3d9ff;
+            color: #004080;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #efe;
+            border: 2px solid #cfc;
+            color: #060;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .ticker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .ticker-name {
+            font-size: 2em;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        .signal-count {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .signals-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .signal-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .signal-card:hover {
+            transform: translateX(5px);
+        }
+
+        .signal-card.positive {
+            border-left-color: #28a745;
+        }
+
+        .signal-card.negative {
+            border-left-color: #dc3545;
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .signal-date {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .pnl-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .pnl-badge.positive {
+            background: #28a745;
+            color: white;
+        }
+
+        .pnl-badge.negative {
+            background: #dc3545;
+            color: white;
+        }
+
+        .signal-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Triple Signal Maroon Scanner</h1>
+            <p class="subtitle">Find extreme oversold opportunities with MAROON signals</p>
+        </div>
+
+        <div class="search-box">
+            <div class="input-group">
+                <input type="text" id="tickerInput" placeholder="Enter ticker symbol (e.g., AAPL, MSFT)" autocomplete="off">
+                <input type="number" id="holdDaysInput" placeholder="Hold days" value="63" min="1" max="252">
+                <button onclick="searchSignal()">Search Signal</button>
+            </div>
+
+            <div class="criteria-info">
+                <h3>MAROON Signal Criteria:</h3>
+                <ul>
+                    <li>In Channel (price within 3-week range)</li>
+                    <li>Price in Buy Zone (0-35% of $1 range)</li>
+                    <li>EFI is MAROON (strongest oversold signal)</li>
+                    <li>Normalized Price &lt; -0.5 (deep oversold)</li>
+                    <li>Uptrend confirmed</li>
+                </ul>
+                <p style="margin-top: 10px;"><strong>Note:</strong> This represents extreme selling exhaustion in uptrends - classic "blood in the streets" setups.</p>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing signals...</p>
+        </div>
+
+        <div class="results" id="results">
+            <!-- Results will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        function searchSignal() {
+            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
+            const holdDays = document.getElementById('holdDaysInput').value || 63;
+
+            if (!ticker) {
+                alert('Please enter a ticker symbol');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('results').classList.remove('show');
+
+            // Make API call
+            fetch('/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ticker: ticker,
+                    hold_days: parseInt(holdDays)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').classList.remove('show');
+                displayResults(data);
+            })
+            .catch(error => {
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('results').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+                document.getElementById('results').classList.add('show');
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+
+            if (data.error) {
+                resultsDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${data.error}
+                    </div>
+                `;
+            } else if (data.info) {
+                resultsDiv.innerHTML = `
+                    <div class="info">
+                        <strong>Info:</strong> ${data.info}
+                    </div>
+                `;
+            } else if (data.signals) {
+                const signals = data.signals;
+                const totalSignals = signals.length;
+                const profitableSignals = signals.filter(s => s.pnl_pct > 0).length;
+                const avgPnl = signals.reduce((sum, s) => sum + s.pnl_pct, 0) / totalSignals;
+                const totalPnl = signals.reduce((sum, s) => sum + s.pnl_dollars, 0);
+
+                let html = `
+                    <div class="ticker-header">
+                        <div class="ticker-name">${data.ticker}</div>
+                        <div class="signal-count">${totalSignals} Signal${totalSignals !== 1 ? 's' : ''} Found</div>
+                    </div>
+
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">${totalSignals}</div>
+                            <div class="stat-label">Total Signals</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${profitableSignals}</div>
+                            <div class="stat-label">Profitable (${((profitableSignals/totalSignals)*100).toFixed(1)}%)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${avgPnl > 0 ? '+' : ''}${avgPnl.toFixed(2)}%</div>
+                            <div class="stat-label">Average P&L</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">$${totalPnl > 0 ? '+' : ''}${totalPnl.toFixed(2)}</div>
+                            <div class="stat-label">Total P&L</div>
+                        </div>
+                    </div>
+
+                    <h2 style="margin-bottom: 20px; color: #764ba2;">Signal History</h2>
+                    <div class="signals-grid">
+                `;
+
+                signals.forEach((signal, index) => {
+                    const isPositive = signal.pnl_pct > 0;
+                    html += `
+                        <div class="signal-card ${isPositive ? 'positive' : 'negative'}">
+                            <div class="signal-header">
+                                <div class="signal-date">Signal #${index + 1}: ${signal.entry_date}</div>
+                                <div class="pnl-badge ${isPositive ? 'positive' : 'negative'}">
+                                    ${signal.pnl_pct > 0 ? '+' : ''}${signal.pnl_pct}%
+                                </div>
+                            </div>
+                            <div class="signal-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Entry Price</div>
+                                    <div class="detail-value">$${signal.entry_price}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Exit Price</div>
+                                    <div class="detail-value">$${signal.exit_price}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Exit Date</div>
+                                    <div class="detail-value">${signal.exit_date}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">P&L Dollars</div>
+                                    <div class="detail-value">$${signal.pnl_dollars > 0 ? '+' : ''}${signal.pnl_dollars}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Hold Days</div>
+                                    <div class="detail-value">${signal.hold_days} days</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Normalized Price</div>
+                                    <div class="detail-value">${signal.normalized_price}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Force Index</div>
+                                    <div class="detail-value">${signal.force_index}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Range Position</div>
+                                    <div class="detail-value">${signal.range_position_pct}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                resultsDiv.innerHTML = html;
+            }
+
+            resultsDiv.classList.add('show');
+        }
+
+        // Allow Enter key to search
+        document.getElementById('tickerInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchSignal();
+            }
+        });
+    </script>
+</body>
+</html>
