@@ -1,0 +1,36 @@
+================================================================================
+SHAKEOUT REVERSALS - TOP 20 BEST SETUPS
+================================================================================
+Generated: 2025-12-24 21:19:56
+Total symbols: 20
+================================================================================
+
+Copy the line below and paste into TradingView watchlist:
+--------------------------------------------------------------------------------
+
+COOK,EPAC,AORT,APH,CSBR,LIN,NERV,PRPH,TDG,ACIW,AGX,BALY,BCPC,EKSO,ELAN,GE,HALO,HMN,HOFT,LGND
+
+--------------------------------------------------------------------------------
+
+Individual symbols (one per line):
+--------------------------------------------------------------------------------
+COOK
+EPAC
+AORT
+APH
+CSBR
+LIN
+NERV
+PRPH
+TDG
+ACIW
+AGX
+BALY
+BCPC
+EKSO
+ELAN
+GE
+HALO
+HMN
+HOFT
+LGND
