@@ -1,0 +1,699 @@
+================================================================================
+ULTIMATE HIGH PROBABILITY SCANNER - RESULTS
+================================================================================
+Scan Date: 2025-12-23 12:43:14
+
+STRATEGY CRITERIA:
+  1. Consolidating for at least 10 days
+  2. In uptrend (price > 50 SMA, SMA rising)
+  3. Price in lower 35% of consolidation range
+  4. EFI oversold (MAROON or ORANGE)
+  5. Normalized price < -0.2 (oversold)
+
+QUALITY SCORE:
+  Based on consolidation duration, oversold level, EFI strength, volume
+  Higher score = higher probability setup
+
+Total High Probability Setups Found: 42
+================================================================================
+
+TOP HIGH PROBABILITY SETUPS (sorted by quality score):
+--------------------------------------------------------------------------------
+Ticker   Score   Days   Range    Pos%   Norm    EFI      Vol  
+--------------------------------------------------------------------------------
+SEE      75      21     6.4%     1%     -0.98   ORANGE   3.1x 
+BKH      75      26     9.0%     16%    -0.97   ORANGE   1.4x 
+PTGX     62      11     14.8%    14%    -0.65   ORANGE   2.2x 
+CTRA     61      26     11.3%    10%    -0.80   ORANGE   1.3x 
+FTI      61      26     11.5%    22%    -0.72   ORANGE   1.3x 
+INVA     61      21     14.0%    13%    -0.71   ORANGE   1.3x 
+GH       59      16     14.1%    6%     -0.90   ORANGE   1.3x 
+BIIB     59      21     11.7%    21%    -0.57   ORANGE   1.4x 
+FANG     57      26     14.9%    18%    -0.67   ORANGE   1.2x 
+BHE      55      16     14.2%    4%     -0.45   ORANGE   1.4x 
+GPOR     52      26     13.6%    2%     -0.95   ORANGE   0.7x 
+MDGL     52      21     13.1%    13%    -0.73   ORANGE   1.2x 
+WAT      50      26     11.5%    11%    -0.78   ORANGE   1.1x 
+HCA      50      26     13.1%    12%    -0.81   ORANGE   1.0x 
+PR       49      21     13.8%    30%    -0.61   ORANGE   1.2x 
+NUVL     47      21     12.4%    8%     -0.84   ORANGE   0.7x 
+UHS      46      31     13.4%    26%    -0.62   ORANGE   0.9x 
+MDT      46      26     12.4%    33%    -0.71   ORANGE   0.8x 
+SD       43      21     13.6%    15%    -0.71   ORANGE   1.0x 
+IDYA     43      21     14.1%    17%    -0.67   ORANGE   1.0x 
+CNX      43      16     14.1%    3%     -0.78   ORANGE   1.0x 
+TALO     41      16     14.6%    14%    -0.62   ORANGE   1.1x 
+DVAX     40      26     8.9%     25%    -0.49   ORANGE   0.7x 
+TVTX     40      26     13.5%    32%    -0.49   ORANGE   0.7x 
+NTRA     39      16     11.3%    12%    -0.65   ORANGE   0.8x 
+BRKR     39      16     12.0%    10%    -0.64   ORANGE   0.7x 
+MD       39      11     13.8%    19%    -0.72   ORANGE   0.9x 
+VCYT     38      11     15.0%    8%     -0.71   ORANGE   0.7x 
+RGEN     38      16     11.5%    10%    -0.37   ORANGE   1.1x 
+AGYS     38      31     13.0%    26%    -0.29   ORANGE   0.7x 
+MUR      36      16     11.7%    9%     -0.41   ORANGE   1.1x 
+IRON     36      21     14.7%    29%    -0.42   ORANGE   0.8x 
+GSHD     35      16     13.3%    25%    -0.24   ORANGE   1.1x 
+ATEC     35      11     12.0%    23%    -0.56   ORANGE   0.6x 
+IDXX     35      16     12.0%    11%    -0.46   ORANGE   0.8x 
+CAT      32      16     12.6%    12%    -0.36   ORANGE   0.8x 
+HXL      30      16     10.0%    19%    -0.27   ORANGE   0.9x 
+MRVI     29      11     15.0%    17%    -0.35   ORANGE   0.8x 
+ARDX     28      11     13.4%    3%     -0.32   ORANGE   0.8x 
+HP       28      11     14.8%    16%    -0.28   ORANGE   1.0x 
+STZ      27      11     10.8%    1%     -0.24   ORANGE   0.8x 
+BCRX     26      11     14.9%    17%    -0.21   ORANGE   0.9x 
+
+================================================================================
+DETAILED SIGNALS:
+================================================================================
+
+SIGNAL #1 - SEE - Quality Score: 75/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $41.26
+  Consolidation:       21 days
+  Range:               $41.23 - $43.85 (6.4%)
+  Position in Range:   1% (lower third = buy zone)
+  Normalized Price:    -0.98 (oversold)
+  Force Index:         -568447.22 (ORANGE)
+  Volume:              3.1x average
+
+  SETUP: SEE consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 75/100 quality score.
+
+SIGNAL #2 - BKH - Quality Score: 75/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $68.93
+  Consolidation:       26 days
+  Range:               $67.93 - $74.02 (9.0%)
+  Position in Range:   16% (lower third = buy zone)
+  Normalized Price:    -0.97 (oversold)
+  Force Index:         -438717.61 (ORANGE)
+  Volume:              1.4x average
+
+  SETUP: BKH consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 75/100 quality score.
+
+SIGNAL #3 - PTGX - Quality Score: 62/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $85.79
+  Consolidation:       11 days
+  Range:               $84.11 - $96.54 (14.8%)
+  Position in Range:   14% (lower third = buy zone)
+  Normalized Price:    -0.65 (oversold)
+  Force Index:         -1068447.70 (ORANGE)
+  Volume:              2.2x average
+
+  SETUP: PTGX consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 62/100 quality score.
+
+SIGNAL #4 - CTRA - Quality Score: 61/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $25.43
+  Consolidation:       26 days
+  Range:               $25.15 - $28.00 (11.3%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    -0.80 (oversold)
+  Force Index:         -1241688.45 (ORANGE)
+  Volume:              1.3x average
+
+  SETUP: CTRA consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 61/100 quality score.
+
+SIGNAL #5 - FTI - Quality Score: 61/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $43.52
+  Consolidation:       26 days
+  Range:               $42.46 - $47.33 (11.5%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    -0.72 (oversold)
+  Force Index:         -1247803.77 (ORANGE)
+  Volume:              1.3x average
+
+  SETUP: FTI consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 61/100 quality score.
+
+SIGNAL #6 - INVA - Quality Score: 61/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $20.07
+  Consolidation:       21 days
+  Range:               $19.72 - $22.48 (14.0%)
+  Position in Range:   13% (lower third = buy zone)
+  Normalized Price:    -0.71 (oversold)
+  Force Index:         -57153.50 (ORANGE)
+  Volume:              1.3x average
+
+  SETUP: INVA consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 61/100 quality score.
+
+SIGNAL #7 - GH - Quality Score: 59/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $97.10
+  Consolidation:       16 days
+  Range:               $96.28 - $109.81 (14.1%)
+  Position in Range:   6% (lower third = buy zone)
+  Normalized Price:    -0.90 (oversold)
+  Force Index:         -1809329.97 (ORANGE)
+  Volume:              1.3x average
+
+  SETUP: GH consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 59/100 quality score.
+
+SIGNAL #8 - BIIB - Quality Score: 59/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $169.91
+  Consolidation:       21 days
+  Range:               $165.75 - $185.17 (11.7%)
+  Position in Range:   21% (lower third = buy zone)
+  Normalized Price:    -0.57 (oversold)
+  Force Index:         -1799490.25 (ORANGE)
+  Volume:              1.4x average
+
+  SETUP: BIIB consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 59/100 quality score.
+
+SIGNAL #9 - FANG - Quality Score: 57/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $147.00
+  Consolidation:       26 days
+  Range:               $143.14 - $164.44 (14.9%)
+  Position in Range:   18% (lower third = buy zone)
+  Normalized Price:    -0.67 (oversold)
+  Force Index:         -2627599.47 (ORANGE)
+  Volume:              1.2x average
+
+  SETUP: FANG consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 57/100 quality score.
+
+SIGNAL #10 - BHE - Quality Score: 55/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $43.94
+  Consolidation:       16 days
+  Range:               $43.70 - $49.89 (14.2%)
+  Position in Range:   4% (lower third = buy zone)
+  Normalized Price:    -0.45 (oversold)
+  Force Index:         -175002.76 (ORANGE)
+  Volume:              1.4x average
+
+  SETUP: BHE consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 55/100 quality score.
+
+SIGNAL #11 - GPOR - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $199.32
+  Consolidation:       26 days
+  Range:               $198.67 - $225.78 (13.6%)
+  Position in Range:   2% (lower third = buy zone)
+  Normalized Price:    -0.95 (oversold)
+  Force Index:         -265517.04 (ORANGE)
+  Volume:              0.7x average
+
+  SETUP: GPOR consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 52/100 quality score.
+
+SIGNAL #12 - MDGL - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $544.41
+  Consolidation:       21 days
+  Range:               $535.00 - $605.00 (13.1%)
+  Position in Range:   13% (lower third = buy zone)
+  Normalized Price:    -0.73 (oversold)
+  Force Index:         -301817.77 (ORANGE)
+  Volume:              1.2x average
+
+  SETUP: MDGL consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 52/100 quality score.
+
+SIGNAL #13 - WAT - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $376.31
+  Consolidation:       26 days
+  Range:               $371.57 - $414.15 (11.5%)
+  Position in Range:   11% (lower third = buy zone)
+  Normalized Price:    -0.78 (oversold)
+  Force Index:         -962443.43 (ORANGE)
+  Volume:              1.1x average
+
+  SETUP: WAT consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 50/100 quality score.
+
+SIGNAL #14 - HCA - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $466.56
+  Consolidation:       26 days
+  Range:               $459.28 - $519.23 (13.1%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    -0.81 (oversold)
+  Force Index:         -4198937.39 (ORANGE)
+  Volume:              1.0x average
+
+  SETUP: HCA consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 50/100 quality score.
+
+SIGNAL #15 - PR - Quality Score: 49/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $13.77
+  Consolidation:       21 days
+  Range:               $13.22 - $15.04 (13.8%)
+  Position in Range:   30% (lower third = buy zone)
+  Normalized Price:    -0.61 (oversold)
+  Force Index:         -709373.25 (ORANGE)
+  Volume:              1.2x average
+
+  SETUP: PR consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 49/100 quality score.
+
+SIGNAL #16 - NUVL - Quality Score: 47/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $101.41
+  Consolidation:       21 days
+  Range:               $100.42 - $112.88 (12.4%)
+  Position in Range:   8% (lower third = buy zone)
+  Normalized Price:    -0.84 (oversold)
+  Force Index:         -173643.79 (ORANGE)
+  Volume:              0.7x average
+
+  SETUP: NUVL consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 47/100 quality score.
+
+SIGNAL #17 - UHS - Quality Score: 46/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $224.74
+  Consolidation:       31 days
+  Range:               $217.08 - $246.13 (13.4%)
+  Position in Range:   26% (lower third = buy zone)
+  Normalized Price:    -0.62 (oversold)
+  Force Index:         -292150.03 (ORANGE)
+  Volume:              0.9x average
+
+  SETUP: UHS consolidating for 31 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 46/100 quality score.
+
+SIGNAL #18 - MDT - Quality Score: 46/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $98.48
+  Consolidation:       26 days
+  Range:               $94.64 - $106.33 (12.4%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    -0.71 (oversold)
+  Force Index:         -841420.16 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: MDT consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 46/100 quality score.
+
+SIGNAL #19 - SD - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $13.97
+  Consolidation:       21 days
+  Range:               $13.70 - $15.56 (13.6%)
+  Position in Range:   15% (lower third = buy zone)
+  Normalized Price:    -0.71 (oversold)
+  Force Index:         -26237.18 (ORANGE)
+  Volume:              1.0x average
+
+  SETUP: SD consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 43/100 quality score.
+
+SIGNAL #20 - IDYA - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $33.26
+  Consolidation:       21 days
+  Range:               $32.50 - $37.08 (14.1%)
+  Position in Range:   17% (lower third = buy zone)
+  Normalized Price:    -0.67 (oversold)
+  Force Index:         -77585.78 (ORANGE)
+  Volume:              1.0x average
+
+  SETUP: IDYA consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 43/100 quality score.
+
+SIGNAL #21 - CNX - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $37.07
+  Consolidation:       16 days
+  Range:               $36.91 - $42.13 (14.1%)
+  Position in Range:   3% (lower third = buy zone)
+  Normalized Price:    -0.78 (oversold)
+  Force Index:         -730020.58 (ORANGE)
+  Volume:              1.0x average
+
+  SETUP: CNX consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 43/100 quality score.
+
+SIGNAL #22 - TALO - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $10.85
+  Consolidation:       16 days
+  Range:               $10.64 - $12.19 (14.6%)
+  Position in Range:   14% (lower third = buy zone)
+  Normalized Price:    -0.62 (oversold)
+  Force Index:         -155899.70 (ORANGE)
+  Volume:              1.1x average
+
+  SETUP: TALO consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 41/100 quality score.
+
+SIGNAL #23 - DVAX - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $10.87
+  Consolidation:       26 days
+  Range:               $10.63 - $11.58 (8.9%)
+  Position in Range:   25% (lower third = buy zone)
+  Normalized Price:    -0.49 (oversold)
+  Force Index:         -9445.55 (ORANGE)
+  Volume:              0.7x average
+
+  SETUP: DVAX consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 40/100 quality score.
+
+SIGNAL #24 - TVTX - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $34.49
+  Consolidation:       26 days
+  Range:               $33.05 - $37.50 (13.5%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    -0.49 (oversold)
+  Force Index:         -296339.95 (ORANGE)
+  Volume:              0.7x average
+
+  SETUP: TVTX consolidating for 26 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 40/100 quality score.
+
+SIGNAL #25 - NTRA - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $224.74
+  Consolidation:       16 days
+  Range:               $221.84 - $246.90 (11.3%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    -0.65 (oversold)
+  Force Index:         -765553.23 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: NTRA consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 39/100 quality score.
+
+SIGNAL #26 - BRKR - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $44.66
+  Consolidation:       16 days
+  Range:               $44.11 - $49.41 (12.0%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    -0.64 (oversold)
+  Force Index:         -128555.67 (ORANGE)
+  Volume:              0.7x average
+
+  SETUP: BRKR consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 39/100 quality score.
+
+SIGNAL #27 - MD - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $21.64
+  Consolidation:       11 days
+  Range:               $21.10 - $24.01 (13.8%)
+  Position in Range:   19% (lower third = buy zone)
+  Normalized Price:    -0.72 (oversold)
+  Force Index:         -138934.82 (ORANGE)
+  Volume:              0.9x average
+
+  SETUP: MD consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 39/100 quality score.
+
+SIGNAL #28 - VCYT - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $42.04
+  Consolidation:       11 days
+  Range:               $41.55 - $47.78 (15.0%)
+  Position in Range:   8% (lower third = buy zone)
+  Normalized Price:    -0.71 (oversold)
+  Force Index:         -116061.35 (ORANGE)
+  Volume:              0.7x average
+
+  SETUP: VCYT consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 38/100 quality score.
+
+SIGNAL #29 - RGEN - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $157.72
+  Consolidation:       16 days
+  Range:               $156.01 - $174.01 (11.5%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    -0.37 (oversold)
+  Force Index:         -220991.54 (ORANGE)
+  Volume:              1.1x average
+
+  SETUP: RGEN consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 38/100 quality score.
+
+SIGNAL #30 - AGYS - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $122.01
+  Consolidation:       31 days
+  Range:               $118.00 - $133.32 (13.0%)
+  Position in Range:   26% (lower third = buy zone)
+  Normalized Price:    -0.29 (oversold)
+  Force Index:         -40773.98 (ORANGE)
+  Volume:              0.7x average
+
+  SETUP: AGYS consolidating for 31 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 38/100 quality score.
+
+SIGNAL #31 - MUR - Quality Score: 36/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $31.04
+  Consolidation:       16 days
+  Range:               $30.72 - $34.32 (11.7%)
+  Position in Range:   9% (lower third = buy zone)
+  Normalized Price:    -0.41 (oversold)
+  Force Index:         -498068.50 (ORANGE)
+  Volume:              1.1x average
+
+  SETUP: MUR consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 36/100 quality score.
+
+SIGNAL #32 - IRON - Quality Score: 36/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $90.44
+  Consolidation:       21 days
+  Range:               $86.75 - $99.50 (14.7%)
+  Position in Range:   29% (lower third = buy zone)
+  Normalized Price:    -0.42 (oversold)
+  Force Index:         -121321.43 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: IRON consolidating for 21 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 36/100 quality score.
+
+SIGNAL #33 - GSHD - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $72.79
+  Consolidation:       16 days
+  Range:               $70.45 - $79.85 (13.3%)
+  Position in Range:   25% (lower third = buy zone)
+  Normalized Price:    -0.24 (oversold)
+  Force Index:         -52201.90 (ORANGE)
+  Volume:              1.1x average
+
+  SETUP: GSHD consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 35/100 quality score.
+
+SIGNAL #34 - ATEC - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $19.87
+  Consolidation:       11 days
+  Range:               $19.33 - $21.65 (12.0%)
+  Position in Range:   23% (lower third = buy zone)
+  Normalized Price:    -0.56 (oversold)
+  Force Index:         -147070.20 (ORANGE)
+  Volume:              0.6x average
+
+  SETUP: ATEC consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 35/100 quality score.
+
+SIGNAL #35 - IDXX - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $697.10
+  Consolidation:       16 days
+  Range:               $687.68 - $769.98 (12.0%)
+  Position in Range:   11% (lower third = buy zone)
+  Normalized Price:    -0.46 (oversold)
+  Force Index:         -330075.61 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: IDXX consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 35/100 quality score.
+
+SIGNAL #36 - CAT - Quality Score: 32/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $565.83
+  Consolidation:       16 days
+  Range:               $557.46 - $627.50 (12.6%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    -0.36 (oversold)
+  Force Index:         -16553943.33 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: CAT consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 32/100 quality score.
+
+SIGNAL #37 - HXL - Quality Score: 30/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $73.36
+  Consolidation:       16 days
+  Range:               $71.98 - $79.20 (10.0%)
+  Position in Range:   19% (lower third = buy zone)
+  Normalized Price:    -0.27 (oversold)
+  Force Index:         -614600.44 (ORANGE)
+  Volume:              0.9x average
+
+  SETUP: HXL consolidating for 16 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 30/100 quality score.
+
+SIGNAL #38 - MRVI - Quality Score: 29/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $3.52
+  Consolidation:       11 days
+  Range:               $3.43 - $3.95 (15.0%)
+  Position in Range:   17% (lower third = buy zone)
+  Normalized Price:    -0.35 (oversold)
+  Force Index:         -12170.97 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: MRVI consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 29/100 quality score.
+
+SIGNAL #39 - ARDX - Quality Score: 28/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $5.68
+  Consolidation:       11 days
+  Range:               $5.66 - $6.41 (13.4%)
+  Position in Range:   3% (lower third = buy zone)
+  Normalized Price:    -0.32 (oversold)
+  Force Index:         -34792.82 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: ARDX consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 28/100 quality score.
+
+SIGNAL #40 - HP - Quality Score: 28/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $27.68
+  Consolidation:       11 days
+  Range:               $27.04 - $31.04 (14.8%)
+  Position in Range:   16% (lower third = buy zone)
+  Normalized Price:    -0.28 (oversold)
+  Force Index:         -421905.26 (ORANGE)
+  Volume:              1.0x average
+
+  SETUP: HP consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 28/100 quality score.
+
+SIGNAL #41 - STZ - Quality Score: 27/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $136.81
+  Consolidation:       11 days
+  Range:               $136.72 - $151.51 (10.8%)
+  Position in Range:   1% (lower third = buy zone)
+  Normalized Price:    -0.24 (oversold)
+  Force Index:         -1179239.18 (ORANGE)
+  Volume:              0.8x average
+
+  SETUP: STZ consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 27/100 quality score.
+
+SIGNAL #42 - BCRX - Quality Score: 26/100
+--------------------------------------------------------------------------------
+  Date:                12/17/2025
+  Current Price:       $7.29
+  Consolidation:       11 days
+  Range:               $7.11 - $8.17 (14.9%)
+  Position in Range:   17% (lower third = buy zone)
+  Normalized Price:    -0.21 (oversold)
+  Force Index:         -41704.88 (ORANGE)
+  Volume:              0.9x average
+
+  SETUP: BCRX consolidating for 11 days in uptrend,
+         now oversold (ORANGE EFI) at low end of range.
+         Buy zone entry with 26/100 quality score.

@@ -316,8 +316,13 @@ def run_triple_scan():
     # Create TradingView list
     create_tradingview_list(signals)
 
-    # Print to console
-    print(report_text)
+    # Print to console (handle encoding issues on Windows)
+    try:
+        print(report_text)
+    except UnicodeEncodeError:
+        # If console can't handle special characters, print without them
+        print(report_text.encode('ascii', errors='replace').decode('ascii'))
+
     print(f"Report saved to: {output_file}")
     print(f"TradingView list saved to: {tradingview_file}")
 

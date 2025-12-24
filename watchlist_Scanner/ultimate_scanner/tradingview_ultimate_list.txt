@@ -1,0 +1,9 @@
+================================================================================
+ULTIMATE HIGH PROBABILITY SCANNER - TRADINGVIEW WATCHLIST
+================================================================================
+Generated: 2025-12-23 12:43:14
+Total symbols: 42
+
+Copy the comma-separated line below into TradingView:
+--------------------------------------------------------------------------------
+SEE,BKH,PTGX,CTRA,FTI,INVA,GH,BIIB,FANG,BHE,GPOR,MDGL,WAT,HCA,PR,NUVL,UHS,MDT,SD,IDYA,CNX,TALO,DVAX,TVTX,NTRA,BRKR,MD,VCYT,RGEN,AGYS,MUR,IRON,GSHD,ATEC,IDXX,CAT,HXL,MRVI,ARDX,HP,STZ,BCRX

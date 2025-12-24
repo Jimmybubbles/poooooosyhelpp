@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Signal Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #ffd700;
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            color: #e0e7ff;
+            font-size: 1.3em;
+            font-weight: 300;
+            margin-top: 15px;
+        }
+
+        .premium-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .scanner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .scanner-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanner-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #4ecdc4, #ffd700);
+            background-size: 200% 100%;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .scanner-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+        }
+
+        .scanner-card h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .scanner-card h2 i {
+            font-size: 0.9em;
+        }
+
+        .card-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: auto;
+        }
+
+        .badge-extreme {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4);
+        }
+
+        .badge-premium {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .scanner-card p {
+            color: #e5e7eb;
+            margin-bottom: 25px;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .criteria-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .criteria-list h3 {
+            color: #ffd700;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .criteria-list ul {
+            list-style: none;
+            color: #d1d5db;
+        }
+
+        .criteria-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .criteria-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 16px 25px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a1a1a;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-primary:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status.running {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+        }
+
+        .status.idle {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 2px solid #10b981;
+        }
+
+        .results-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #e5e7eb;
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .results-box::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .results-box::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .results-box::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 10px;
+        }
+
+        .results-box::-webkit-scrollbar-thumb:hover {
+            background: #ffed4e;
+        }
+
+        .last-run {
+            font-size: 0.9em;
+            color: #9ca3af;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        /* Metrics Dashboard */
+        .metrics-dashboard {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .metrics-dashboard h2 {
+            color: #ffd700;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .metric-value.positive {
+            color: #10b981;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .metric-value.negative {
+            color: #ef4444;
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+
+        .ticker-link {
+            color: #ffd700;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .ticker-link:hover {
+            color: #ffed4e;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        .chart-container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            margin-top: 30px;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .chart-container.visible {
+            display: block;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .chart-header h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .close-chart {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .close-chart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        #stockChart {
+            width: 100%;
+            height: 600px;
+            border-radius: 15px;
+        }
+
+        /* Buy List Table */
+        .buy-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .buy-table thead {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+        }
+
+        .buy-table th {
+            padding: 18px 20px;
+            text-align: left;
+            color: #ffd700;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.9em;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .buy-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .buy-table tbody tr:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.01);
+        }
+
+        .buy-table td {
+            padding: 16px 20px;
+            color: #e5e7eb;
+            font-size: 1em;
+        }
+
+        .buy-table td:first-child {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .buy-action {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .buy-action.buy {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .buy-action.sell {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .scanner-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .buy-table {
+                font-size: 0.85em;
+            }
+
+            .buy-table th,
+            .buy-table td {
+                padding: 12px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-crown"></i> Premium Signal Analytics</h1>
+            <div class="subtitle">Elite Trading Strategies | Advanced Backtesting Platform</div>
+            <div class="premium-badge"><i class="fas fa-star"></i> Professional Edition</div>
+        </div>
+
+        <div class="scanner-grid">
+            <!-- MAROON Signal Backtest -->
+            <div class="scanner-card">
+                <h2>
+                    <i class="fas fa-fire"></i> MAROON Signal Backtest
+                    <span class="card-badge badge-extreme">Extreme</span>
+                </h2>
+
+                <div class="criteria-list">
+                    <h3><i class="fas fa-bullseye"></i> Strategy Overview</h3>
+                    <ul>
+                        <li>MAROON EFI only (Force Index < -2.0)</li>
+                        <li>Normalized Price < -0.5 (deep oversold)</li>
+                        <li>In channel consolidation (3-week range)</li>
+                        <li>Price in buy zone (0-35% of range)</li>
+                        <li>Uptrend confirmed (50-period SMA)</li>
+                    </ul>
+                </div>
+
+                <p><strong>Extreme capitulation strategy:</strong> Catches the deepest oversold moments in uptrends. Tests historical performance over business quarters (63 trading days).</p>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="runScan('backtest_maroon')" id="btn-backtest_maroon">
+                        <i class="fas fa-rocket"></i> Run Backtest
+                    </button>
+                    <button class="btn-secondary" onclick="viewBacktestResults('backtest_maroon')">
+                        <i class="fas fa-chart-bar"></i> View Results
+                    </button>
+                </div>
+
+                <div class="status idle" id="status-backtest_maroon">
+                    <i class="fas fa-circle"></i> Status: Idle
+                </div>
+                <div class="last-run" id="lastrun-backtest_maroon"></div>
+            </div>
+
+            <!-- Triple Signal Backtest -->
+            <div class="scanner-card">
+                <h2>
+                    <i class="fas fa-history"></i> Triple Signal Backtest
+                    <span class="card-badge badge-premium">Premium</span>
+                </h2>
+
+                <div class="criteria-list">
+                    <h3><i class="fas fa-chart-line"></i> Performance Analysis</h3>
+                    <ul>
+                        <li>Tests all 4-signal confirmations</li>
+                        <li>Includes MAROON + ORANGE signals</li>
+                        <li>Business quarter hold period (63 days)</li>
+                        <li>Full P&L analysis by price range</li>
+                    </ul>
+                </div>
+
+                <p><strong>Standard strategy backtest:</strong> Tests the Triple Signal scanner with both maroon AND orange EFI signals. Compare with MAROON-only backtest to see selectivity vs. returns.</p>
+
+                <div class="button-group">
+                    <button class="btn-primary" onclick="runScan('backtest_triple')" id="btn-backtest_triple">
+                        <i class="fas fa-rocket"></i> Run Backtest
+                    </button>
+                    <button class="btn-secondary" onclick="viewBacktestResults('backtest_triple')">
+                        <i class="fas fa-chart-bar"></i> View Results
+                    </button>
+                </div>
+
+                <div class="status idle" id="status-backtest_triple">
+                    <i class="fas fa-circle"></i> Status: Idle
+                </div>
+                <div class="last-run" id="lastrun-backtest_triple"></div>
+            </div>
+        </div>
+
+        <!-- Metrics Dashboard -->
+        <div class="metrics-dashboard" id="metrics-dashboard" style="display: none;">
+            <h2><i class="fas fa-trophy"></i> Performance Metrics</h2>
+            <div class="metrics-grid" id="metrics-grid"></div>
+        </div>
+
+        <!-- Buy List -->
+        <div class="metrics-dashboard" id="buy-list-section" style="display: none;">
+            <h2><i class="fas fa-shopping-cart"></i> Buy Signals</h2>
+            <div id="buy-list-table"></div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container" id="chart-container">
+            <div class="chart-header">
+                <h2 id="chart-title"><i class="fas fa-chart-candlestick"></i> Stock Chart</h2>
+                <button class="close-chart" onclick="closeChart()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+            <div id="stockChart"></div>
+        </div>
+    </div>
+
+    <!-- Include Plotly.js for charting -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <script>
+        const scanTypes = ['triple_signal', 'backtest_triple', 'backtest_maroon'];
+
+        function updateStatus(scanType) {
+            fetch(`/scan_status/${scanType}`)
+                .then(response => response.json())
+                .then(data => {
+                    const statusDiv = document.getElementById(`status-${scanType}`);
+                    const resultsDiv = document.getElementById(`results-${scanType}`);
+                    const lastRunDiv = document.getElementById(`lastrun-${scanType}`);
+                    const button = document.getElementById(`btn-${scanType}`);
+
+                    if (data.running) {
+                        statusDiv.className = 'status running';
+                        statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Status: Running';
+                        button.disabled = true;
+                    } else {
+                        statusDiv.className = 'status idle';
+                        statusDiv.innerHTML = '<i class="fas fa-circle"></i> Status: Idle';
+                        button.disabled = false;
+                    }
+
+                    if (data.last_run) {
+                        lastRunDiv.innerHTML = `<i class="far fa-clock"></i> Last run: ${data.last_run}`;
+                    }
+
+                    if (data.results) {
+                        resultsDiv.innerHTML = makeTickersClickable(data.results);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function runScan(scanType) {
+            fetch(`/run_scan/${scanType}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    updateStatus(scanType);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error starting scan');
+            });
+        }
+
+        function viewResults(scanType) {
+            fetch(`/view_results/${scanType}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById(`results-${scanType}`);
+                    if (data.status === 'success') {
+                        resultsDiv.innerHTML = makeTickersClickable(data.content);
+                    } else {
+                        resultsDiv.textContent = data.message;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading results');
+                });
+        }
+
+        function viewBacktestResults(scanType) {
+            fetch(`/view_results/${scanType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Display metrics dashboard
+                        if (data.metrics && Object.keys(data.metrics).length > 0) {
+                            displayMetricsDashboard(data.metrics);
+                        }
+
+                        // Extract and display buy list
+                        const buySignals = extractBuySignals(data.content);
+                        if (buySignals.length > 0) {
+                            displayBuyList(buySignals);
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading results');
+                });
+        }
+
+        function extractBuySignals(text) {
+            const signals = [];
+            const pattern = /(BUY|SELL)\s+([A-Z]+)\s+(\d{2}\/\d{2}\/\d{4})/g;
+            let match;
+
+            while ((match = pattern.exec(text)) !== null) {
+                signals.push({
+                    action: match[1],
+                    ticker: match[2],
+                    date: match[3]
+                });
+            }
+
+            return signals;
+        }
+
+        function displayBuyList(signals) {
+            const section = document.getElementById('buy-list-section');
+            const tableDiv = document.getElementById('buy-list-table');
+
+            section.style.display = 'block';
+
+            let html = '<table class="buy-table">';
+            html += '<thead><tr>';
+            html += '<th>Action</th>';
+            html += '<th>Ticker</th>';
+            html += '<th>Date</th>';
+            html += '</tr></thead>';
+            html += '<tbody>';
+
+            signals.forEach(signal => {
+                const actionClass = signal.action.toLowerCase();
+                html += '<tr>';
+                html += `<td><span class="buy-action ${actionClass}">${signal.action}</span></td>`;
+                html += `<td><span class="ticker-link" onclick="loadChart('${signal.ticker}', '${signal.date}')">${signal.ticker}</span></td>`;
+                html += `<td>${signal.date}</td>`;
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            tableDiv.innerHTML = html;
+
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function displayMetricsDashboard(metrics) {
+            const dashboard = document.getElementById('metrics-dashboard');
+            const grid = document.getElementById('metrics-grid');
+            dashboard.style.display = 'block';
+
+            let html = '';
+
+            if (metrics.total_trades) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-list-ol"></i> Total Trades</div>
+                        <div class="metric-value">${metrics.total_trades}</div>
+                    </div>
+                `;
+            }
+
+            if (metrics.win_rate) {
+                const winRate = parseFloat(metrics.win_rate);
+                const winClass = winRate > 50 ? 'positive' : 'negative';
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-percentage"></i> Win Rate</div>
+                        <div class="metric-value ${winClass}">${metrics.win_rate}</div>
+                    </div>
+                `;
+            }
+
+            if (metrics.avg_pnl) {
+                const avgPnl = metrics.avg_pnl.includes('+') ? 'positive' : 'negative';
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-chart-line"></i> Average P&L</div>
+                        <div class="metric-value ${avgPnl}">${metrics.avg_pnl}</div>
+                    </div>
+                `;
+            }
+
+            if (metrics.portfolio_return) {
+                const portReturn = metrics.portfolio_return.includes('+') ? 'positive' : 'negative';
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-wallet"></i> Portfolio Return</div>
+                        <div class="metric-value ${portReturn}">${metrics.portfolio_return}</div>
+                    </div>
+                `;
+            }
+
+            if (metrics.best_trade) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-trophy"></i> Best Trade</div>
+                        <div class="metric-value positive">${metrics.best_trade}</div>
+                    </div>
+                `;
+            }
+
+            if (metrics.worst_trade) {
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-label"><i class="fas fa-exclamation-triangle"></i> Worst Trade</div>
+                        <div class="metric-value negative">${metrics.worst_trade}</div>
+                    </div>
+                `;
+            }
+
+            grid.innerHTML = html;
+            dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function makeTickersClickable(text) {
+            const pattern = /(BUY|SELL)\s+([A-Z]+)\s+(\d{2}\/\d{2}\/\d{4})/g;
+            return text.replace(pattern, (match, action, ticker, date) => {
+                return `${action} <span class="ticker-link" onclick="loadChart('${ticker}', '${date}')">${ticker}</span> ${date}`;
+            });
+        }
+
+        function loadChart(ticker, signalDate = null) {
+            const chartContainer = document.getElementById('chart-container');
+            const chartTitle = document.getElementById('chart-title');
+            const chartDiv = document.getElementById('stockChart');
+
+            chartContainer.classList.add('visible');
+            chartTitle.innerHTML = `<i class="fas fa-chart-candlestick"></i> Loading ${ticker}...`;
+            chartDiv.innerHTML = '<div style="text-align: center; padding: 60px; color: #ffd700;"><i class="fas fa-spinner fa-spin fa-3x"></i><br><br>Loading chart data...</div>';
+
+            chartContainer.scrollIntoView({ behavior: 'smooth' });
+
+            let url = `/get_chart/${ticker}`;
+            if (signalDate) {
+                const parts = signalDate.split('/');
+                const formattedDate = `${parts[2]}-${parts[0]}-${parts[1]}`;
+                url += `?signal_date=${formattedDate}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const dateInfo = signalDate ? ` - Signal: ${signalDate}` : '';
+                        chartTitle.innerHTML = `<i class="fas fa-chart-candlestick"></i> ${ticker} - Daily Chart${dateInfo}`;
+                        displayChart(data);
+                    } else {
+                        chartDiv.innerHTML = `<div style="text-align: center; padding: 60px; color: #ef4444;"><i class="fas fa-exclamation-circle fa-3x"></i><br><br>Error: ${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    chartDiv.innerHTML = '<div style="text-align: center; padding: 60px; color: #ef4444;"><i class="fas fa-exclamation-circle fa-3x"></i><br><br>Error loading chart data</div>';
+                });
+        }
+
+        function displayChart(data) {
+            const candlestick = {
+                x: data.dates,
+                close: data.prices,
+                high: data.highs,
+                low: data.lows,
+                open: data.opens,
+                type: 'candlestick',
+                name: data.ticker,
+                increasing: {line: {color: '#10b981'}},
+                decreasing: {line: {color: '#ef4444'}}
+            };
+
+            const layout = {
+                dragmode: 'zoom',
+                showlegend: false,
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0.3)',
+                xaxis: {
+                    rangeslider: {visible: false},
+                    title: 'Date',
+                    color: '#e5e7eb',
+                    gridcolor: 'rgba(255, 255, 255, 0.1)'
+                },
+                yaxis: {
+                    title: 'Price ($)',
+                    color: '#e5e7eb',
+                    gridcolor: 'rgba(255, 255, 255, 0.1)'
+                },
+                margin: { l: 60, r: 60, t: 20, b: 60 }
+            };
+
+            if (data.signal_date) {
+                layout.shapes = [{
+                    type: 'line',
+                    x0: data.signal_date,
+                    x1: data.signal_date,
+                    y0: 0,
+                    y1: 1,
+                    yref: 'paper',
+                    line: { color: '#ffd700', width: 3, dash: 'dash' }
+                }];
+
+                layout.annotations = [{
+                    x: data.signal_date,
+                    y: 1,
+                    yref: 'paper',
+                    text: 'Signal Date',
+                    showarrow: true,
+                    arrowhead: 2,
+                    arrowcolor: '#ffd700',
+                    ax: 0,
+                    ay: -40,
+                    bgcolor: '#ffd700',
+                    bordercolor: '#ffd700',
+                    font: { color: '#1a1a1a', size: 12, family: 'Arial, sans-serif' }
+                }];
+            }
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d']
+            };
+
+            Plotly.newPlot('stockChart', [candlestick], layout, config);
+        }
+
+        function closeChart() {
+            const chartContainer = document.getElementById('chart-container');
+            chartContainer.classList.remove('visible');
+        }
+
+        // Update status every 2 seconds for all scan types
+        scanTypes.forEach(scanType => {
+            setInterval(() => updateStatus(scanType), 2000);
+            updateStatus(scanType);
+        });
+    </script>
+</body>
+</html>
