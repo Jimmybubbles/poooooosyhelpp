@@ -1,0 +1,36 @@
+================================================================================
+MULTI-MONTH REVERSALS - MULTI-LEVEL HITS (Extreme Shakeouts)
+================================================================================
+Generated: 2025-12-24 22:43:59
+Total symbols: 20
+================================================================================
+
+Copy the line below and paste into TradingView watchlist:
+--------------------------------------------------------------------------------
+
+ALEX,DHIL,MIRM,PRPH,SRDX,BBW,COOK,AJG,LIN,LMT,OMC,STRO,ACIW,CBZ,EPAC,NOC,NPK,AAOI,ADI,AFIB
+
+--------------------------------------------------------------------------------
+
+Individual symbols (one per line):
+--------------------------------------------------------------------------------
+ALEX
+DHIL
+MIRM
+PRPH
+SRDX
+BBW
+COOK
+AJG
+LIN
+LMT
+OMC
+STRO
+ACIW
+CBZ
+EPAC
+NOC
+NPK
+AAOI
+ADI
+AFIB

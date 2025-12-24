@@ -1,0 +1,41 @@
+================================================================================
+MULTI-MONTH REVERSALS - TOP 25 BEST SETUPS
+================================================================================
+Generated: 2025-12-24 22:43:59
+Total symbols: 25
+================================================================================
+
+Copy the line below and paste into TradingView watchlist:
+--------------------------------------------------------------------------------
+
+HOFT,AAOI,ADI,AFG,AFIB,AIV,AMR,AORT,AP,ASUR,ATHA,ATLC,AVIR,AYI,BFLY,BURL,CDZI,CHMI,CROX,CSBR,CSX,CTS,CWST,DBRG,DY
+
+--------------------------------------------------------------------------------
+
+Individual symbols (one per line):
+--------------------------------------------------------------------------------
+HOFT
+AAOI
+ADI
+AFG
+AFIB
+AIV
+AMR
+AORT
+AP
+ASUR
+ATHA
+ATLC
+AVIR
+AYI
+BFLY
+BURL
+CDZI
+CHMI
+CROX
+CSBR
+CSX
+CTS
+CWST
+DBRG
+DY

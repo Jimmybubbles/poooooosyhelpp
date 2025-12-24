@@ -1,0 +1,255 @@
+================================================================================
+MULTI-MONTH LEVEL REVERSAL SCANNER - RESULTS
+================================================================================
+Scan Date: 2025-12-24 22:43:59
+
+CONCEPT:
+  Scans previous 3 months' key levels (High/Low/Open/Close).
+  Finds stocks that violated these levels then reversed with
+  positive EFI momentum. More levels = more opportunities!
+
+Total Setups Found: 826
+  Confirmed Reversals: 567 (Reclaimed level)
+  Emerging Reversals: 259 (Still below but reversing)
+
+================================================================================
+
+TOP 25 BEST SETUPS (Highest Signal Strength):
+================================================================================
+Ticker   Price      EFI        Strength  Level Hit    Recovery%   Days  
+--------------------------------------------------------------------------------
+HOFT     $11.18     lime       12        M1-Open          25.90% 8     
+AAOI     $40.64     lime       11        M1-Open          68.98% 30    
+ADI      $276.73    lime       11        M3-Open          21.63% 30    
+AFG      $138.27    lime       11        M3-Low            6.36% 14    
+AFIB     $0.00      lime       11        M1-Open        2900.00% 23    
+AIV      $5.79      lime       11        M2-Open           8.83% 30    
+AMR      $208.74    lime       11        M1-Open          27.51% 30    
+AORT     $47.18     lime       11        M1-Open           7.47% 30    
+AP       $4.25      lime       11        M3-Open         142.86% 30    
+ASUR     $8.98      lime       11        M1-Open          11.83% 30    
+ATHA     $7.51      teal       11        M1-Open          96.08% 14    
+ATLC     $69.68     lime       11        M3-Open          42.96% 30    
+AVIR     $3.43      lime       11        M1-Open          19.51% 27    
+AYI      $371.34    lime       11        M1-Open           5.95% 30    
+BFLY     $3.95      lime       11        M1-Open          80.37% 30    
+BURL     $283.97    lime       11        M2-Open          14.96% 19    
+CDZI     $5.74      lime       11        M1-Open          25.88% 30    
+CHMI     $2.77      lime       11        M3-Open          22.03% 30    
+CROX     $89.98     lime       11        M3-Open          22.39% 30    
+CSBR     $7.07      teal       11        M1-Low           17.83% 16    
+CSX      $36.59     lime       11        M1-Open           5.59% 30    
+CTS      $43.99     lime       11        M1-Open           9.54% 30    
+CWST     $99.96     lime       11        M3-Open          16.34% 30    
+DBRG     $13.29     lime       11        M1-Open          25.02% 30    
+DY       $348.95    lime       11        M2-Open          27.82% 30    
+
+================================================================================
+
+[STRONG BUY] CONFIRMED REVERSALS (Reclaimed Level):
+================================================================================
+Ticker   Price      Level        Levels Hit      Recovery%   EFI        Notes
+--------------------------------------------------------------------------------
+HOFT     $11.18     M1-Open      M1-Low,M1-Open,M3-Low     25.90% lime       Reclaimed level, EFI bullish
+AAOI     $40.64     M1-Open      M1-Open,M2-Low,M2-Open     68.98% lime       Reclaimed level, EFI bullish
+ADI      $276.73    M3-Open      M1-Open,M2-Low,M2-Open     21.63% lime       Reclaimed level, EFI bullish
+AFG      $138.27    M3-Low       M3-Low,M3-Open       6.36% lime       Reclaimed level, EFI bullish
+AFIB     $0.00      M1-Open      M1-Open,M2-Low,M2-Open   2900.00% lime       Reclaimed level, EFI bullish
+AIV      $5.79      M2-Open      M2-Open,M3-Open      8.83% lime       Reclaimed level, EFI bullish
+AMR      $208.74    M1-Open      M1-Open,M2-Open     27.51% lime       Reclaimed level, EFI bullish
+AORT     $47.18     M1-Open      M1-Low,M1-Open,M3-Open      7.47% lime       Reclaimed level, EFI bullish
+AP       $4.25      M3-Open      M1-Open,M2-Low,M2-Open    142.86% lime       Reclaimed level, EFI bullish
+ASUR     $8.98      M1-Open      M1-Open,M2-Low,M2-Open     11.83% lime       Reclaimed level, EFI bullish
+ATHA     $7.51      M1-Open      M1-Open,M3-Open     96.08% teal       Reclaimed level, FI positive
+ATLC     $69.68     M3-Open      M1-Open,M2-Low,M2-Open     42.96% lime       Reclaimed level, EFI bullish
+AVIR     $3.43      M1-Open      M1-Open,M2-Open     19.51% lime       Reclaimed level, EFI bullish
+AYI      $371.34    M1-Open      M1-Open,M2-Low,M2-Open      5.95% lime       Reclaimed level, EFI bullish
+BFLY     $3.95      M1-Open      M1-Open,M2-Open     80.37% lime       Reclaimed level, EFI bullish
+BURL     $283.97    M2-Open      M1-Low,M1-Open,M2-Low     14.96% lime       Reclaimed level, EFI bullish
+CDZI     $5.74      M1-Open      M1-Open,M2-Open     25.88% lime       Reclaimed level, EFI bullish
+CHMI     $2.77      M3-Open      M1-Open,M2-Low,M2-Open     22.03% lime       Reclaimed level, EFI bullish
+CROX     $89.98     M3-Open      M1-Open,M2-Low,M2-Open     22.39% lime       Reclaimed level, EFI bullish
+CSBR     $7.07      M1-Low       M1-Low,M2-Low,M2-Open     17.83% teal       Reclaimed level, FI positive
+CSX      $36.59     M1-Open      M1-Open,M2-Low,M2-Open      5.59% lime       Reclaimed level, EFI bullish
+CTS      $43.99     M1-Open      M1-Open,M3-Open      9.54% lime       Reclaimed level, EFI bullish
+CWST     $99.96     M3-Open      M1-Open,M2-Open,M3-Open     16.34% lime       Reclaimed level, EFI bullish
+DBRG     $13.29     M1-Open      M1-Open,M2-Low,M2-Open     25.02% lime       Reclaimed level, EFI bullish
+DY       $348.95    M2-Open      M1-Open,M2-Open     27.82% lime       Reclaimed level, EFI bullish
+EZPW     $20.15     M2-Open      M1-Open,M2-Low,M2-Open     13.52% lime       Reclaimed level, EFI bullish
+FELE     $99.58     M3-Open      M1-Open,M2-Low,M2-Open      6.29% lime       Reclaimed level, EFI bullish
+FTAI     $172.22    M2-Low       M1-Open,M2-Low,M2-Open     10.74% lime       Reclaimed level, EFI bullish
+FTK      $18.48     M1-Open      M1-Open,M2-Low,M2-Open     23.69% lime       Reclaimed level, EFI bullish
+GVA      $118.49    M2-Open      M1-Open,M2-Low,M2-Open     20.43% lime       Reclaimed level, EFI bullish
+HALO     $68.36     M2-Low       M1-Low,M1-Open,M2-Low     10.79% teal       Reclaimed level, FI positive
+HIFS     $299.00    M1-Open      M1-Open,M2-Open,M3-Low      5.96% lime       Reclaimed level, EFI bullish
+HTLD     $9.21      M3-Open      M1-Open,M2-Low,M2-Open     21.83% lime       Reclaimed level, EFI bullish
+IDN      $6.80      M3-Open      M1-Open,M2-Low,M2-Open     70.00% lime       Reclaimed level, EFI bullish
+INSE     $9.19      M1-Open      M1-Open,M2-Low      25.91% lime       Reclaimed level, EFI bullish
+JLL      $342.09    M1-Open      M1-Open,M2-Open,M3-Low     19.23% lime       Reclaimed level, EFI bullish
+JOUT     $44.33     M1-Open      M1-Open,M2-Low,M2-Open     14.70% lime       Reclaimed level, EFI bullish
+KLIC     $46.35     M2-Open      M1-Open,M2-Low,M2-Open     24.70% lime       Reclaimed level, EFI bullish
+KPTI     $7.44      M3-Open      M1-Open,M2-Open,M3-Low     44.75% lime       Reclaimed level, EFI bullish
+KRMD     $6.52      M3-Open      M1-Open,M2-Low,M2-Open     71.81% lime       Reclaimed level, EFI bullish
+
+================================================================================
+
+[WATCH] EMERGING REVERSALS (Below Level, Reversing):
+================================================================================
+Ticker   Price      Level        Below%     Recovery%   EFI        Days  
+--------------------------------------------------------------------------------
+ABBV     $228.79    M2-Open         -1.37%      5.85% lime       30    
+ALG      $173.60    M3-Open        -16.69%      5.49% lime       30    
+AMP      $498.38    M3-Open         -1.88%      9.92% lime       30    
+AN       $210.08    M2-Open         -3.64%     10.10% lime       30    
+ANGI     $12.80     M3-Open        -27.44%     14.18% lime       30    
+ASTC     $3.83      M3-Open        -25.05%     20.06% lime       30    
+AZZ      $110.73    M3-Open         -0.04%     11.95% lime       30    
+BBW      $57.70     M2-Open        -10.44%     19.80% lime       30    
+BKNG     $5439.27   M3-Open         -2.12%     10.24% lime       30    
+BMRA     $2.62      M3-Open        -13.53%      8.71% lime       30    
+BNED     $9.54      M2-Open         -2.35%     18.95% lime       30    
+CLH      $239.80    M3-Open         -0.32%     17.90% lime       30    
+CLRO     $5.35      M2-Open         -7.83%      7.35% lime       30    
+CMCSA    $29.38     M3-Open        -11.89%      9.83% lime       30    
+COOK     $1.06      M3-Open        -15.20%     34.18% lime       30    
+CRMT     $25.80     M3-Open        -41.92%     31.90% lime       30    
+CVLG     $22.83     M3-Open         -3.52%     18.18% lime       30    
+DSGR     $28.74     M3-Open         -8.65%     11.74% lime       30    
+EMR      $135.49    M1-Open         -2.36%      6.34% lime       30    
+EQH      $48.93     M3-Open         -6.01%     10.48% lime       30    
+FLXS     $40.99     M2-Open        -10.68%     17.11% lime       30    
+GDOT     $13.02     M3-Open         -4.69%     10.90% lime       30    
+GIC      $29.92     M3-Open        -18.31%     11.67% lime       30    
+GXO      $53.95     M1-Open         -3.82%      6.20% lime       30    
+HCI      $195.95    M1-Open         -3.66%      6.99% lime       30    
+ICE      $161.95    M3-Open         -7.22%     10.10% lime       30    
+ICHR     $18.55     M1-Open        -18.96%     23.67% lime       30    
+IPI      $28.49     M3-Open         -6.38%     13.51% lime       30    
+IR       $81.45     M2-Open         -0.48%      7.18% lime       30    
+MBUU     $29.16     M3-Open        -10.22%     16.83% lime       30    
+
+================================================================================
+
+MULTI-LEVEL HITS (Hit Multiple Monthly Levels):
+================================================================================
+Ticker   Price      Levels Hit   Recovered  All Levels                              
+--------------------------------------------------------------------------------
+ALEX     $20.61     6            6/6         M1-Low,M1-Open,M2-Low
+DHIL     $169.77    6            6/6         M1-Low,M1-Open,M2-Low
+MIRM     $80.05     6            6/6         M1-Low,M1-Open,M2-Low
+PRPH     $0.69      6            6/6         M1-Low,M1-Open,M2-Low
+SRDX     $42.98     6            6/6         M1-Low,M1-Open,M2-Low
+BBW      $57.70     6            3/6         M1-Low,M1-Open,M2-Low
+COOK     $1.06      6            3/6         M1-Low,M1-Open,M2-Low
+AJG      $258.70    6            3/6         M1-Low,M1-Open,M2-Low
+LIN      $425.10    6            3/6         M1-Low,M1-Open,M2-Low
+LMT      $482.55    6            4/6         M1-Low,M1-Open,M2-Low
+OMC      $78.70     6            5/6         M1-Low,M1-Open,M2-Low
+STRO     $10.38     6            5/6         M1-Low,M1-Open,M2-Low
+ACIW     $48.69     6            4/6         M1-Low,M1-Open,M2-Low
+CBZ      $52.23     6            3/6         M1-Low,M1-Open,M2-Low
+EPAC     $39.85     6            3/6         M1-Low,M1-Open,M2-Low
+NOC      $580.06    6            4/6         M1-Low,M1-Open,M2-Low
+NPK      $108.74    6            5/6         M1-Low,M1-Open,M2-Low
+AAOI     $40.64     5            5/5         M1-Open,M2-Low,M2-Open
+ADI      $276.73    5            5/5         M1-Open,M2-Low,M2-Open
+AFIB     $0.00      5            5/5         M1-Open,M2-Low,M2-Open
+
+================================================================================
+
+DETAILED ANALYSIS - ALL SETUPS:
+--------------------------------------------------------------------------------
+Ticker   Strength  Violation Date Days   Depth%   Recovery%  Level
+--------------------------------------------------------------------------------
+HOFT     12        2025-12-11     8        2.63%    25.90% M1-Open
+AAOI     11        2025-11-10     30      33.45%    68.98% M1-Open
+ADI      11        2025-11-10     30       7.37%    21.63% M3-Open
+AFG      11        2025-12-03     14       1.47%     6.36% M3-Low
+AFIB     11        2025-11-19     23      66.67%  2900.00% M1-Open
+AIV      11        2025-11-10     30       5.46%     8.83% M2-Open
+AMR      11        2025-11-10     30       5.52%    27.51% M1-Open
+AORT     11        2025-11-10     30       3.58%     7.47% M1-Open
+AP       11        2025-11-10     30      35.19%   142.86% M3-Open
+ASUR     11        2025-11-10     30       9.88%    11.83% M1-Open
+ATHA     11        2025-12-03     14       3.04%    96.08% M1-Open
+ATLC     11        2025-11-10     30      25.55%    42.96% M3-Open
+AVIR     11        2025-11-13     27      10.87%    19.51% M1-Open
+AYI      11        2025-11-07     30       4.21%     5.95% M1-Open
+BFLY     11        2025-11-10     30      16.09%    80.37% M1-Open
+BURL     11        2025-11-25     19       2.71%    14.96% M2-Open
+CDZI     11        2025-11-07     30      13.96%    25.88% M1-Open
+CHMI     11        2025-11-10     30      17.06%    22.03% M3-Open
+CROX     11        2025-11-10     30      14.42%    22.39% M3-Open
+CSBR     11        2025-12-01     16       7.26%    17.83% M1-Low
+CSX      11        2025-11-10     30       3.07%     5.59% M1-Open
+CTS      11        2025-11-07     30       4.08%     9.54% M1-Open
+CWST     11        2025-11-10     30      12.26%    16.34% M3-Open
+DBRG     11        2025-11-10     30       8.68%    25.02% M1-Open
+DY       11        2025-11-07     30       5.75%    27.82% M2-Open
+EZPW     11        2025-11-10     30       5.99%    13.52% M2-Open
+FELE     11        2025-11-07     30       3.01%     6.29% M3-Open
+FTAI     11        2025-11-11     29       3.82%    10.74% M2-Low
+FTK      11        2025-11-10     30      12.94%    23.69% M1-Open
+GVA      11        2025-11-10     30       9.78%    20.43% M2-Open
+HALO     11        2025-12-04     13       3.26%    10.79% M2-Low
+HIFS     11        2025-11-10     30       4.41%     5.96% M1-Open
+HTLD     11        2025-11-07     30      10.11%    21.83% M3-Open
+IDN      11        2025-11-07     30      25.09%    70.00% M3-Open
+INSE     11        2025-11-14     26       3.71%    25.91% M1-Open
+JLL      11        2025-11-07     30       4.83%    19.23% M1-Open
+JOUT     11        2025-11-07     30       4.71%    14.70% M1-Open
+KLIC     11        2025-11-07     30       7.88%    24.70% M2-Open
+KPTI     11        2025-11-10     30      25.62%    44.75% M3-Open
+KRMD     11        2025-11-10     30       8.77%    71.81% M3-Open
+KVHI     11        2025-11-07     30       3.71%    27.16% M1-Open
+LECO     11        2025-11-07     30       6.05%     9.32% M3-Open
+LFUS     11        2025-11-10     30       6.88%     7.88% M2-Open
+LIVN     11        2025-11-10     30      10.93%    26.94% M3-Open
+LPTH     11        2025-11-10     30       7.90%    13.26% M1-Open
+LQDT     11        2025-11-10     30      17.49%    38.20% M2-Open
+MLM      11        2025-11-10     30       3.88%     5.64% M2-Open
+MODG     11        2025-11-19     23       3.04%    29.11% M2-Open
+MUX      11        2025-11-10     30       8.51%    20.89% M1-Open
+NCNO     11        2025-12-05     12       3.01%    11.48% M1-Low
+
+================================================================================
+
+LEGEND:
+  Level Codes:
+    M1 = Most recent complete month
+    M2 = 2 months ago
+    M3 = 3 months ago
+    -Low, -Open, -Close, -High = The specific level violated
+
+  Metrics:
+    Depth%: How far below the level price went (bigger = more panic)
+    Recovery%: Bounce from violation low to current price
+    Below%: Current distance below level (negative = still below)
+    Levels Hit: Number of different monthly levels violated
+    Recovered: How many violated levels have been reclaimed
+
+TRADING STRATEGY:
+
+  [STRONG BUY] CONFIRMED REVERSALS:
+    - Price reclaimed the violated level
+    - EFI reversed from negative to positive
+    - Entry: Buy now or on pullback to reclaimed level
+    - Stop: Below violation low
+    - Target: Next monthly high or 2R+
+
+  [WATCH] EMERGING REVERSALS:
+    - Price still below level but EFI reversing
+    - Early reversal signal forming
+    - Action: Add to watchlist
+    - Entry: When price reclaims the level with volume
+
+  MULTI-LEVEL HITS:
+    - Violated multiple monthly levels = severe shakeout
+    - If recovering, these can be explosive moves
+    - Higher risk, higher reward setups
+
+WHY THIS WORKS:
+  Monthly levels represent key institutional price memory.
+  Breaks create panic selling from weak hands. When EFI
+  reverses positive, it signals smart money accumulation.
+  In uptrends, these reversals often produce V-shaped recoveries.
