@@ -1,0 +1,81 @@
+================================================================================
+TRIPLE SIGNAL SCANNER - TRADINGVIEW WATCHLIST
+================================================================================
+Generated: 2026-01-25 20:24:47
+Total symbols: 59
+================================================================================
+
+These stocks have ALL 4 confirmations:
+  ✓ In Channel (consolidating)
+  ✓ Price in Buy Zone
+  ✓ EFI Oversold
+  ✓ Uptrend
+
+Copy the line below and paste into TradingView watchlist:
+--------------------------------------------------------------------------------
+
+FFLG,MSTB,IAGG,LGHT,KCAI,FXD,JMHI,IXG,OSEA,FXO,LITL,CWS,MSTI,MAGG,PPTY,ARKK,MUST,DYNF,PBDC,BKLN,ANEW,FMUB,GEVX,PEJ,HYD,MSSS,MDEV,NSCR,CLIX,HAPI,DXJ,DISO,ADME,NBCR,CHAU,AFSC,CTIF,IBTJ,MSFD,GPTY,DPST,PILL,FB,CDEI,IBTI,DDIV,ABFL,AUGZ,MINN,FLCC,DYLD,NAIL,KBE,DFGX,EBIZ,BDVG,GSLC,GSIB,NUSA
+
+--------------------------------------------------------------------------------
+
+Individual symbols (one per line):
+--------------------------------------------------------------------------------
+FFLG
+MSTB
+IAGG
+LGHT
+KCAI
+FXD
+JMHI
+IXG
+OSEA
+FXO
+LITL
+CWS
+MSTI
+MAGG
+PPTY
+ARKK
+MUST
+DYNF
+PBDC
+BKLN
+ANEW
+FMUB
+GEVX
+PEJ
+HYD
+MSSS
+MDEV
+NSCR
+CLIX
+HAPI
+DXJ
+DISO
+ADME
+NBCR
+CHAU
+AFSC
+CTIF
+IBTJ
+MSFD
+GPTY
+DPST
+PILL
+FB
+CDEI
+IBTI
+DDIV
+ABFL
+AUGZ
+MINN
+FLCC
+DYLD
+NAIL
+KBE
+DFGX
+EBIZ
+BDVG
+GSLC
+GSIB
+NUSA
