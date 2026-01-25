@@ -1,0 +1,205 @@
+================================================================================
+CHANNEL + ROCWMA CONFLUENCE SCANNER - RESULTS
+================================================================================
+Scan Date: 2025-12-25 21:12:07
+
+STRATEGY:
+  Find stocks in monthly channels showing ROCWMA triangle UP signals
+  BEFORE the channel breakout occurs. Early entry at support with
+  momentum confirmation = high probability setups.
+
+Total Setups Found: 629
+  EXCELLENT (Bottom Third): 43
+  GOOD (Lower Half): 94
+  FAIR (Middle): 96
+
+================================================================================
+
+TOP 20 BEST SETUPS (Highest Signal Strength):
+================================================================================
+Ticker   Price      Zone           Signal Date    Days   ROCWMA     Strength 
+--------------------------------------------------------------------------------
+AJG      $258.70    Bottom Third   2025-12-22     1      bull       12       
+TOST     $36.68     Bottom Third   2025-12-17     4      bull       12       
+TW       $107.27    Bottom Third   2025-12-22     1      bull       12       
+AMZN     $232.14    Lower Half     2025-12-18     3      bull       11       
+AVB      $181.64    Lower Half     2025-12-18     3      bull       11       
+CCCS     $8.01      Bottom Third   2025-12-18     3      bull       11       
+LYV      $144.10    Lower Half     2025-12-18     3      bull       11       
+PRI      $262.26    Lower Half     2025-12-17     4      bull       11       
+TDG      $1314.52   Bottom Third   2025-12-23     0      bull       11       
+TDS      $40.59     Top Third      2025-12-22     1      bull       11       
+ARMK     $38.02     Lower Half     2025-12-17     4      bull       10       
+BMRN     $61.14     Top Third      2025-12-19     2      bull       10       
+FAST     $41.72     Bottom Third   N/A            -      bull       10       
+FTDR     $57.95     Lower Half     2025-12-18     3      bull       10       
+HWM      $209.57    Top Third      2025-12-19     2      bull       10       
+LIN      $425.10    Lower Half     2025-12-19     2      bull       10       
+LKFN     $59.35     Bottom Third   N/A            -      bull       10       
+MIRM     $80.05     Top Third      2025-12-19     2      bull       10       
+MSM      $87.00     Lower Half     2025-12-19     2      bull       10       
+NWS      $30.00     Bottom Third   N/A            -      bull       10       
+
+================================================================================
+
+[EXCELLENT] BOTTOM THIRD OF CHANNEL (Best Buy Zone):
+================================================================================
+Ticker   Price      Signal Date    Days   Position   ROCWMA     Notes
+--------------------------------------------------------------------------------
+AJG      $258.70    2025-12-22     1          26.2% bull       Bottom third, ROCWMA bull
+TOST     $36.68     2025-12-17     4          25.9% bull       Bottom third, ROCWMA bull
+TW       $107.27    2025-12-22     1          12.5% bull       Bottom third, ROCWMA bull
+CCCS     $8.01      2025-12-18     3          29.7% bull       Bottom third, ROCWMA bull
+TDG      $1314.52   2025-12-23     0          27.8% bull       Bottom third, ROCWMA bull
+FAST     $41.72     N/A            -          24.1% bull       Bottom third, ROCWMA bull
+LKFN     $59.35     N/A            -          25.9% bull       Bottom third, ROCWMA bull
+NWS      $30.00     N/A            -          27.5% bull       Bottom third, ROCWMA bull
+NWSA     $26.40     N/A            -          23.7% bull       Bottom third, ROCWMA bull
+OFLX     $28.36     N/A            -          24.1% bull       Bottom third, ROCWMA bull
+SYBT     $66.95     N/A            -          22.5% bull       Bottom third, ROCWMA bull
+UFPI     $91.53     N/A            -          21.4% bull       Bottom third, ROCWMA bull
+ALG      $173.60    N/A            -          22.6% bull       Bottom third, ROCWMA bull
+BJ       $93.57     N/A            -          28.4% bull       Bottom third, ROCWMA bull
+CHD      $85.25     N/A            -          23.2% bull       Bottom third, ROCWMA bull
+COLD     $12.20     N/A            -          31.3% bull       Bottom third, ROCWMA bull
+CTAS     $190.66    N/A            -          23.4% bull       Bottom third, ROCWMA bull
+CXM      $7.69      N/A            -          32.7% bull       Bottom third, ROCWMA bull
+DRVN     $14.92     N/A            -          23.5% bull       Bottom third, ROCWMA bull
+EFX      $219.99    N/A            -          25.7% bull       Bottom third, ROCWMA bull
+FCBC     $33.95     N/A            -          26.9% bull       Bottom third, ROCWMA bull
+GIC      $29.92     N/A            -          30.2% bull       Bottom third, ROCWMA bull
+HNI      $42.21     N/A            -          29.0% bull       Bottom third, ROCWMA bull
+IDT      $51.46     N/A            -          22.7% bull       Bottom third, ROCWMA bull
+IIIN     $32.05     N/A            -          28.1% bull       Bottom third, ROCWMA bull
+INTU     $674.14    N/A            -          28.2% bull       Bottom third, ROCWMA bull
+KDP      $27.90     N/A            -          27.1% bull       Bottom third, ROCWMA bull
+LNN      $117.58    N/A            -          27.0% bull       Bottom third, ROCWMA bull
+MMC      $185.90    N/A            -          26.9% bull       Bottom third, ROCWMA bull
+MTDR     $41.74     N/A            -          32.2% bull       Bottom third, ROCWMA bull
+
+================================================================================
+
+[GOOD] LOWER HALF OF CHANNEL (Good Buy Zone):
+================================================================================
+Ticker   Price      Signal Date    Days   Position   ROCWMA     R:R     
+--------------------------------------------------------------------------------
+AMZN     $232.14    2025-12-18     3          44.4% bull         1.25x
+AVB      $181.64    2025-12-18     3          39.4% bull         1.54x
+LYV      $144.10    2025-12-18     3          37.6% bull         1.66x
+PRI      $262.26    2025-12-17     4          40.6% bull         1.46x
+ARMK     $38.02     2025-12-17     4          33.0% bull         2.03x
+FTDR     $57.95     2025-12-18     3          43.7% bull         1.29x
+LIN      $425.10    2025-12-19     2          39.2% bull         1.55x
+MSM      $87.00     2025-12-19     2          48.3% bull         1.07x
+ABG      $237.38    N/A            -          41.8% bull         1.39x
+BALL     $52.23     N/A            -          50.0% bull         1.00x
+BDC      $118.86    N/A            -          47.0% bull         1.13x
+DRI      $187.00    N/A            -          35.8% bull         1.79x
+ECL      $264.74    2025-12-22     1          40.9% bull         1.45x
+ED       $98.95     2025-12-23     0          45.0% bull         1.22x
+FG       $31.24     N/A            -          35.6% bull         1.81x
+IOSP     $78.08     N/A            -          41.4% bull         1.41x
+LTH      $26.92     N/A            -          41.7% bull         1.40x
+PK       $10.69     N/A            -          40.0% bull         1.50x
+PM       $162.06    N/A            -          49.7% bull         1.01x
+RWT      $5.49      N/A            -          38.5% bull         1.60x
+
+================================================================================
+
+DETAILED ANALYSIS - ALL SETUPS:
+--------------------------------------------------------------------------------
+Ticker   Strength  Signal Date    Days   Zone           ROCWMA Osc   R:R     
+--------------------------------------------------------------------------------
+AJG      12        2025-12-22     1      Bottom Third   -0.37          2.82x
+TOST     12        2025-12-17     4      Bottom Third   0.57           2.87x
+TW       12        2025-12-22     1      Bottom Third   0.26           7.03x
+AMZN     11        2025-12-18     3      Lower Half     0.04           1.25x
+AVB      11        2025-12-18     3      Lower Half     -0.11          1.54x
+CCCS     11        2025-12-18     3      Bottom Third   -0.15          2.37x
+LYV      11        2025-12-18     3      Lower Half     0.07           1.66x
+PRI      11        2025-12-17     4      Lower Half     0.20           1.46x
+TDG      11        2025-12-23     0      Bottom Third   -0.26          2.60x
+TDS      11        2025-12-22     1      Top Third      3.19           0.37x
+ARMK     10        2025-12-17     4      Lower Half     -0.07          2.03x
+BMRN     10        2025-12-19     2      Top Third      3.95           0.27x
+FAST     10        N/A            -      Bottom Third   0.17           3.14x
+FTDR     10        2025-12-18     3      Lower Half     -0.20          1.29x
+HWM      10        2025-12-19     2      Top Third      1.00           0.06x
+LIN      10        2025-12-19     2      Lower Half     -0.12          1.55x
+LKFN     10        N/A            -      Bottom Third   0.39           2.86x
+MIRM     10        2025-12-19     2      Top Third      2.34           0.08x
+MSM      10        2025-12-19     2      Lower Half     0.11           1.07x
+NWS      10        N/A            -      Bottom Third   0.51           2.63x
+NWSA     10        N/A            -      Bottom Third   0.47           3.22x
+OFLX     10        N/A            -      Bottom Third   0.33           3.15x
+RMCF     10        2025-12-22     1      Middle Third   2.50           0.85x
+SYBT     10        N/A            -      Bottom Third   0.66           3.45x
+UFPI     10        N/A            -      Bottom Third   0.86           3.68x
+ABG      9         N/A            -      Lower Half     0.48           1.39x
+ADEA     9         2025-12-22     1      Top Third      0.48           0.20x
+ALG      9         N/A            -      Bottom Third   0.13           3.43x
+BALL     9         N/A            -      Lower Half     2.37           1.00x
+BDC      9         N/A            -      Lower Half     0.89           1.13x
+BJ       9         N/A            -      Bottom Third   1.30           2.52x
+BURL     9         2025-12-17     4      Top Third      1.33           0.48x
+CHD      9         N/A            -      Bottom Third   -0.14          3.32x
+COLD     9         N/A            -      Bottom Third   0.11           2.19x
+CTAS     9         N/A            -      Bottom Third   1.00           3.28x
+CXM      9         N/A            -      Bottom Third   0.57           2.06x
+DRI      9         N/A            -      Lower Half     1.16           1.79x
+DRVN     9         N/A            -      Bottom Third   0.33           3.26x
+ECL      9         2025-12-22     1      Lower Half     -0.31          1.45x
+ED       9         2025-12-23     0      Lower Half     -0.30          1.22x
+
+================================================================================
+
+LEGEND:
+  Zone: Where price is in the channel
+    - Bottom Third (0-33%): BEST buy zone at support
+    - Lower Half (33-50%): GOOD buy zone
+    - Middle (50-66%): FAIR, wait for pullback
+
+  Signal Date: When ROCWMA triangle UP occurred
+    - Shows the exact date momentum shifted bullish
+    - 'Days' column shows days since the signal
+
+  ROCWMA: ROC-Weighted MA oscillator state
+    - bull: Bullish momentum
+    - Triangle UP: Reversal signal from bearish to bullish
+
+  R:R: Risk/Reward ratio
+    - Risk: Distance to channel low (stop loss)
+    - Reward: Distance to channel high (target)
+
+  Profit%: Potential upside to channel high
+
+TRADING STRATEGY:
+
+  ENTRY TRIGGERS:
+    1. Price in lower half of channel (preferably bottom third)
+    2. ROCWMA triangle UP appears OR already bull state
+    3. Stock in uptrend (pullback buy, not falling knife)
+
+  ENTRY: Buy when ROCWMA shows triangle UP inside channel
+         Enter BEFORE breakout arrow for better risk/reward
+
+  STOP LOSS: Below channel low (or recent swing low)
+
+  TARGET:
+    - Conservative: Channel high (resistance)
+    - Aggressive: Channel breakout + channel range
+
+WHY THIS WORKS:
+  Channels represent institutional accumulation/distribution zones.
+  ROCWMA triangle UP inside channel = smart money stepping in EARLY
+  at support. You're entering with momentum confirmation BEFORE the
+  breakout, giving you:
+    - Better entry price
+    - Lower risk (closer to support)
+    - Higher reward (more room to channel high)
+
+CONFLUENCE CONFIRMATION:
+  When BOTH conditions align:
+    ✓ Channel structure (price memory)
+    ✓ ROCWMA momentum (smart money flow)
+  = High-probability setup!

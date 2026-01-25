@@ -1,0 +1,2529 @@
+================================================================================
+ULTIMATE HIGH PROBABILITY SCANNER - $0-20 PRICE RANGE
+================================================================================
+Scan Date: 2026-01-25 21:39:41
+
+STRATEGY CRITERIA:
+  1. Price between $0 - $20
+  2. Channel consolidation detected (any duration)
+  3. EFI oversold (MAROON or ORANGE - histogram below 0)
+  4. Normalized price > 0 (Close above 68 EMA - DIVERGENCE setup)
+  (Fader color shown for reference - RED or GREEN both accepted)
+
+QUALITY SCORE:
+  Based on consolidation duration, oversold level, EFI strength, volume
+  Higher score = higher probability setup
+
+Total High Probability Setups Found: 139
+================================================================================
+
+TOP HIGH PROBABILITY SETUPS (sorted by quality score):
+--------------------------------------------------------------------------------
+Ticker   Score   Days   Range    Pos%   Norm    EFI      Fader   Vol 
+------------------------------------------------------------------------------------------
+XXII     85      20     48.7   % 11   % 3.13    MAROON   RED     3.6x
+STTK     84      20     58.8   % 59   % 1.00    MAROON   RED     8.8x
+LPTH     81      20     79.1   % 58   % 2.96    MAROON   GREEN   1.4x
+LTRX     78      20     27.0   % 45   % 0.72    MAROON   GREEN   1.8x
+RGNX     76      20     25.8   % 28   % 0.68    MAROON   GREEN   1.9x
+FCF      72      20     11.2   % 49   % 0.60    MAROON   GREEN   1.5x
+OSBC     71      20     14.6   % 25   % 0.48    MAROON   GREEN   2.0x
+RMR      71      20     13.9   % 64   % 0.45    MAROON   GREEN   1.6x
+BANC     66      20     13.1   % 32   % 1.09    MAROON   GREEN   1.1x
+HBAN     66      20     10.3   % 12   % 0.26    MAROON   RED     1.8x
+RLMD     66      20     39.0   % 22   % 0.27    MAROON   RED     1.8x
+BOTJ     65      20     7.8    % 57   % 0.62    ORANGE   RED     3.8x
+BCOW     63      20     1.7    % 37   % 0.13    MAROON   RED     2.2x
+FFWM     63      20     9.5    % 7    % 0.13    MAROON   RED     1.6x
+GES      63      20     1.0    % 47   % 0.15    MAROON   GREEN   23.8x
+STHO     63      20     25.8   % 47   % 0.15    MAROON   RED     1.8x
+MCW      62      20     14.0   % 52   % 0.24    MAROON   GREEN   1.4x
+EDUC     61      20     28.5   % 51   % 0.05    MAROON   GREEN   3.1x
+REAL     61      20     14.5   % 1    % 1.02    MAROON   RED     1.0x
+SBGI     61      20     8.3    % 45   % 0.07    MAROON   GREEN   2.0x
+AXTI     60      20     89.8   % 27   % 3.28    MAROON   RED     0.6x
+CODA     60      20     38.9   % 54   % 1.13    MAROON   GREEN   0.6x
+EAF      60      20     23.4   % 60   % 1.67    MAROON   GREEN   0.7x
+FIGS     60      20     17.0   % 20   % 0.63    MAROON   RED     1.2x
+GTX      60      20     14.5   % 40   % 1.06    MAROON   RED     0.8x
+LEG      60      20     19.0   % 70   % 1.30    MAROON   GREEN   0.8x
+MXL      60      20     19.9   % 30   % 1.08    MAROON   GREEN   0.9x
+NRGV     60      20     44.0   % 53   % 1.05    MAROON   GREEN   0.9x
+NRIX     60      20     18.9   % 49   % 2.08    MAROON   GREEN   0.8x
+OMER     60      20     53.2   % 7    % 1.47    MAROON   RED     0.3x
+PTN      60      20     47.6   % 42   % 1.20    MAROON   GREEN   0.3x
+RAIL     60      20     14.5   % 36   % 1.01    MAROON   RED     0.5x
+SHC      60      20     14.4   % 46   % 1.22    MAROON   RED     0.8x
+TWIN     60      20     28.8   % 58   % 1.54    MAROON   GREEN   0.5x
+WVE      60      20     47.5   % 4    % 1.01    MAROON   RED     0.6x
+BWB      55      20     12.5   % 46   % 0.55    MAROON   GREEN   1.1x
+DBI      55      20     22.4   % 8    % 0.83    MAROON   RED     0.6x
+KRNY     55      20     17.1   % 44   % 0.54    MAROON   GREEN   1.1x
+MAC      54      20     8.0    % 44   % 0.43    MAROON   RED     1.2x
+EBS      52      20     32.6   % 39   % 0.69    MAROON   RED     0.6x
+QNCX     52      20     46.5   % 44   % 0.24    MAROON   GREEN   1.2x
+HBI      51      20     6.4    % 41   % 0.07    ORANGE   RED     8.1x
+VLY      51      20     9.9    % 32   % 0.51    MAROON   GREEN   1.1x
+APVO     50      20     144.4  % 12   % 2.89    ORANGE   RED     0.0x
+CYRX     50      20     21.8   % 48   % 0.63    MAROON   GREEN   1.0x
+HCSG     50      20     19.1   % 67   % 0.61    MAROON   GREEN   0.7x
+PASG     50      20     109.2  % 29   % 1.55    ORANGE   RED     0.9x
+SVRA     50      20     20.9   % 48   % 0.63    MAROON   GREEN   0.8x
+MITT     49      20     11.8   % 57   % 0.57    MAROON   GREEN   0.6x
+NXTC     49      20     32.7   % 24   % 0.59    MAROON   RED     0.7x
+JAMF     48      20     0.3    % 22   % 0.53    MAROON   RED     0.5x
+NAII     48      20     57.5   % 55   % 0.53    MAROON   RED     0.9x
+SEM      48      20     5.7    % 60   % 0.54    MAROON   GREEN   0.8x
+SWBI     48      20     12.5   % 58   % 0.67    ORANGE   GREEN   1.1x
+UMH      48      20     6.1    % 42   % 0.53    MAROON   RED     0.9x
+IBIO     47      20     70.0   % 46   % 0.50    MAROON   GREEN   0.2x
+NVFY     47      20     12.9   % 52   % 0.48    MAROON   RED     0.8x
+PDLB     47      20     10.5   % 54   % 0.51    MAROON   GREEN   0.8x
+BALY     46      20     14.5   % 42   % 0.46    MAROON   RED     0.6x
+KVHI     46      20     16.5   % 35   % 0.44    MAROON   RED     0.9x
+UNIT     46      20     27.1   % 44   % 0.46    MAROON   GREEN   0.5x
+F        45      20     11.0   % 35   % 0.43    MAROON   RED     0.8x
+FSEA     45      20     6.4    % 42   % 0.43    MAROON   RED     0.3x
+HLMN     45      20     18.9   % 70   % 0.42    MAROON   GREEN   0.6x
+KW       45      20     6.2    % 51   % 0.42    MAROON   RED     0.7x
+OWLT     45      20     34.2   % 8    % 0.22    MAROON   RED     1.1x
+SCS      45      20     6.9    % 65   % 0.30    ORANGE   GREEN   1.3x
+ASUR     44      20     15.5   % 26   % 0.29    MAROON   RED     1.1x
+ATHA     44      20     34.0   % 1    % 0.38    MAROON   RED     0.3x
+KRMD     44      20     28.8   % 32   % 0.38    MAROON   RED     0.5x
+PETS     44      20     18.2   % 33   % 0.38    MAROON   GREEN   0.4x
+SBH      44      20     27.7   % 35   % 0.38    MAROON   GREEN   0.9x
+PPSI     43      20     40.3   % 54   % 0.33    MAROON   RED     0.8x
+VTLE     43      20     25.0   % 61   % 0.74    ORANGE   RED     0.0x
+COMM     42      20     16.5   % 28   % 0.30    MAROON   RED     0.6x
+CPIX     42      20     43.1   % 10   % 0.30    MAROON   RED     1.0x
+CTKB     42      20     23.4   % 33   % 0.31    MAROON   RED     0.9x
+EVC      42      20     19.4   % 60   % 0.32    MAROON   GREEN   0.6x
+FNB      42      20     8.5    % 17   % 0.28    MAROON   GREEN   0.9x
+AAL      41      20     12.6   % 1    % 0.24    MAROON   RED     0.7x
+ACEL     41      20     7.3    % 29   % 0.25    MAROON   RED     0.6x
+AOUT     41      20     30.6   % 35   % 0.25    MAROON   RED     0.7x
+ARMP     41      20     40.5   % 15   % 0.26    MAROON   RED     0.6x
+MCS      41      20     9.8    % 59   % 0.24    MAROON   GREEN   0.9x
+AEVA     40      20     83.9   % 34   % 0.22    MAROON   RED     1.0x
+BWEN     40      20     48.7   % 32   % 0.23    MAROON   RED     0.5x
+EWCZ     40      20     33.3   % 48   % 0.02    MAROON   GREEN   1.1x
+MRVI     40      20     28.7   % 57   % 0.23    MAROON   GREEN   0.5x
+NVCR     40      20     18.4   % 28   % 0.23    MAROON   RED     0.8x
+XPOF     40      20     14.2   % 21   % 0.22    MAROON   RED     0.6x
+ZDGE     40      20     26.1   % 38   % 0.23    MAROON   RED     0.4x
+ACCO     39      20     14.3   % 58   % 0.17    MAROON   GREEN   0.7x
+AHCO     39      20     14.6   % 40   % 0.17    MAROON   RED     0.8x
+ATXS     39      20     8.5    % 33   % 0.60    ORANGE   RED     0.0x
+CWK      39      20     10.7   % 29   % 0.19    MAROON   RED     0.9x
+HLLY     39      20     12.6   % 35   % 0.17    MAROON   RED     0.5x
+ICCC     39      20     22.8   % 35   % 0.19    MAROON   RED     0.7x
+INSE     39      20     12.5   % 22   % 0.20    MAROON   RED     0.6x
+OLPX     39      20     44.8   % 51   % 0.19    MAROON   GREEN   0.3x
+RLAY     39      20     25.0   % 24   % 0.16    MAROON   RED     1.0x
+TNDM     39      20     22.1   % 7    % 0.19    MAROON   RED     1.0x
+AIV      38      20     3.6    % 33   % 0.13    MAROON   RED     0.8x
+BFIN     38      20     16.9   % 46   % 0.14    MAROON   RED     0.0x
+BHR      38      20     15.5   % 37   % 0.14    MAROON   GREEN   0.6x
+CFFN     38      20     9.2    % 37   % 0.13    MAROON   GREEN   0.8x
+CRNC     38      20     22.4   % 33   % 0.15    MAROON   RED     0.6x
+CTO      38      20     5.4    % 33   % 0.53    ORANGE   RED     1.0x
+FBIO     38      20     39.4   % 12   % 0.13    MAROON   RED     0.4x
+IDN      38      20     18.9   % 13   % 0.01    MAROON   RED     1.1x
+KOPN     38      20     56.1   % 45   % 0.15    MAROON   GREEN   0.9x
+RLJ      38      20     8.4    % 35   % 0.13    MAROON   GREEN   0.8x
+SBRA     38      20     8.0    % 32   % 0.01    MAROON   RED     1.1x
+SSP      38      20     22.5   % 16   % 0.13    MAROON   RED     0.9x
+CCO      37      20     15.3   % 30   % 0.11    MAROON   RED     0.6x
+CTLP     37      20     3.6    % 63   % 0.10    MAROON   GREEN   0.8x
+LADR     37      20     7.7    % 63   % 0.10    MAROON   GREEN   0.7x
+PACK     37      20     16.8   % 17   % 0.08    MAROON   RED     0.8x
+PRLD     37      20     70.0   % 21   % 0.11    MAROON   RED     0.4x
+TRTX     37      20     8.3    % 54   % 0.06    MAROON   GREEN   1.0x
+BRBS     36      20     8.0    % 55   % 0.08    MAROON   GREEN   0.7x
+PLBY     36      20     17.2   % 30   % 0.06    MAROON   RED     0.7x
+PNBK     36      20     25.3   % 24   % 0.06    MAROON   RED     0.6x
+SFIX     36      20     20.6   % 24   % 0.07    MAROON   RED     0.8x
+CODX     35      20     217.8  % 12   % 0.41    ORANGE   RED     0.1x
+HTZ      35      20     19.6   % 40   % 0.02    MAROON   GREEN   0.8x
+LPRO     35      20     56.7   % 46   % 0.04    MAROON   GREEN   0.4x
+NDLS     35      20     45.9   % 57   % 0.02    MAROON   RED     0.5x
+PDM      35      20     8.8    % 45   % 0.03    MAROON   RED     1.0x
+QUAD     35      20     12.5   % 42   % 0.02    MAROON   RED     0.5x
+KZR      31      20     8.1    % 29   % 0.24    ORANGE   RED     0.8x
+NERV     30      20     29.6   % 20   % 0.13    ORANGE   RED     1.0x
+UBCP     30      20     10.7   % 34   % 0.22    ORANGE   RED     0.9x
+MERC     28      20     47.7   % 58   % 0.16    ORANGE   RED     0.6x
+CIM      27      20     9.2    % 55   % 0.09    ORANGE   GREEN   0.5x
+ENTA     26      20     41.9   % 18   % 0.06    ORANGE   RED     1.0x
+SMRT     26      20     21.4   % 28   % 0.06    ORANGE   RED     1.0x
+KPTI     25      20     52.3   % 23   % 0.03    ORANGE   RED     0.8x
+MIND     25      20     44.2   % 51   % 0.00    ORANGE   RED     1.0x
+MPW      25      20     12.0   % 22   % 0.01    ORANGE   RED     0.9x
+
+================================================================================
+DETAILED SIGNAL ANALYSIS
+================================================================================
+
+SIGNAL #1 - XXII - Quality Score: 85/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $10.51
+  Consolidation:       20 days
+  Range:               $9.99 - $14.85 (48.7%)
+  Position in Range:   11% (lower third = buy zone)
+  Normalized Price:    3.13 (DIVERGENCE)
+  Force Index:         -3.39 (MAROON)
+  Fader Signal:        RED
+  Volume:              3.6x average
+
+  SETUP: XXII consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 85/100
+
+SIGNAL #2 - STTK - Quality Score: 84/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $4.15
+  Consolidation:       20 days
+  Range:               $3.08 - $4.89 (58.8%)
+  Position in Range:   59% (lower third = buy zone)
+  Normalized Price:    1.00 (DIVERGENCE)
+  Force Index:         -0.33 (MAROON)
+  Fader Signal:        RED
+  Volume:              8.8x average
+
+  SETUP: STTK consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 84/100
+
+SIGNAL #3 - LPTH - Quality Score: 81/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $12.44
+  Consolidation:       20 days
+  Range:               $8.51 - $15.24 (79.1%)
+  Position in Range:   58% (lower third = buy zone)
+  Normalized Price:    2.96 (DIVERGENCE)
+  Force Index:         -0.36 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.4x average
+
+  SETUP: LPTH consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 81/100
+
+SIGNAL #4 - LTRX - Quality Score: 78/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.31
+  Consolidation:       20 days
+  Range:               $5.62 - $7.14 (27.0%)
+  Position in Range:   45% (lower third = buy zone)
+  Normalized Price:    0.72 (DIVERGENCE)
+  Force Index:         -0.24 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.8x average
+
+  SETUP: LTRX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 78/100
+
+SIGNAL #5 - RGNX - Quality Score: 76/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $13.79
+  Consolidation:       20 days
+  Range:               $12.87 - $16.19 (25.8%)
+  Position in Range:   28% (lower third = buy zone)
+  Normalized Price:    0.68 (DIVERGENCE)
+  Force Index:         -1.55 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.9x average
+
+  SETUP: RGNX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 76/100
+
+SIGNAL #6 - FCF - Quality Score: 72/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.47
+  Consolidation:       20 days
+  Range:               $16.56 - $18.42 (11.2%)
+  Position in Range:   49% (lower third = buy zone)
+  Normalized Price:    0.60 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.5x average
+
+  SETUP: FCF consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 72/100
+
+SIGNAL #7 - OSBC - Quality Score: 71/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $19.90
+  Consolidation:       20 days
+  Range:               $19.19 - $22.00 (14.6%)
+  Position in Range:   25% (lower third = buy zone)
+  Normalized Price:    0.48 (DIVERGENCE)
+  Force Index:         -1.15 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              2.0x average
+
+  SETUP: OSBC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 71/100
+
+SIGNAL #8 - RMR - Quality Score: 71/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $16.05
+  Consolidation:       20 days
+  Range:               $14.73 - $16.78 (13.9%)
+  Position in Range:   64% (lower third = buy zone)
+  Normalized Price:    0.45 (DIVERGENCE)
+  Force Index:         -0.15 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.6x average
+
+  SETUP: RMR consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 71/100
+
+SIGNAL #9 - BANC - Quality Score: 66/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $19.92
+  Consolidation:       20 days
+  Range:               $19.11 - $21.61 (13.1%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    1.09 (DIVERGENCE)
+  Force Index:         -0.89 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.1x average
+
+  SETUP: BANC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 66/100
+
+SIGNAL #10 - HBAN - Quality Score: 66/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.35
+  Consolidation:       20 days
+  Range:               $17.14 - $18.91 (10.3%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    0.26 (DIVERGENCE)
+  Force Index:         -1.11 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.8x average
+
+  SETUP: HBAN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 66/100
+
+SIGNAL #11 - RLMD - Quality Score: 66/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.90
+  Consolidation:       20 days
+  Range:               $3.59 - $4.99 (39.0%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    0.27 (DIVERGENCE)
+  Force Index:         -0.24 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.8x average
+
+  SETUP: RLMD consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 66/100
+
+SIGNAL #12 - BOTJ - Quality Score: 65/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.12
+  Consolidation:       20 days
+  Range:               $17.34 - $18.70 (7.8%)
+  Position in Range:   57% (lower third = buy zone)
+  Normalized Price:    0.62 (DIVERGENCE)
+  Force Index:         -0.26 (ORANGE)
+  Fader Signal:        RED
+  Volume:              3.8x average
+
+  SETUP: BOTJ consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 65/100
+
+SIGNAL #13 - BCOW - Quality Score: 63/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.10
+  Consolidation:       20 days
+  Range:               $11.03 - $11.22 (1.7%)
+  Position in Range:   37% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              2.2x average
+
+  SETUP: BCOW consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 63/100
+
+SIGNAL #14 - FFWM - Quality Score: 63/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.01
+  Consolidation:       20 days
+  Range:               $5.97 - $6.53 (9.5%)
+  Position in Range:   7% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.39 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.6x average
+
+  SETUP: FFWM consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 63/100
+
+SIGNAL #15 - GES - Quality Score: 63/100
+--------------------------------------------------------------------------------
+  Date:                01/22/2026
+  Current Price:       $16.81
+  Consolidation:       20 days
+  Range:               $16.73 - $16.90 (1.0%)
+  Position in Range:   47% (lower third = buy zone)
+  Normalized Price:    0.15 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              23.8x average
+
+  SETUP: GES consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 63/100
+
+SIGNAL #16 - STHO - Quality Score: 63/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $8.21
+  Consolidation:       20 days
+  Range:               $7.33 - $9.22 (25.8%)
+  Position in Range:   47% (lower third = buy zone)
+  Normalized Price:    0.15 (DIVERGENCE)
+  Force Index:         -0.88 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.8x average
+
+  SETUP: STHO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 63/100
+
+SIGNAL #17 - MCW - Quality Score: 62/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.86
+  Consolidation:       20 days
+  Range:               $5.47 - $6.23 (14.0%)
+  Position in Range:   52% (lower third = buy zone)
+  Normalized Price:    0.24 (DIVERGENCE)
+  Force Index:         -0.09 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.4x average
+
+  SETUP: MCW consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 62/100
+
+SIGNAL #18 - EDUC - Quality Score: 61/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $1.41
+  Consolidation:       20 days
+  Range:               $1.23 - $1.58 (28.5%)
+  Position in Range:   51% (lower third = buy zone)
+  Normalized Price:    0.05 (DIVERGENCE)
+  Force Index:         -0.00 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              3.1x average
+
+  SETUP: EDUC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 61/100
+
+SIGNAL #19 - REAL - Quality Score: 61/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $15.22
+  Consolidation:       20 days
+  Range:               $15.19 - $17.39 (14.5%)
+  Position in Range:   1% (lower third = buy zone)
+  Normalized Price:    1.02 (DIVERGENCE)
+  Force Index:         -2.00 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: REAL consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 61/100
+
+SIGNAL #20 - SBGI - Quality Score: 61/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $15.05
+  Consolidation:       20 days
+  Range:               $14.50 - $15.71 (8.3%)
+  Position in Range:   45% (lower third = buy zone)
+  Normalized Price:    0.07 (DIVERGENCE)
+  Force Index:         -0.28 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              2.0x average
+
+  SETUP: SBGI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 61/100
+
+SIGNAL #21 - AXTI - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.40
+  Consolidation:       20 days
+  Range:               $14.05 - $26.66 (89.8%)
+  Position in Range:   27% (lower third = buy zone)
+  Normalized Price:    3.28 (DIVERGENCE)
+  Force Index:         -5.76 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: AXTI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #22 - CODA - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $10.65
+  Consolidation:       20 days
+  Range:               $8.80 - $12.22 (38.9%)
+  Position in Range:   54% (lower third = buy zone)
+  Normalized Price:    1.13 (DIVERGENCE)
+  Force Index:         -0.22 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.6x average
+
+  SETUP: CODA consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #23 - EAF - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.33
+  Consolidation:       20 days
+  Range:               $15.21 - $18.77 (23.4%)
+  Position in Range:   60% (lower third = buy zone)
+  Normalized Price:    1.67 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.7x average
+
+  SETUP: EAF consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #24 - FIGS - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.05
+  Consolidation:       20 days
+  Range:               $10.69 - $12.50 (17.0%)
+  Position in Range:   20% (lower third = buy zone)
+  Normalized Price:    0.63 (DIVERGENCE)
+  Force Index:         -1.30 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: FIGS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #25 - GTX - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.82
+  Consolidation:       20 days
+  Range:               $16.84 - $19.28 (14.5%)
+  Position in Range:   40% (lower third = buy zone)
+  Normalized Price:    1.06 (DIVERGENCE)
+  Force Index:         -0.91 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: GTX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #26 - LEG - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $12.15
+  Consolidation:       20 days
+  Range:               $10.73 - $12.77 (19.0%)
+  Position in Range:   70% (lower third = buy zone)
+  Normalized Price:    1.30 (DIVERGENCE)
+  Force Index:         -0.03 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: LEG consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #27 - MXL - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.41
+  Consolidation:       20 days
+  Range:               $17.36 - $20.82 (19.9%)
+  Position in Range:   30% (lower third = buy zone)
+  Normalized Price:    1.08 (DIVERGENCE)
+  Force Index:         -0.95 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
+
+  SETUP: MXL consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #28 - NRGV - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.44
+  Consolidation:       20 days
+  Range:               $4.41 - $6.35 (44.0%)
+  Position in Range:   53% (lower third = buy zone)
+  Normalized Price:    1.05 (DIVERGENCE)
+  Force Index:         -0.14 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
+
+  SETUP: NRGV consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #29 - NRIX - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.56
+  Consolidation:       20 days
+  Range:               $16.98 - $20.18 (18.9%)
+  Position in Range:   49% (lower third = buy zone)
+  Normalized Price:    2.08 (DIVERGENCE)
+  Force Index:         -0.51 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: NRIX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #30 - OMER - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.93
+  Consolidation:       20 days
+  Range:               $11.52 - $17.65 (53.2%)
+  Position in Range:   7% (lower third = buy zone)
+  Normalized Price:    1.47 (DIVERGENCE)
+  Force Index:         -1.44 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.3x average
+
+  SETUP: OMER consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #31 - PTN - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $16.60
+  Consolidation:       20 days
+  Range:               $13.84 - $20.43 (47.6%)
+  Position in Range:   42% (lower third = buy zone)
+  Normalized Price:    1.20 (DIVERGENCE)
+  Force Index:         -0.45 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.3x average
+
+  SETUP: PTN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #32 - RAIL - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $10.98
+  Consolidation:       20 days
+  Range:               $10.44 - $11.95 (14.5%)
+  Position in Range:   36% (lower third = buy zone)
+  Normalized Price:    1.01 (DIVERGENCE)
+  Force Index:         -0.35 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: RAIL consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #33 - SHC - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.51
+  Consolidation:       20 days
+  Range:               $17.35 - $19.85 (14.4%)
+  Position in Range:   46% (lower third = buy zone)
+  Normalized Price:    1.22 (DIVERGENCE)
+  Force Index:         -0.47 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: SHC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #34 - TWIN - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.50
+  Consolidation:       20 days
+  Range:               $15.01 - $19.33 (28.8%)
+  Position in Range:   58% (lower third = buy zone)
+  Normalized Price:    1.54 (DIVERGENCE)
+  Force Index:         -0.37 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.5x average
+
+  SETUP: TWIN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #35 - WVE - Quality Score: 60/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $13.47
+  Consolidation:       20 days
+  Range:               $13.22 - $19.50 (47.5%)
+  Position in Range:   4% (lower third = buy zone)
+  Normalized Price:    1.01 (DIVERGENCE)
+  Force Index:         -1.77 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: WVE consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 60/100
+
+SIGNAL #36 - BWB - Quality Score: 55/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.23
+  Consolidation:       20 days
+  Range:               $17.24 - $19.40 (12.5%)
+  Position in Range:   46% (lower third = buy zone)
+  Normalized Price:    0.55 (DIVERGENCE)
+  Force Index:         -0.19 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.1x average
+
+  SETUP: BWB consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 55/100
+
+SIGNAL #37 - DBI - Quality Score: 55/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.94
+  Consolidation:       20 days
+  Range:               $6.82 - $8.35 (22.4%)
+  Position in Range:   8% (lower third = buy zone)
+  Normalized Price:    0.83 (DIVERGENCE)
+  Force Index:         -1.16 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: DBI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 55/100
+
+SIGNAL #38 - KRNY - Quality Score: 55/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $7.80
+  Consolidation:       20 days
+  Range:               $7.26 - $8.50 (17.1%)
+  Position in Range:   44% (lower third = buy zone)
+  Normalized Price:    0.54 (DIVERGENCE)
+  Force Index:         -0.05 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.1x average
+
+  SETUP: KRNY consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 55/100
+
+SIGNAL #39 - MAC - Quality Score: 54/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.35
+  Consolidation:       20 days
+  Range:               $17.73 - $19.14 (8.0%)
+  Position in Range:   44% (lower third = buy zone)
+  Normalized Price:    0.43 (DIVERGENCE)
+  Force Index:         -0.18 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: MAC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 54/100
+
+SIGNAL #40 - EBS - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.95
+  Consolidation:       20 days
+  Range:               $10.60 - $14.06 (32.6%)
+  Position in Range:   39% (lower third = buy zone)
+  Normalized Price:    0.69 (DIVERGENCE)
+  Force Index:         -0.06 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: EBS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #41 - QNCX - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.08
+  Consolidation:       20 days
+  Range:               $2.56 - $3.75 (46.5%)
+  Position in Range:   44% (lower third = buy zone)
+  Normalized Price:    0.24 (DIVERGENCE)
+  Force Index:         -0.17 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.2x average
+
+  SETUP: QNCX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #42 - HBI - Quality Score: 51/100
+--------------------------------------------------------------------------------
+  Date:                12/02/2025
+  Current Price:       $6.47
+  Consolidation:       20 days
+  Range:               $6.30 - $6.71 (6.4%)
+  Position in Range:   41% (lower third = buy zone)
+  Normalized Price:    0.07 (DIVERGENCE)
+  Force Index:         -0.15 (ORANGE)
+  Fader Signal:        RED
+  Volume:              8.1x average
+
+  SETUP: HBI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 51/100
+
+SIGNAL #43 - VLY - Quality Score: 51/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.91
+  Consolidation:       20 days
+  Range:               $11.54 - $12.68 (9.9%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    0.51 (DIVERGENCE)
+  Force Index:         -0.17 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.1x average
+
+  SETUP: VLY consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 51/100
+
+SIGNAL #44 - APVO - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $8.98
+  Consolidation:       20 days
+  Range:               $7.66 - $18.72 (144.4%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    2.89 (DIVERGENCE)
+  Force Index:         -0.39 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.0x average
+
+  SETUP: APVO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #45 - CYRX - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $10.39
+  Consolidation:       20 days
+  Range:               $9.40 - $11.45 (21.8%)
+  Position in Range:   48% (lower third = buy zone)
+  Normalized Price:    0.63 (DIVERGENCE)
+  Force Index:         -0.49 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.0x average
+
+  SETUP: CYRX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #46 - HCSG - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.91
+  Consolidation:       20 days
+  Range:               $16.78 - $19.98 (19.1%)
+  Position in Range:   67% (lower third = buy zone)
+  Normalized Price:    0.61 (DIVERGENCE)
+  Force Index:         -0.26 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.7x average
+
+  SETUP: HCSG consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #47 - PASG - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $12.58
+  Consolidation:       20 days
+  Range:               $9.56 - $20.00 (109.2%)
+  Position in Range:   29% (lower third = buy zone)
+  Normalized Price:    1.55 (DIVERGENCE)
+  Force Index:         -2.47 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: PASG consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #48 - SVRA - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.02
+  Consolidation:       20 days
+  Range:               $5.47 - $6.61 (20.9%)
+  Position in Range:   48% (lower third = buy zone)
+  Normalized Price:    0.63 (DIVERGENCE)
+  Force Index:         -0.01 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: SVRA consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #49 - MITT - Quality Score: 49/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $8.85
+  Consolidation:       20 days
+  Range:               $8.29 - $9.27 (11.8%)
+  Position in Range:   57% (lower third = buy zone)
+  Normalized Price:    0.57 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.6x average
+
+  SETUP: MITT consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 49/100
+
+SIGNAL #50 - NXTC - Quality Score: 49/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.92
+  Consolidation:       20 days
+  Range:               $11.04 - $14.65 (32.7%)
+  Position in Range:   24% (lower third = buy zone)
+  Normalized Price:    0.59 (DIVERGENCE)
+  Force Index:         -2.07 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: NXTC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 49/100
+
+SIGNAL #51 - JAMF - Quality Score: 48/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $13.00
+  Consolidation:       20 days
+  Range:               $12.99 - $13.03 (0.3%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    0.53 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: JAMF consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 48/100
+
+SIGNAL #52 - NAII - Quality Score: 48/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $4.15
+  Consolidation:       20 days
+  Range:               $3.15 - $4.96 (57.5%)
+  Position in Range:   55% (lower third = buy zone)
+  Normalized Price:    0.53 (DIVERGENCE)
+  Force Index:         -0.36 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: NAII consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 48/100
+
+SIGNAL #53 - SEM - Quality Score: 48/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $15.15
+  Consolidation:       20 days
+  Range:               $14.65 - $15.48 (5.7%)
+  Position in Range:   60% (lower third = buy zone)
+  Normalized Price:    0.54 (DIVERGENCE)
+  Force Index:         -0.09 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: SEM consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 48/100
+
+SIGNAL #54 - SWBI - Quality Score: 48/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $10.56
+  Consolidation:       20 days
+  Range:               $9.85 - $11.08 (12.5%)
+  Position in Range:   58% (lower third = buy zone)
+  Normalized Price:    0.67 (DIVERGENCE)
+  Force Index:         -0.03 (ORANGE)
+  Fader Signal:        GREEN
+  Volume:              1.1x average
+
+  SETUP: SWBI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 48/100
+
+SIGNAL #55 - UMH - Quality Score: 48/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $16.10
+  Consolidation:       20 days
+  Range:               $15.70 - $16.65 (6.1%)
+  Position in Range:   42% (lower third = buy zone)
+  Normalized Price:    0.53 (DIVERGENCE)
+  Force Index:         -0.06 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: UMH consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 48/100
+
+SIGNAL #56 - IBIO - Quality Score: 47/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $2.25
+  Consolidation:       20 days
+  Range:               $1.70 - $2.89 (70.0%)
+  Position in Range:   46% (lower third = buy zone)
+  Normalized Price:    0.50 (DIVERGENCE)
+  Force Index:         -0.04 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.2x average
+
+  SETUP: IBIO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 47/100
+
+SIGNAL #57 - NVFY - Quality Score: 47/100
+--------------------------------------------------------------------------------
+  Date:                01/07/2026
+  Current Price:       $5.89
+  Consolidation:       20 days
+  Range:               $5.52 - $6.23 (12.9%)
+  Position in Range:   52% (lower third = buy zone)
+  Normalized Price:    0.48 (DIVERGENCE)
+  Force Index:         -0.11 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: NVFY consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 47/100
+
+SIGNAL #58 - PDLB - Quality Score: 47/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $16.40
+  Consolidation:       20 days
+  Range:               $15.52 - $17.15 (10.5%)
+  Position in Range:   54% (lower third = buy zone)
+  Normalized Price:    0.51 (DIVERGENCE)
+  Force Index:         -0.04 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: PDLB consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 47/100
+
+SIGNAL #59 - BALY - Quality Score: 46/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $16.50
+  Consolidation:       20 days
+  Range:               $15.55 - $17.80 (14.5%)
+  Position in Range:   42% (lower third = buy zone)
+  Normalized Price:    0.46 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: BALY consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 46/100
+
+SIGNAL #60 - KVHI - Quality Score: 46/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $7.00
+  Consolidation:       20 days
+  Range:               $6.62 - $7.71 (16.5%)
+  Position in Range:   35% (lower third = buy zone)
+  Normalized Price:    0.44 (DIVERGENCE)
+  Force Index:         -0.45 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: KVHI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 46/100
+
+SIGNAL #61 - UNIT - Quality Score: 46/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $7.40
+  Consolidation:       20 days
+  Range:               $6.61 - $8.40 (27.1%)
+  Position in Range:   44% (lower third = buy zone)
+  Normalized Price:    0.46 (DIVERGENCE)
+  Force Index:         -0.19 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.5x average
+
+  SETUP: UNIT consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 46/100
+
+SIGNAL #62 - F - Quality Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $13.56
+  Consolidation:       20 days
+  Range:               $13.06 - $14.50 (11.0%)
+  Position in Range:   35% (lower third = buy zone)
+  Normalized Price:    0.43 (DIVERGENCE)
+  Force Index:         -0.26 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: F consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 45/100
+
+SIGNAL #63 - FSEA - Quality Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $12.74
+  Consolidation:       20 days
+  Range:               $12.41 - $13.20 (6.4%)
+  Position in Range:   42% (lower third = buy zone)
+  Normalized Price:    0.43 (DIVERGENCE)
+  Force Index:         -0.08 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.3x average
+
+  SETUP: FSEA consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 45/100
+
+SIGNAL #64 - HLMN - Quality Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $9.63
+  Consolidation:       20 days
+  Range:               $8.51 - $10.11 (18.9%)
+  Position in Range:   70% (lower third = buy zone)
+  Normalized Price:    0.42 (DIVERGENCE)
+  Force Index:         -0.07 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.6x average
+
+  SETUP: HLMN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 45/100
+
+SIGNAL #65 - KW - Quality Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $9.80
+  Consolidation:       20 days
+  Range:               $9.50 - $10.09 (6.2%)
+  Position in Range:   51% (lower third = buy zone)
+  Normalized Price:    0.42 (DIVERGENCE)
+  Force Index:         -0.12 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: KW consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 45/100
+
+SIGNAL #66 - OWLT - Quality Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $12.97
+  Consolidation:       20 days
+  Range:               $12.62 - $16.94 (34.2%)
+  Position in Range:   8% (lower third = buy zone)
+  Normalized Price:    0.22 (DIVERGENCE)
+  Force Index:         -2.29 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.1x average
+
+  SETUP: OWLT consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 45/100
+
+SIGNAL #67 - SCS - Quality Score: 45/100
+--------------------------------------------------------------------------------
+  Date:                12/09/2025
+  Current Price:       $16.14
+  Consolidation:       20 days
+  Range:               $15.45 - $16.51 (6.9%)
+  Position in Range:   65% (lower third = buy zone)
+  Normalized Price:    0.30 (DIVERGENCE)
+  Force Index:         -0.01 (ORANGE)
+  Fader Signal:        GREEN
+  Volume:              1.3x average
+
+  SETUP: SCS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 45/100
+
+SIGNAL #68 - ASUR - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $9.19
+  Consolidation:       20 days
+  Range:               $8.83 - $10.20 (15.5%)
+  Position in Range:   26% (lower third = buy zone)
+  Normalized Price:    0.29 (DIVERGENCE)
+  Force Index:         -0.60 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.1x average
+
+  SETUP: ASUR consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 44/100
+
+SIGNAL #69 - ATHA - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.81
+  Consolidation:       20 days
+  Range:               $5.80 - $7.77 (34.0%)
+  Position in Range:   1% (lower third = buy zone)
+  Normalized Price:    0.38 (DIVERGENCE)
+  Force Index:         -1.16 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.3x average
+
+  SETUP: ATHA consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 44/100
+
+SIGNAL #70 - KRMD - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.61
+  Consolidation:       20 days
+  Range:               $5.13 - $6.61 (28.8%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    0.38 (DIVERGENCE)
+  Force Index:         -0.14 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: KRMD consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 44/100
+
+SIGNAL #71 - PETS - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.32
+  Consolidation:       20 days
+  Range:               $3.13 - $3.70 (18.2%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    0.38 (DIVERGENCE)
+  Force Index:         -0.08 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.4x average
+
+  SETUP: PETS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 44/100
+
+SIGNAL #72 - SBH - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $15.41
+  Consolidation:       20 days
+  Range:               $14.03 - $17.92 (27.7%)
+  Position in Range:   35% (lower third = buy zone)
+  Normalized Price:    0.38 (DIVERGENCE)
+  Force Index:         -0.43 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
+
+  SETUP: SBH consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 44/100
+
+SIGNAL #73 - PPSI - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $4.68
+  Consolidation:       20 days
+  Range:               $3.84 - $5.39 (40.3%)
+  Position in Range:   54% (lower third = buy zone)
+  Normalized Price:    0.33 (DIVERGENCE)
+  Force Index:         -0.20 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: PPSI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #74 - VTLE - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                12/19/2025
+  Current Price:       $17.92
+  Consolidation:       20 days
+  Range:               $15.56 - $19.45 (25.0%)
+  Position in Range:   61% (lower third = buy zone)
+  Normalized Price:    0.74 (DIVERGENCE)
+  Force Index:         -0.33 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.0x average
+
+  SETUP: VTLE consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #75 - COMM - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.92
+  Consolidation:       20 days
+  Range:               $17.12 - $19.95 (16.5%)
+  Position in Range:   28% (lower third = buy zone)
+  Normalized Price:    0.30 (DIVERGENCE)
+  Force Index:         -0.98 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: COMM consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #76 - CPIX - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.93
+  Consolidation:       20 days
+  Range:               $3.76 - $5.38 (43.1%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    0.30 (DIVERGENCE)
+  Force Index:         -1.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: CPIX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #77 - CTKB - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.27
+  Consolidation:       20 days
+  Range:               $4.89 - $6.04 (23.4%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    0.31 (DIVERGENCE)
+  Force Index:         -0.32 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: CTKB consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #78 - EVC - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.17
+  Consolidation:       20 days
+  Range:               $2.84 - $3.39 (19.4%)
+  Position in Range:   60% (lower third = buy zone)
+  Normalized Price:    0.32 (DIVERGENCE)
+  Force Index:         -0.03 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.6x average
+
+  SETUP: EVC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #79 - FNB - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $17.11
+  Consolidation:       20 days
+  Range:               $16.86 - $18.30 (8.5%)
+  Position in Range:   17% (lower third = buy zone)
+  Normalized Price:    0.28 (DIVERGENCE)
+  Force Index:         -0.73 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
+
+  SETUP: FNB consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #80 - AAL - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $14.67
+  Consolidation:       20 days
+  Range:               $14.65 - $16.50 (12.6%)
+  Position in Range:   1% (lower third = buy zone)
+  Normalized Price:    0.24 (DIVERGENCE)
+  Force Index:         -1.26 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: AAL consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #81 - ACEL - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.29
+  Consolidation:       20 days
+  Range:               $11.06 - $11.86 (7.3%)
+  Position in Range:   29% (lower third = buy zone)
+  Normalized Price:    0.25 (DIVERGENCE)
+  Force Index:         -0.26 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: ACEL consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #82 - AOUT - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $8.46
+  Consolidation:       20 days
+  Range:               $7.65 - $9.99 (30.6%)
+  Position in Range:   35% (lower third = buy zone)
+  Normalized Price:    0.25 (DIVERGENCE)
+  Force Index:         -0.77 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: AOUT consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #83 - ARMP - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.00
+  Consolidation:       20 days
+  Range:               $5.66 - $7.95 (40.5%)
+  Position in Range:   15% (lower third = buy zone)
+  Normalized Price:    0.26 (DIVERGENCE)
+  Force Index:         -0.53 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: ARMP consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #84 - MCS - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $15.60
+  Consolidation:       20 days
+  Range:               $14.75 - $16.20 (9.8%)
+  Position in Range:   59% (lower third = buy zone)
+  Normalized Price:    0.24 (DIVERGENCE)
+  Force Index:         -0.05 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
+
+  SETUP: MCS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #85 - AEVA - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $15.79
+  Consolidation:       20 days
+  Range:               $12.30 - $22.62 (83.9%)
+  Position in Range:   34% (lower third = buy zone)
+  Normalized Price:    0.22 (DIVERGENCE)
+  Force Index:         -4.34 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: AEVA consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #86 - BWEN - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.23
+  Consolidation:       20 days
+  Range:               $2.79 - $4.15 (48.7%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    0.23 (DIVERGENCE)
+  Force Index:         -0.49 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: BWEN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #87 - EWCZ - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.92
+  Consolidation:       20 days
+  Range:               $3.38 - $4.51 (33.3%)
+  Position in Range:   48% (lower third = buy zone)
+  Normalized Price:    0.02 (DIVERGENCE)
+  Force Index:         -0.05 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.1x average
+
+  SETUP: EWCZ consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #88 - MRVI - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.71
+  Consolidation:       20 days
+  Range:               $3.19 - $4.11 (28.7%)
+  Position in Range:   57% (lower third = buy zone)
+  Normalized Price:    0.23 (DIVERGENCE)
+  Force Index:         -0.15 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.5x average
+
+  SETUP: MRVI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #89 - NVCR - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $13.45
+  Consolidation:       20 days
+  Range:               $12.80 - $15.15 (18.4%)
+  Position in Range:   28% (lower third = buy zone)
+  Normalized Price:    0.23 (DIVERGENCE)
+  Force Index:         -0.52 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: NVCR consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #90 - XPOF - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $7.93
+  Consolidation:       20 days
+  Range:               $7.70 - $8.79 (14.2%)
+  Position in Range:   21% (lower third = buy zone)
+  Normalized Price:    0.22 (DIVERGENCE)
+  Force Index:         -0.27 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: XPOF consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #91 - ZDGE - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.41
+  Consolidation:       20 days
+  Range:               $3.10 - $3.91 (26.1%)
+  Position in Range:   38% (lower third = buy zone)
+  Normalized Price:    0.23 (DIVERGENCE)
+  Force Index:         -0.25 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.4x average
+
+  SETUP: ZDGE consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #92 - ACCO - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.93
+  Consolidation:       20 days
+  Range:               $3.63 - $4.15 (14.3%)
+  Position in Range:   58% (lower third = buy zone)
+  Normalized Price:    0.17 (DIVERGENCE)
+  Force Index:         -0.03 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.7x average
+
+  SETUP: ACCO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #93 - AHCO - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $10.09
+  Consolidation:       20 days
+  Range:               $9.53 - $10.92 (14.6%)
+  Position in Range:   40% (lower third = buy zone)
+  Normalized Price:    0.17 (DIVERGENCE)
+  Force Index:         -0.65 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: AHCO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #94 - ATXS - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $12.58
+  Consolidation:       20 days
+  Range:               $12.24 - $13.28 (8.5%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    0.60 (DIVERGENCE)
+  Force Index:         -0.17 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.0x average
+
+  SETUP: ATXS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #95 - CWK - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $16.21
+  Consolidation:       20 days
+  Range:               $15.72 - $17.40 (10.7%)
+  Position in Range:   29% (lower third = buy zone)
+  Normalized Price:    0.19 (DIVERGENCE)
+  Force Index:         -0.89 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: CWK consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #96 - HLLY - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $4.05
+  Consolidation:       20 days
+  Range:               $3.88 - $4.37 (12.6%)
+  Position in Range:   35% (lower third = buy zone)
+  Normalized Price:    0.17 (DIVERGENCE)
+  Force Index:         -0.20 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: HLLY consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #97 - ICCC - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.26
+  Consolidation:       20 days
+  Range:               $5.80 - $7.12 (22.8%)
+  Position in Range:   35% (lower third = buy zone)
+  Normalized Price:    0.19 (DIVERGENCE)
+  Force Index:         -0.40 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: ICCC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #98 - INSE - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $9.09
+  Consolidation:       20 days
+  Range:               $8.85 - $9.95 (12.5%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    0.20 (DIVERGENCE)
+  Force Index:         -0.40 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: INSE consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #99 - OLPX - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $1.56
+  Consolidation:       20 days
+  Range:               $1.27 - $1.84 (44.8%)
+  Position in Range:   51% (lower third = buy zone)
+  Normalized Price:    0.19 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.3x average
+
+  SETUP: OLPX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #100 - RLAY - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $7.43
+  Consolidation:       20 days
+  Range:               $7.01 - $8.76 (25.0%)
+  Position in Range:   24% (lower third = buy zone)
+  Normalized Price:    0.16 (DIVERGENCE)
+  Force Index:         -0.64 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: RLAY consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #101 - TNDM - Quality Score: 39/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $19.90
+  Consolidation:       20 days
+  Range:               $19.61 - $23.95 (22.1%)
+  Position in Range:   7% (lower third = buy zone)
+  Normalized Price:    0.19 (DIVERGENCE)
+  Force Index:         -2.37 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: TNDM consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 39/100
+
+SIGNAL #102 - AIV - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.89
+  Consolidation:       20 days
+  Range:               $5.82 - $6.03 (3.6%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.03 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: AIV consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #103 - BFIN - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                12/31/2025
+  Current Price:       $12.00
+  Consolidation:       20 days
+  Range:               $11.13 - $13.01 (16.9%)
+  Position in Range:   46% (lower third = buy zone)
+  Normalized Price:    0.14 (DIVERGENCE)
+  Force Index:         -0.90 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.0x average
+
+  SETUP: BFIN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #104 - BHR - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $2.92
+  Consolidation:       20 days
+  Range:               $2.76 - $3.19 (15.5%)
+  Position in Range:   37% (lower third = buy zone)
+  Normalized Price:    0.14 (DIVERGENCE)
+  Force Index:         -0.02 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.6x average
+
+  SETUP: BHR consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #105 - CFFN - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.75
+  Consolidation:       20 days
+  Range:               $6.53 - $7.13 (9.2%)
+  Position in Range:   37% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.08 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: CFFN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #106 - CRNC - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.36
+  Consolidation:       20 days
+  Range:               $10.57 - $12.94 (22.4%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    0.15 (DIVERGENCE)
+  Force Index:         -0.58 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: CRNC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #107 - CTO - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.07
+  Consolidation:       20 days
+  Range:               $17.75 - $18.71 (5.4%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    0.53 (DIVERGENCE)
+  Force Index:         -0.22 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: CTO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #108 - FBIO - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.40
+  Consolidation:       20 days
+  Range:               $3.25 - $4.53 (39.4%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.52 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.4x average
+
+  SETUP: FBIO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #109 - IDN - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.01
+  Consolidation:       20 days
+  Range:               $5.87 - $6.98 (18.9%)
+  Position in Range:   13% (lower third = buy zone)
+  Normalized Price:    0.01 (DIVERGENCE)
+  Force Index:         -0.35 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.1x average
+
+  SETUP: IDN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #110 - KOPN - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $2.86
+  Consolidation:       20 days
+  Range:               $2.28 - $3.56 (56.1%)
+  Position in Range:   45% (lower third = buy zone)
+  Normalized Price:    0.15 (DIVERGENCE)
+  Force Index:         -0.15 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
+
+  SETUP: KOPN consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #111 - RLJ - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $7.60
+  Consolidation:       20 days
+  Range:               $7.38 - $8.00 (8.4%)
+  Position in Range:   35% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.08 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: RLJ consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #112 - SBRA - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $18.82
+  Consolidation:       20 days
+  Range:               $18.36 - $19.82 (8.0%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    0.01 (DIVERGENCE)
+  Force Index:         -0.72 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.1x average
+
+  SETUP: SBRA consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #113 - SSP - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.45
+  Consolidation:       20 days
+  Range:               $3.33 - $4.08 (22.5%)
+  Position in Range:   16% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.39 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: SSP consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #114 - CCO - Quality Score: 37/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $2.05
+  Consolidation:       20 days
+  Range:               $1.96 - $2.26 (15.3%)
+  Position in Range:   30% (lower third = buy zone)
+  Normalized Price:    0.11 (DIVERGENCE)
+  Force Index:         -0.08 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: CCO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 37/100
+
+SIGNAL #115 - CTLP - Quality Score: 37/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $10.76
+  Consolidation:       20 days
+  Range:               $10.52 - $10.90 (3.6%)
+  Position in Range:   63% (lower third = buy zone)
+  Normalized Price:    0.10 (DIVERGENCE)
+  Force Index:         -0.05 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: CTLP consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 37/100
+
+SIGNAL #116 - LADR - Quality Score: 37/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $11.07
+  Consolidation:       20 days
+  Range:               $10.56 - $11.37 (7.7%)
+  Position in Range:   63% (lower third = buy zone)
+  Normalized Price:    0.10 (DIVERGENCE)
+  Force Index:         -0.01 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.7x average
+
+  SETUP: LADR consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 37/100
+
+SIGNAL #117 - PACK - Quality Score: 37/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.45
+  Consolidation:       20 days
+  Range:               $5.30 - $6.19 (16.8%)
+  Position in Range:   17% (lower third = buy zone)
+  Normalized Price:    0.08 (DIVERGENCE)
+  Force Index:         -0.43 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: PACK consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 37/100
+
+SIGNAL #118 - PRLD - Quality Score: 37/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $2.02
+  Consolidation:       20 days
+  Range:               $1.76 - $3.00 (70.0%)
+  Position in Range:   21% (lower third = buy zone)
+  Normalized Price:    0.11 (DIVERGENCE)
+  Force Index:         -0.30 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.4x average
+
+  SETUP: PRLD consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 37/100
+
+SIGNAL #119 - TRTX - Quality Score: 37/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $8.97
+  Consolidation:       20 days
+  Range:               $8.59 - $9.30 (8.3%)
+  Position in Range:   54% (lower third = buy zone)
+  Normalized Price:    0.06 (DIVERGENCE)
+  Force Index:         -0.13 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.0x average
+
+  SETUP: TRTX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 37/100
+
+SIGNAL #120 - BRBS - Quality Score: 36/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $4.33
+  Consolidation:       20 days
+  Range:               $4.15 - $4.48 (8.0%)
+  Position in Range:   55% (lower third = buy zone)
+  Normalized Price:    0.08 (DIVERGENCE)
+  Force Index:         -0.05 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.7x average
+
+  SETUP: BRBS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 36/100
+
+SIGNAL #121 - PLBY - Quality Score: 36/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $1.83
+  Consolidation:       20 days
+  Range:               $1.74 - $2.04 (17.2%)
+  Position in Range:   30% (lower third = buy zone)
+  Normalized Price:    0.06 (DIVERGENCE)
+  Force Index:         -0.06 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: PLBY consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 36/100
+
+SIGNAL #122 - PNBK - Quality Score: 36/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $1.59
+  Consolidation:       20 days
+  Range:               $1.50 - $1.88 (25.3%)
+  Position in Range:   24% (lower third = buy zone)
+  Normalized Price:    0.06 (DIVERGENCE)
+  Force Index:         -0.05 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: PNBK consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 36/100
+
+SIGNAL #123 - SFIX - Quality Score: 36/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.00
+  Consolidation:       20 days
+  Range:               $4.76 - $5.74 (20.6%)
+  Position in Range:   24% (lower third = buy zone)
+  Normalized Price:    0.07 (DIVERGENCE)
+  Force Index:         -0.40 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: SFIX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 36/100
+
+SIGNAL #124 - CODX - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $2.99
+  Consolidation:       20 days
+  Range:               $2.36 - $7.50 (217.8%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    0.41 (DIVERGENCE)
+  Force Index:         -1.53 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.1x average
+
+  SETUP: CODX consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 35/100
+
+SIGNAL #125 - HTZ - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.53
+  Consolidation:       20 days
+  Range:               $5.13 - $6.14 (19.6%)
+  Position in Range:   40% (lower third = buy zone)
+  Normalized Price:    0.02 (DIVERGENCE)
+  Force Index:         -0.01 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: HTZ consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 35/100
+
+SIGNAL #126 - LPRO - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $1.89
+  Consolidation:       20 days
+  Range:               $1.50 - $2.35 (56.7%)
+  Position in Range:   46% (lower third = buy zone)
+  Normalized Price:    0.04 (DIVERGENCE)
+  Force Index:         -0.12 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.4x average
+
+  SETUP: LPRO consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 35/100
+
+SIGNAL #127 - NDLS - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $0.77
+  Consolidation:       20 days
+  Range:               $0.61 - $0.89 (45.9%)
+  Position in Range:   57% (lower third = buy zone)
+  Normalized Price:    0.02 (DIVERGENCE)
+  Force Index:         -0.04 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: NDLS consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 35/100
+
+SIGNAL #128 - PDM - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $8.40
+  Consolidation:       20 days
+  Range:               $8.08 - $8.79 (8.8%)
+  Position in Range:   45% (lower third = buy zone)
+  Normalized Price:    0.03 (DIVERGENCE)
+  Force Index:         -0.10 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: PDM consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 35/100
+
+SIGNAL #129 - QUAD - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.07
+  Consolidation:       20 days
+  Range:               $5.77 - $6.49 (12.5%)
+  Position in Range:   42% (lower third = buy zone)
+  Normalized Price:    0.02 (DIVERGENCE)
+  Force Index:         -0.23 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: QUAD consolidating for 20 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 35/100
+
+SIGNAL #130 - KZR - Quality Score: 31/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.18
+  Consolidation:       20 days
+  Range:               $6.04 - $6.53 (8.1%)
+  Position in Range:   29% (lower third = buy zone)
+  Normalized Price:    0.24 (DIVERGENCE)
+  Force Index:         -0.06 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: KZR consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 31/100
+
+SIGNAL #131 - NERV - Quality Score: 30/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $3.97
+  Consolidation:       20 days
+  Range:               $3.75 - $4.86 (29.6%)
+  Position in Range:   20% (lower third = buy zone)
+  Normalized Price:    0.13 (DIVERGENCE)
+  Force Index:         -0.51 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: NERV consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 30/100
+
+SIGNAL #132 - UBCP - Quality Score: 30/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $13.91
+  Consolidation:       20 days
+  Range:               $13.42 - $14.85 (10.7%)
+  Position in Range:   34% (lower third = buy zone)
+  Normalized Price:    0.22 (DIVERGENCE)
+  Force Index:         -0.01 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: UBCP consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 30/100
+
+SIGNAL #133 - MERC - Quality Score: 28/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $2.46
+  Consolidation:       20 days
+  Range:               $1.93 - $2.85 (47.7%)
+  Position in Range:   58% (lower third = buy zone)
+  Normalized Price:    0.16 (DIVERGENCE)
+  Force Index:         -0.02 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: MERC consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 28/100
+
+SIGNAL #134 - CIM - Quality Score: 27/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $12.89
+  Consolidation:       20 days
+  Range:               $12.27 - $13.40 (9.2%)
+  Position in Range:   55% (lower third = buy zone)
+  Normalized Price:    0.09 (DIVERGENCE)
+  Force Index:         -0.10 (ORANGE)
+  Fader Signal:        GREEN
+  Volume:              0.5x average
+
+  SETUP: CIM consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 27/100
+
+SIGNAL #135 - ENTA - Quality Score: 26/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $13.02
+  Consolidation:       20 days
+  Range:               $12.09 - $17.15 (41.9%)
+  Position in Range:   18% (lower third = buy zone)
+  Normalized Price:    0.06 (DIVERGENCE)
+  Force Index:         -0.57 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: ENTA consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 26/100
+
+SIGNAL #136 - SMRT - Quality Score: 26/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $1.80
+  Consolidation:       20 days
+  Range:               $1.70 - $2.06 (21.4%)
+  Position in Range:   28% (lower third = buy zone)
+  Normalized Price:    0.06 (DIVERGENCE)
+  Force Index:         -0.00 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: SMRT consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 26/100
+
+SIGNAL #137 - KPTI - Quality Score: 25/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $6.59
+  Consolidation:       20 days
+  Range:               $5.88 - $8.95 (52.3%)
+  Position in Range:   23% (lower third = buy zone)
+  Normalized Price:    0.03 (DIVERGENCE)
+  Force Index:         -0.67 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: KPTI consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 25/100
+
+SIGNAL #138 - MIND - Quality Score: 25/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $9.67
+  Consolidation:       20 days
+  Range:               $7.90 - $11.39 (44.2%)
+  Position in Range:   51% (lower third = buy zone)
+  Normalized Price:    0.00 (DIVERGENCE)
+  Force Index:         -0.65 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: MIND consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 25/100
+
+SIGNAL #139 - MPW - Quality Score: 25/100
+--------------------------------------------------------------------------------
+  Date:                01/23/2026
+  Current Price:       $5.11
+  Consolidation:       20 days
+  Range:               $4.98 - $5.58 (12.0%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    0.01 (DIVERGENCE)
+  Force Index:         -0.16 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: MPW consolidating for 20 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 25/100
