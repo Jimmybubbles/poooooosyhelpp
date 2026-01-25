@@ -1,7 +1,7 @@
 ================================================================================
 TRIPLE SIGNAL SCANNER - ULTIMATE BUY SETUP RESULTS
 ================================================================================
-Scan Date: 2025-12-22 18:33:25
+Scan Date: 2026-01-25 17:13:03
 
 SIGNAL CRITERIA (ALL MUST BE TRUE):
   1. In Channel: Price within 3-week range (consolidating)
@@ -9,7 +9,7 @@ SIGNAL CRITERIA (ALL MUST BE TRUE):
   3. EFI Momentum: Maroon or orange (oversold)
   4. Trend: Uptrend confirmed
 
-Total TRIPLE SIGNALS Found: 124
+Total TRIPLE SIGNALS Found: 123
 ================================================================================
 
 TRIPLE SIGNAL SETUPS (Sorted by Range Position - Lower = Better):
@@ -101,7 +101,6 @@ DDS      12/18/2025   $652.55    $650-$660    25.5   % ORANGE        -10.97
 FRSH     12/18/2025   $12.59     $10-$20      25.9   % ORANGE         -0.02
 IRWD     12/18/2025   $3.26      $3-$4        26.0   % MAROON         -0.44
 MRKR     12/18/2025   $1.26      $1-$2        26.0   % MAROON         -0.12
-NOG      12/17/2025   $22.62     $20-$30      26.2   % ORANGE         -0.79
 ATXS     12/18/2025   $12.71     $10-$20      27.1   % ORANGE         -0.20
 KBH      12/18/2025   $62.75     $60-$70      27.5   % MAROON         -1.43
 GSHD     12/18/2025   $72.79     $70-$80      27.9   % ORANGE         -2.15
@@ -1499,22 +1498,6 @@ TICKER: MRKR
   EFI Color: MAROON
   Force Index: -0.12
   Normalized Price: 0.11
-  Trend: UPTREND
-  ✓ In Channel: YES (consolidating)
-  ✓ Price Zone: BUY ZONE
-  ✓ EFI Momentum: OVERSOLD
-  ✓ Trend: UPTREND
---------------------------------------------------------------------------------
-
-TICKER: NOG
-  Date: 2025-12-17
-  Price: $22.62
-  Range: $20-$30
-  Position in Range: 26.2%
-  Buy Zone (25%): $22.50
-  EFI Color: ORANGE
-  Force Index: -0.79
-  Normalized Price: -0.66
   Trend: UPTREND
   ✓ In Channel: YES (consolidating)
   ✓ Price Zone: BUY ZONE

@@ -136,7 +136,7 @@ def run_diagnostic():
             if not all(col in df.columns for col in required_cols):
                 continue
 
-            df['Date'] = pd.to_datetime(df['Date'])
+            df['Date'] = pd.to_datetime(df['Date'], utc=True)
             df = df.sort_values('Date')
             df.set_index('Date', inplace=True)
 
