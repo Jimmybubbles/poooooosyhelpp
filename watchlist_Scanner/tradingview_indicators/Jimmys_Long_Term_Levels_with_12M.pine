@@ -1,0 +1,82 @@
+//@version=5
+indicator(title="Jimmys Long term levels", shorttitle="Jimmys Long Term Levels", overlay=true)
+
+// Input settings
+show_monthly = input.bool(title="Show Monthly", defval=false)
+show_quarterly = input.bool(title="Show Quarterly", defval=true)
+show_12month = input.bool(title="Show 12 Month", defval=true)
+showlabels = input.bool(title="Label Lines", defval=true)
+offset_val = input.int(title="Label Offset", defval=20)
+small_labels = input.bool(title="Use Small Labels", defval=false)
+
+// Monthly levels (previous month)
+monthH = request.security(syminfo.tickerid, 'M', high[1])
+monthO = request.security(syminfo.tickerid, 'M', open[1])
+monthC = request.security(syminfo.tickerid, 'M', close[1])
+monthL = request.security(syminfo.tickerid, 'M', low[1])
+
+// Quarterly levels (previous quarter)
+quarterlyH = request.security(syminfo.tickerid, '3M', high[1])
+quarterlyO = request.security(syminfo.tickerid, '3M', open[1])
+quarterlyC = request.security(syminfo.tickerid, '3M', close[1])
+quarterlyL = request.security(syminfo.tickerid, '3M', low[1])
+
+// 12 Month levels (previous 12 months)
+twelveMonthH = request.security(syminfo.tickerid, '12M', high[1])
+twelveMonthO = request.security(syminfo.tickerid, '12M', open[1])
+twelveMonthC = request.security(syminfo.tickerid, '12M', close[1])
+twelveMonthL = request.security(syminfo.tickerid, '12M', low[1])
+
+// Plot Monthly levels (Blue)
+plot(show_monthly ? monthH : na, title="Last Month High", style=plot.style_line, linewidth=1, color=#0F4A98, offset=offset_val, trackprice=true)
+plot(show_monthly ? monthO : na, title="Last Month Open", style=plot.style_line, linewidth=3, color=#0F4A98, offset=offset_val, trackprice=true)
+plot(show_monthly ? monthC : na, title="Last Month Close", style=plot.style_line, linewidth=3, color=#0F4A98, offset=offset_val, trackprice=true)
+plot(show_monthly ? monthL : na, title="Last Month Low", style=plot.style_line, linewidth=1, color=#0F4A98, offset=offset_val, trackprice=true)
+
+// Plot Quarterly levels (Purple)
+plot(show_quarterly ? quarterlyH : na, title="Prev Quarter High", style=plot.style_line, linewidth=1, color=#6600a6, offset=offset_val, trackprice=true)
+plot(show_quarterly ? quarterlyO : na, title="Prev Quarter Open", style=plot.style_line, linewidth=3, color=#6600a6, offset=offset_val, trackprice=true)
+plot(show_quarterly ? quarterlyC : na, title="Prev Quarter Close", style=plot.style_line, linewidth=3, color=#6600a6, offset=offset_val, trackprice=true)
+plot(show_quarterly ? quarterlyL : na, title="Prev Quarter Low", style=plot.style_line, linewidth=1, color=#6600a6, offset=offset_val, trackprice=true)
+
+// Plot 12 Month levels (Orange/Red)
+plot(show_12month ? twelveMonthH : na, title="Prev 12M High", style=plot.style_line, linewidth=2, color=#FF6600, offset=offset_val, trackprice=true)
+plot(show_12month ? twelveMonthO : na, title="Prev 12M Open", style=plot.style_line, linewidth=4, color=#FF6600, offset=offset_val, trackprice=true)
+plot(show_12month ? twelveMonthC : na, title="Prev 12M Close", style=plot.style_line, linewidth=4, color=#FF6600, offset=offset_val, trackprice=true)
+plot(show_12month ? twelveMonthL : na, title="Prev 12M Low", style=plot.style_line, linewidth=2, color=#FF6600, offset=offset_val, trackprice=true)
+
+// Full labels for Monthly
+plotshape(not small_labels and showlabels and show_monthly ? monthH : na, style=shape.labeldown, location=location.absolute, color=#0F4A98, textcolor=color.white, text="Last Month High", offset=offset_val, title="Last Month High Label")
+plotshape(not small_labels and showlabels and show_monthly ? monthL : na, style=shape.labelup, location=location.absolute, color=#0F4A98, textcolor=color.white, text="Last Month Low", offset=offset_val, title="Last Month Low Label")
+plotshape(not small_labels and showlabels and show_monthly ? monthO : na, style=shape.labeldown, location=location.absolute, color=#0F4A98, textcolor=color.white, text="Last Month Open", offset=offset_val, title="Last Month Open Label")
+plotshape(not small_labels and showlabels and show_monthly ? monthC : na, style=shape.labelup, location=location.absolute, color=#0F4A98, textcolor=color.white, text="Last Month Close", offset=offset_val, title="Last Month Close Label")
+
+// Full labels for Quarterly
+plotshape(not small_labels and showlabels and show_quarterly ? quarterlyH : na, style=shape.labeldown, location=location.absolute, color=#2E317E, textcolor=color.white, text="Prev Quarter High", offset=offset_val, title="Prev Quarter High Label")
+plotshape(not small_labels and showlabels and show_quarterly ? quarterlyL : na, style=shape.labelup, location=location.absolute, color=#2E317E, textcolor=color.white, text="Prev Quarter Low", offset=offset_val, title="Prev Quarter Low Label")
+plotshape(not small_labels and showlabels and show_quarterly ? quarterlyO : na, style=shape.labeldown, location=location.absolute, color=#2E317E, textcolor=color.white, text="Prev Quarter Open", offset=offset_val, title="Prev Quarter Open Label")
+plotshape(not small_labels and showlabels and show_quarterly ? quarterlyC : na, style=shape.labelup, location=location.absolute, color=#2E317E, textcolor=color.white, text="Prev Quarter Close", offset=offset_val, title="Prev Quarter Close Label")
+
+// Full labels for 12 Month
+plotshape(not small_labels and showlabels and show_12month ? twelveMonthH : na, style=shape.labeldown, location=location.absolute, color=#FF6600, textcolor=color.white, text="Prev 12M High", offset=offset_val, title="Prev 12M High Label")
+plotshape(not small_labels and showlabels and show_12month ? twelveMonthL : na, style=shape.labelup, location=location.absolute, color=#FF6600, textcolor=color.white, text="Prev 12M Low", offset=offset_val, title="Prev 12M Low Label")
+plotshape(not small_labels and showlabels and show_12month ? twelveMonthO : na, style=shape.labeldown, location=location.absolute, color=#FF6600, textcolor=color.white, text="Prev 12M Open", offset=offset_val, title="Prev 12M Open Label")
+plotshape(not small_labels and showlabels and show_12month ? twelveMonthC : na, style=shape.labelup, location=location.absolute, color=#FF6600, textcolor=color.white, text="Prev 12M Close", offset=offset_val, title="Prev 12M Close Label")
+
+// Small labels for Monthly
+plotshape(small_labels and showlabels and show_monthly ? monthH : na, style=shape.labeldown, location=location.absolute, color=#0F4A98, textcolor=color.white, text="M", offset=offset_val, title="M High")
+plotshape(small_labels and showlabels and show_monthly ? monthL : na, style=shape.labelup, location=location.absolute, color=#0F4A98, textcolor=color.white, text="M", offset=offset_val, title="M Low")
+plotshape(small_labels and showlabels and show_monthly ? monthO : na, style=shape.labeldown, location=location.absolute, color=#0F4A98, textcolor=color.white, text="M_O", offset=offset_val, title="M Open")
+plotshape(small_labels and showlabels and show_monthly ? monthC : na, style=shape.labelup, location=location.absolute, color=#0F4A98, textcolor=color.white, text="M_C", offset=offset_val, title="M Close")
+
+// Small labels for Quarterly
+plotshape(small_labels and showlabels and show_quarterly ? quarterlyH : na, style=shape.labeldown, location=location.absolute, color=#2E317E, textcolor=color.white, text="Q", offset=offset_val, title="Q High")
+plotshape(small_labels and showlabels and show_quarterly ? quarterlyL : na, style=shape.labelup, location=location.absolute, color=#2E317E, textcolor=color.white, text="Q", offset=offset_val, title="Q Low")
+plotshape(small_labels and showlabels and show_quarterly ? quarterlyO : na, style=shape.labeldown, location=location.absolute, color=#2E317E, textcolor=color.white, text="Q_O", offset=offset_val, title="Q Open")
+plotshape(small_labels and showlabels and show_quarterly ? quarterlyC : na, style=shape.labelup, location=location.absolute, color=#2E317E, textcolor=color.white, text="Q_C", offset=offset_val, title="Q Close")
+
+// Small labels for 12 Month
+plotshape(small_labels and showlabels and show_12month ? twelveMonthH : na, style=shape.labeldown, location=location.absolute, color=#FF6600, textcolor=color.white, text="12M", offset=offset_val, title="12M High")
+plotshape(small_labels and showlabels and show_12month ? twelveMonthL : na, style=shape.labelup, location=location.absolute, color=#FF6600, textcolor=color.white, text="12M", offset=offset_val, title="12M Low")
+plotshape(small_labels and showlabels and show_12month ? twelveMonthO : na, style=shape.labeldown, location=location.absolute, color=#FF6600, textcolor=color.white, text="12M_O", offset=offset_val, title="12M Open")
+plotshape(small_labels and showlabels and show_12month ? twelveMonthC : na, style=shape.labelup, location=location.absolute, color=#FF6600, textcolor=color.white, text="12M_C", offset=offset_val, title="12M Close")

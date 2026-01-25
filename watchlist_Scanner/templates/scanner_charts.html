@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Results with Charts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f7fafc;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .scanner-results {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            position: sticky;
+            top: 20px;
+        }
+
+        .scanner-results h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .ticker-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ticker-item {
+            padding: 15px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticker-item:hover {
+            background: #edf2f7;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .ticker-item.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .ticker-symbol {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .ticker-info {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .ticker-item.active .ticker-info {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .chart-area {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .chart-title {
+            font-size: 1.8rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+
+        #tradingview-widget {
+            height: 700px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .signal-details {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .signal-details h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .signal-badge {
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .signal-label {
+            font-size: 0.75rem;
+            color: #718096;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .signal-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .filter-tab {
+            padding: 8px 15px;
+            background: #edf2f7;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 1200px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .scanner-results {
+                position: static;
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Scanner Results with Live Charts</h1>
+            <p>Click any ticker to view its chart with your custom indicators</p>
+        </div>
+
+        <div class="layout">
+            <!-- Scanner Results Sidebar -->
+            <div class="scanner-results">
+                <h2>🎯 Triple Signal Stocks</h2>
+
+                <div class="filter-section">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" onclick="filterResults('all')">All</button>
+                        <button class="filter-tab" onclick="filterResults('excellent')">Excellent</button>
+                        <button class="filter-tab" onclick="filterResults('good')">Good</button>
+                    </div>
+                </div>
+
+                <div class="ticker-list" id="ticker-list">
+                    <!-- Tickers will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Chart Area -->
+            <div class="chart-area">
+                <div class="chart-header">
+                    <div class="chart-title" id="chart-title">Select a ticker to view chart</div>
+                    <div class="chart-actions">
+                        <button class="btn btn-secondary" onclick="openInTradingView()">
+                            Open in TradingView
+                        </button>
+                        <button class="btn btn-primary" onclick="nextTicker()">
+                            Next →
+                        </button>
+                    </div>
+                </div>
+
+                <div class="signal-details" id="signal-details" style="display: none;">
+                    <h3>📈 Signal Details</h3>
+                    <div class="signal-grid">
+                        <div class="signal-badge">
+                            <div class="signal-label">Price</div>
+                            <div class="signal-value" id="signal-price">-</div>
+                        </div>
+                        <div class="signal-badge">
+                            <div class="signal-label">Signal Date</div>
+                            <div class="signal-value" id="signal-date">-</div>
+                        </div>
+                        <div class="signal-badge">
+                            <div class="signal-label">Days Since</div>
+                            <div class="signal-value" id="signal-days">-</div>
+                        </div>
+                        <div class="signal-badge">
+                            <div class="signal-label">Zone</div>
+                            <div class="signal-value" id="signal-zone">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tradingview-widget"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        let currentTicker = null;
+        let currentIndex = 0;
+        let widget = null;
+
+        // Sample data - replace with actual scanner results
+        const scannerResults = [
+            { ticker: 'AAPL', price: 185.50, signalDate: '2024-12-20', days: 3, zone: 'EXCELLENT' },
+            { ticker: 'MSFT', price: 375.20, signalDate: '2024-12-18', days: 5, zone: 'GOOD' },
+            { ticker: 'NVDA', price: 495.75, signalDate: '2024-12-21', days: 2, zone: 'EXCELLENT' },
+            { ticker: 'TSLA', price: 265.30, signalDate: '2024-12-19', days: 4, zone: 'GOOD' },
+            { ticker: 'AMZN', price: 172.50, signalDate: '2024-12-22', days: 1, zone: 'EXCELLENT' },
+        ];
+
+        // Load ticker list
+        function loadTickerList() {
+            const tickerList = document.getElementById('ticker-list');
+            tickerList.innerHTML = '';
+
+            scannerResults.forEach((result, index) => {
+                const item = document.createElement('div');
+                item.className = 'ticker-item';
+                item.onclick = () => loadChart(result.ticker, index);
+
+                item.innerHTML = `
+                    <div>
+                        <div class="ticker-symbol">${result.ticker}</div>
+                        <div class="ticker-info">${result.zone} • ${result.days}d ago</div>
+                    </div>
+                    <div class="ticker-info">$${result.price}</div>
+                `;
+
+                tickerList.appendChild(item);
+            });
+        }
+
+        function filterResults(filter) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter logic would go here
+            // For now, just reload list
+            loadTickerList();
+        }
+
+        function loadChart(ticker, index = 0) {
+            currentTicker = ticker;
+            currentIndex = index;
+
+            // Update active ticker in list
+            document.querySelectorAll('.ticker-item').forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Update chart title
+            document.getElementById('chart-title').textContent = `${ticker} Chart`;
+
+            // Show and update signal details
+            const result = scannerResults[index];
+            document.getElementById('signal-details').style.display = 'block';
+            document.getElementById('signal-price').textContent = `$${result.price}`;
+            document.getElementById('signal-date').textContent = result.signalDate;
+            document.getElementById('signal-days').textContent = result.days;
+            document.getElementById('signal-zone').textContent = result.zone;
+
+            // Clear existing widget
+            document.getElementById('tradingview-widget').innerHTML = '';
+
+            // Create new TradingView widget
+            widget = new TradingView.widget({
+                "width": "100%",
+                "height": 700,
+                "symbol": ticker,
+                "interval": "D",
+                "timezone": "America/New_York",
+                "theme": "light",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "allow_symbol_change": false,
+                "save_image": true,
+                "container_id": "tradingview-widget",
+                "hide_side_toolbar": false,
+                "studies": [
+                    // Add your published indicator IDs here
+                ],
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650"
+            });
+        }
+
+        function nextTicker() {
+            currentIndex = (currentIndex + 1) % scannerResults.length;
+            const result = scannerResults[currentIndex];
+            loadChart(result.ticker, currentIndex);
+        }
+
+        function openInTradingView() {
+            if (!currentTicker) return;
+            window.open(`https://www.tradingview.com/chart/?symbol=${currentTicker}`, '_blank');
+        }
+
+        // Load on page load
+        window.onload = function() {
+            loadTickerList();
+        };
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                nextTicker();
+            } else if (e.key === 'ArrowLeft') {
+                currentIndex = (currentIndex - 1 + scannerResults.length) % scannerResults.length;
+                const result = scannerResults[currentIndex];
+                loadChart(result.ticker, currentIndex);
+            }
+        });
+    </script>
+</body>
+</html>
