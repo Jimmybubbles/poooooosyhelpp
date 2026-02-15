@@ -151,28 +151,52 @@ def calculate_normalized_price_tradingview(df, bollperiod=68):
     normprice = df['Close'] - basis_series
     return normprice
 
-def find_consolidation_range(df, current_idx, lookback=20):
+def find_consolidation_range(df, current_idx, ema1_per=5, ema2_per=26, atr_per=50, atr_mult=0.4):
     """
-    Simple channel detection - just find the high/low range over recent period
-    No strict requirements - any range is accepted
+    Jimmy Channel Scan - Squeeze Channel detection
+    Channel only exists when abs(EMA2 - EMA1) < ATR (squeeze condition)
+    This ensures channel is "printing" on current day
     Returns: (range_high, range_low, consolidation_days, range_percent)
     """
-    if current_idx < lookback:
-        lookback = current_idx
-
-    if lookback < 1:
+    if current_idx < max(ema1_per, ema2_per, atr_per):
         return None, None, 0, 0
 
-    # Get recent data
-    window_data = df.iloc[max(0, current_idx - lookback + 1):current_idx + 1]
+    # Calculate EMAs and ATR
+    ema1 = talib.EMA(df['Close'].values, timeperiod=ema1_per)
+    ema2 = talib.EMA(df['Close'].values, timeperiod=ema2_per)
+    atr = talib.ATR(df['High'].values, df['Low'].values, df['Close'].values, timeperiod=atr_per) * atr_mult
 
-    # Calculate high/low range
-    range_high = window_data['High'].max()
-    range_low = window_data['Low'].min()
+    # Calculate Squeeze Channel Levels
+    # Channel only exists when abs(EMA2 - EMA1) < ATR
+    ema_diff = np.abs(ema2 - ema1)
+    in_squeeze = ema_diff < atr
+
+    # Upper and lower channel boundaries
+    SqLup = ema2 + atr  # Upper channel
+    SqLdn = ema2 - atr  # Lower channel
+
+    # Check if channel is printing on current bar
+    current_in_squeeze = in_squeeze[current_idx]
+
+    if not current_in_squeeze:
+        # Channel not printing today - EMAs too far apart
+        return None, None, 0, 0
+
+    # Channel is printing - get the boundaries
+    range_high = SqLup[current_idx]
+    range_low = SqLdn[current_idx]
     range_pct = ((range_high - range_low) / range_low) * 100 if range_low > 0 else 0
 
-    # Return range info (always valid if we have data)
-    return range_high, range_low, lookback, range_pct
+    # Count how many recent days the channel has been printing
+    lookback = min(60, current_idx)
+    consol_days = 0
+    for i in range(current_idx, max(0, current_idx - lookback), -1):
+        if in_squeeze[i]:
+            consol_days += 1
+        else:
+            break  # Stop counting when channel disappears
+
+    return range_high, range_low, consol_days, range_pct
 
 def check_uptrend(df, current_idx, sma_period=50):
     """Check if stock is in an uptrend"""
@@ -389,7 +413,7 @@ def generate_report(signals):
     report_lines.append(f"Scan Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     report_lines.append("")
     report_lines.append("STRATEGY CRITERIA:")
-    report_lines.append("  1. Channel consolidation detected (any duration)")
+    report_lines.append("  1. Jimmy Squeeze Channel PRINTING on scan day (EMA5/26 within ATR distance)")
     report_lines.append("  2. EFI oversold (MAROON or ORANGE - histogram below 0)")
     report_lines.append("  3. Normalized price > 0 (Close above 68 EMA - DIVERGENCE setup)")
     report_lines.append("  (Fader color shown for reference - RED or GREEN both accepted)")

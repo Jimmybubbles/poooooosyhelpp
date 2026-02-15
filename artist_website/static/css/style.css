@@ -1,0 +1,873 @@
+/* ============================================================
+   ARTIST PORTFOLIO WEBSITE - STYLESHEET
+   ============================================================ */
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    text-decoration: none;
+    color: white;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+}
+
+.artist-name {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-style: italic;
+}
+
+.main-nav {
+    display: flex;
+    gap: 2rem;
+}
+
+.main-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.main-nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Flash Messages */
+.flash-messages {
+    margin-bottom: 1.5rem;
+}
+
+.flash {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.flash.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.flash.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ============================================================
+   GALLERY PAGE
+   ============================================================ */
+.gallery-page {
+    padding: 1rem 0;
+}
+
+/* Category Filter */
+.category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 0.5rem 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+/* Gallery Grid - 3 Columns */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+/* Painting Card */
+.painting-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.painting-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.painting-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    cursor: pointer;
+}
+
+.painting-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.painting-card:hover .painting-image img {
+    transform: scale(1.1);
+}
+
+.painting-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.painting-card:hover .painting-overlay {
+    opacity: 1;
+}
+
+.view-icon {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid white;
+    border-radius: 25px;
+}
+
+.painting-info {
+    padding: 1rem;
+}
+
+.painting-info h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+}
+
+.painting-category {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    background: var(--bg-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+}
+
+/* Share Buttons */
+.share-buttons {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem 1rem;
+}
+
+.share-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    color: white;
+}
+
+.share-btn:hover {
+    transform: scale(1.1);
+}
+
+.share-btn.facebook { background: #1877f2; }
+.share-btn.twitter { background: #000000; }
+.share-btn.pinterest { background: #e60023; }
+.share-btn.copy { background: var(--secondary-color); }
+
+.share-buttons.large .share-btn {
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* Empty Gallery */
+.empty-gallery {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+}
+
+.empty-gallery h2 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   LIGHTBOX
+   ============================================================ */
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2.5rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: var(--transition);
+}
+
+.lightbox-close:hover {
+    color: var(--accent-color);
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 3rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: 4px;
+}
+
+.lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-nav.prev { left: -80px; }
+.lightbox-nav.next { right: -80px; }
+
+.lightbox-image-container {
+    max-width: 100%;
+    max-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-image-container img {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.lightbox-info {
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.lightbox-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.lightbox-info p {
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 600px;
+}
+
+.lightbox-info .painting-category {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    margin-top: 0.5rem;
+}
+
+/* ============================================================
+   ADMIN PAGE
+   ============================================================ */
+.admin-page {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.admin-page h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.admin-page h3 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    color: var(--text-light);
+}
+
+/* Upload Section */
+.upload-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+/* Drop Zone */
+.drop-zone {
+    border: 3px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: var(--secondary-color);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.drop-zone-content svg {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.drop-zone-content p {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.or-text {
+    font-size: 0.9rem;
+}
+
+.file-select-btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: var(--secondary-color);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: var(--transition);
+}
+
+.file-select-btn:hover {
+    background: #2980b9;
+}
+
+/* Upload Preview */
+.upload-preview {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.preview-image-container {
+    flex: 0 0 300px;
+}
+
+.preview-image-container img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.upload-form {
+    flex: 1;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+.btn-danger {
+    background: var(--accent-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* Upload Progress */
+.upload-progress {
+    text-align: center;
+    padding: 2rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--bg-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--secondary-color);
+    width: 0%;
+    animation: progress 2s infinite;
+}
+
+@keyframes progress {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
+
+/* Manage Section */
+.manage-section {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.hint {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Paintings List (Admin) */
+.paintings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.painting-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.painting-item.dragging {
+    opacity: 0.5;
+    background: var(--secondary-color);
+}
+
+.drag-handle {
+    cursor: grab;
+    color: var(--text-light);
+    padding: 0.5rem;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.painting-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.painting-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.painting-details input,
+.painting-details textarea,
+.painting-details select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.painting-details textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.painting-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.empty-list {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+}
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.login-box {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: var(--secondary-color);
+}
+
+/* ============================================================
+   PAINTING PAGE (Single View)
+   ============================================================ */
+.painting-page {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.back-btn {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.back-btn:hover {
+    color: var(--secondary-color);
+}
+
+.painting-view {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.painting-image-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+
+.painting-details-large {
+    padding: 2rem;
+}
+
+.painting-details-large h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.painting-description {
+    color: var(--text-light);
+    margin: 1.5rem 0;
+    line-height: 1.8;
+}
+
+.share-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.share-section h4 {
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+    background: var(--primary-color);
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+
+/* Tablet - 2 columns */
+@media (max-width: 1024px) {
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .painting-view {
+        grid-template-columns: 1fr;
+    }
+
+    .lightbox-nav.prev { left: 10px; }
+    .lightbox-nav.next { right: 10px; }
+}
+
+/* Mobile - 1 column */
+@media (max-width: 640px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .main-nav {
+        gap: 1rem;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .upload-preview {
+        flex-direction: column;
+    }
+
+    .preview-image-container {
+        flex: none;
+        width: 100%;
+    }
+
+    .painting-item {
+        flex-wrap: wrap;
+    }
+
+    .painting-details {
+        width: 100%;
+    }
+
+    .painting-actions {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .lightbox-nav {
+        font-size: 2rem;
+        padding: 0.5rem;
+    }
+
+    .share-buttons.large {
+        flex-wrap: wrap;
+    }
+
+    .share-buttons.large .share-btn {
+        flex: 1;
+        min-width: 100px;
+    }
+}

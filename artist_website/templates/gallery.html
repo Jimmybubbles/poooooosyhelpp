@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Gallery - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="gallery-page">
+    <!-- Category Filter -->
+    <div class="category-filter">
+        <a href="{{ url_for('gallery') }}" class="filter-btn {% if not current_category %}active{% endif %}">All</a>
+        {% for cat in categories %}
+            <a href="{{ url_for('gallery_by_category', category=cat.name) }}"
+               class="filter-btn {% if current_category == cat.name %}active{% endif %}">
+                {{ cat.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Gallery Grid -->
+    {% if paintings %}
+    <div class="gallery-grid">
+        {% for painting in paintings %}
+        <div class="painting-card" data-id="{{ painting.id }}">
+            <div class="painting-image" onclick="openLightbox({{ painting.id }})">
+                <img src="{{ url_for('static', filename='uploads/thumbnails/' + painting.thumbnail_filename) }}"
+                     alt="{{ painting.title }}"
+                     loading="lazy">
+                <div class="painting-overlay">
+                    <span class="view-icon">View</span>
+                </div>
+            </div>
+            <div class="painting-info">
+                <h3>{{ painting.title }}</h3>
+                {% if painting.category %}
+                    <span class="painting-category">{{ painting.category }}</span>
+                {% endif %}
+            </div>
+            <!-- Share Buttons -->
+            <div class="share-buttons">
+                <button onclick="shareOnFacebook({{ painting.id }}, '{{ painting.title }}')" title="Share on Facebook" class="share-btn facebook">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                </button>
+                <button onclick="shareOnTwitter({{ painting.id }}, '{{ painting.title }}')" title="Share on Twitter/X" class="share-btn twitter">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </button>
+                <button onclick="shareOnPinterest({{ painting.id }}, '{{ painting.title }}')" title="Pin on Pinterest" class="share-btn pinterest">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 0a12 12 0 0 0-4.37 23.17c-.1-.937-.2-2.38.04-3.4l1.44-6.1s-.36-.73-.36-1.8c0-1.69.98-2.95 2.2-2.95 1.04 0 1.54.78 1.54 1.72 0 1.04-.67 2.6-1.01 4.05-.29 1.2.6 2.18 1.78 2.18 2.14 0 3.78-2.26 3.78-5.5 0-2.88-2.07-4.89-5.02-4.89-3.42 0-5.43 2.57-5.43 5.22 0 1.03.4 2.14.89 2.74a.36.36 0 0 1 .08.35l-.33 1.36c-.05.22-.18.27-.41.16-1.54-.72-2.5-2.96-2.5-4.77 0-3.88 2.82-7.44 8.13-7.44 4.27 0 7.59 3.04 7.59 7.1 0 4.24-2.67 7.65-6.38 7.65-1.25 0-2.42-.65-2.82-1.41l-.77 2.93c-.28 1.07-1.03 2.42-1.54 3.24A12 12 0 1 0 12 0z"/></svg>
+                </button>
+                <button onclick="copyLink({{ painting.id }})" title="Copy Link" class="share-btn copy">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-gallery">
+        <h2>No paintings yet</h2>
+        <p>Check back soon for new artwork!</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <button class="lightbox-nav prev" onclick="navigateLightbox(-1)">&lsaquo;</button>
+        <button class="lightbox-nav next" onclick="navigateLightbox(1)">&rsaquo;</button>
+        <div class="lightbox-image-container">
+            <img id="lightbox-image" src="" alt="">
+        </div>
+        <div class="lightbox-info">
+            <h2 id="lightbox-title"></h2>
+            <p id="lightbox-description"></p>
+            <span id="lightbox-category" class="painting-category"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Store painting IDs for navigation
+    const paintingIds = [{% for p in paintings %}{{ p.id }}{% if not loop.last %},{% endif %}{% endfor %}];
+    let currentLightboxIndex = 0;
+</script>
+{% endblock %}
