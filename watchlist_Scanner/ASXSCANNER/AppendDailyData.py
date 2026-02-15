@@ -8,10 +8,10 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(script_dir)
 
 # Directory where CSV files are stored
-results_directory = os.path.join(project_root, 'watchlist_Scanner', 'ETFSCANNER\Updated_Results')
+results_directory = os.path.join(project_root, 'watchlist_Scanner', 'ASXSCANNER\Updated_Results')
 
 # Ticker list file (same as your main download script)
-ticker_file = os.path.join(project_root, 'watchlist_Scanner', 'CSV', 'etf_list.csv')
+ticker_file = os.path.join(project_root, 'watchlist_Scanner', 'CSV', 'ASXListedCompanies.csv')
 
 def read_ticker_list(file_path):
     """Read ticker symbols from CSV file"""

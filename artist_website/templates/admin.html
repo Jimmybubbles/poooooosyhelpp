@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+    <h2>Admin Panel</h2>
+
+    <!-- Upload Section -->
+    <div class="upload-section">
+        <h3>Upload New Painting</h3>
+
+        <!-- Drag and Drop Zone -->
+        <div id="drop-zone" class="drop-zone">
+            <div class="drop-zone-content">
+                <svg viewBox="0 0 24 24" width="48" height="48">
+                    <path fill="currentColor" d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                </svg>
+                <p>Drag & Drop images here</p>
+                <p class="or-text">or</p>
+                <label class="file-select-btn">
+                    Browse Files
+                    <input type="file" id="file-input" accept="image/*" multiple hidden>
+                </label>
+            </div>
+        </div>
+
+        <!-- Upload Preview & Form -->
+        <div id="upload-preview" class="upload-preview" style="display: none;">
+            <div class="preview-image-container">
+                <img id="preview-image" src="" alt="Preview">
+            </div>
+            <form id="upload-form" class="upload-form">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" required placeholder="Enter painting title">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Describe your artwork..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category">
+                        {% for cat in categories %}
+                            <option value="{{ cat.name }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="cancelUpload()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Upload Progress -->
+        <div id="upload-progress" class="upload-progress" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <p id="progress-text">Uploading...</p>
+        </div>
+    </div>
+
+    <!-- Manage Paintings Section -->
+    <div class="manage-section">
+        <h3>Manage Paintings</h3>
+        <p class="hint">Drag and drop to reorder paintings</p>
+
+        {% if paintings %}
+        <div id="paintings-list" class="paintings-list">
+            {% for painting in paintings %}
+            <div class="painting-item" data-id="{{ painting.id }}" draggable="true">
+                <div class="drag-handle">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M9 3h2v2H9zm4 0h2v2h-2zM9 7h2v2H9zm4 0h2v2h-2zm-4 4h2v2H9zm4 0h2v2h-2zm-4 4h2v2H9zm4 0h2v2h-2zm-4 4h2v2H9zm4 0h2v2h-2z"/>
+                    </svg>
+                </div>
+                <img src="{{ url_for('static', filename='uploads/thumbnails/' + painting.thumbnail_filename) }}" alt="{{ painting.title }}">
+                <div class="painting-details">
+                    <input type="text" class="edit-title" value="{{ painting.title }}" data-original="{{ painting.title }}">
+                    <textarea class="edit-description" data-original="{{ painting.description or '' }}">{{ painting.description or '' }}</textarea>
+                    <select class="edit-category" data-original="{{ painting.category or 'Other' }}">
+                        {% for cat in categories %}
+                            <option value="{{ cat.name }}" {% if painting.category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="painting-actions">
+                    <button onclick="savePainting({{ painting.id }})" class="btn btn-small btn-primary">Save</button>
+                    <button onclick="deletePainting({{ painting.id }})" class="btn btn-small btn-danger">Delete</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-list">
+            <p>No paintings uploaded yet. Use the upload section above to add your first artwork!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    let selectedFile = null;
+
+    // Drag and Drop for Upload
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const uploadPreview = document.getElementById('upload-preview');
+    const previewImage = document.getElementById('preview-image');
+    const uploadForm = document.getElementById('upload-form');
+    const uploadProgress = document.getElementById('upload-progress');
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Highlight drop zone when dragging over
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFile(files[0]);
+        }
+    });
+
+    // Handle file input change
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            handleFile(fileInput.files[0]);
+        }
+    });
+
+    function handleFile(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+
+        selectedFile = file;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImage.src = e.target.result;
+            dropZone.style.display = 'none';
+            uploadPreview.style.display = 'flex';
+
+            // Auto-fill title from filename
+            const titleInput = document.getElementById('title');
+            if (!titleInput.value) {
+                titleInput.value = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function cancelUpload() {
+        selectedFile = null;
+        uploadPreview.style.display = 'none';
+        dropZone.style.display = 'flex';
+        uploadForm.reset();
+        fileInput.value = '';
+    }
+
+    // Handle form submission
+    uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!selectedFile) {
+            alert('Please select a file');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('title', document.getElementById('title').value);
+        formData.append('description', document.getElementById('description').value);
+        formData.append('category', document.getElementById('category').value);
+
+        // Show progress
+        uploadPreview.style.display = 'none';
+        uploadProgress.style.display = 'block';
+
+        try {
+            const response = await fetch('/admin/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Reload page to show new painting
+                location.reload();
+            } else {
+                alert('Upload failed: ' + result.error);
+                uploadProgress.style.display = 'none';
+                uploadPreview.style.display = 'flex';
+            }
+        } catch (error) {
+            alert('Upload failed: ' + error.message);
+            uploadProgress.style.display = 'none';
+            uploadPreview.style.display = 'flex';
+        }
+    });
+
+    // Save painting edits
+    async function savePainting(id) {
+        const item = document.querySelector(`.painting-item[data-id="${id}"]`);
+        const title = item.querySelector('.edit-title').value;
+        const description = item.querySelector('.edit-description').value;
+        const category = item.querySelector('.edit-category').value;
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('category', category);
+
+        try {
+            const response = await fetch(`/admin/edit/${id}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Saved successfully!');
+            } else {
+                alert('Save failed: ' + result.error);
+            }
+        } catch (error) {
+            alert('Save failed: ' + error.message);
+        }
+    }
+
+    // Delete painting
+    async function deletePainting(id) {
+        if (!confirm('Are you sure you want to delete this painting?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/admin/delete/${id}`, {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                // Remove from DOM
+                document.querySelector(`.painting-item[data-id="${id}"]`).remove();
+            } else {
+                alert('Delete failed: ' + result.error);
+            }
+        } catch (error) {
+            alert('Delete failed: ' + error.message);
+        }
+    }
+
+    // Drag and Drop Reordering
+    const paintingsList = document.getElementById('paintings-list');
+
+    if (paintingsList) {
+        let draggedItem = null;
+
+        paintingsList.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('painting-item')) {
+                draggedItem = e.target;
+                e.target.classList.add('dragging');
+            }
+        });
+
+        paintingsList.addEventListener('dragend', (e) => {
+            if (e.target.classList.contains('painting-item')) {
+                e.target.classList.remove('dragging');
+                saveOrder();
+            }
+        });
+
+        paintingsList.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(paintingsList, e.clientY);
+            const draggable = document.querySelector('.dragging');
+
+            if (afterElement == null) {
+                paintingsList.appendChild(draggable);
+            } else {
+                paintingsList.insertBefore(draggable, afterElement);
+            }
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.painting-item:not(.dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        async function saveOrder() {
+            const items = [...paintingsList.querySelectorAll('.painting-item')];
+            const order = items.map(item => parseInt(item.dataset.id));
+
+            try {
+                await fetch('/admin/reorder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order: order })
+                });
+            } catch (error) {
+                console.error('Failed to save order:', error);
+            }
+        }
+    }
+</script>
+{% endblock %}

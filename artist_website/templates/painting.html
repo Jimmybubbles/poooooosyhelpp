@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ painting.title }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="painting-page">
+    <a href="{{ url_for('gallery') }}" class="back-btn">&larr; Back to Gallery</a>
+
+    <div class="painting-view">
+        <div class="painting-image-large">
+            <img src="{{ url_for('static', filename='uploads/originals/' + painting.original_filename) }}"
+                 alt="{{ painting.title }}">
+        </div>
+        <div class="painting-details-large">
+            <h1>{{ painting.title }}</h1>
+            {% if painting.category %}
+                <span class="painting-category">{{ painting.category }}</span>
+            {% endif %}
+            {% if painting.description %}
+                <p class="painting-description">{{ painting.description }}</p>
+            {% endif %}
+
+            <div class="share-section">
+                <h4>Share this artwork</h4>
+                <div class="share-buttons large">
+                    <button onclick="shareOnFacebook({{ painting.id }}, '{{ painting.title }}')" class="share-btn facebook">
+                        Facebook
+                    </button>
+                    <button onclick="shareOnTwitter({{ painting.id }}, '{{ painting.title }}')" class="share-btn twitter">
+                        Twitter/X
+                    </button>
+                    <button onclick="shareOnPinterest({{ painting.id }}, '{{ painting.title }}')" class="share-btn pinterest">
+                        Pinterest
+                    </button>
+                    <button onclick="copyLink({{ painting.id }})" class="share-btn copy">
+                        Copy Link
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
