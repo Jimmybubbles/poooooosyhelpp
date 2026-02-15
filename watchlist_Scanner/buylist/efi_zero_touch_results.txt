@@ -1,0 +1,132 @@
+====================================================================================================
+EFI ZERO TOUCH SCANNER - RESULTS
+====================================================================================================
+Scan Date: 2026-02-07 02:12:53
+
+THEORY:
+  EFI Price Line = Close - Basis (Bollinger middle band)
+  When price line touches 0 from above: Price pulled back to the mean
+  Bullish setups: EFI > 0 (momentum still positive) = potential bounce point
+
+Total Setups Found: 99
+  Bullish Context (EFI > 0): 9
+
+====================================================================================================
+BULLISH ZERO TOUCH (EFI > 0 - Potential Bounce Points)
+====================================================================================================
+Ticker        Price       Norm        EFI Color      VolRatio
+----------------------------------------------------------------------------------------------------
+FBRT     $    10.26     -0.027      0.089 teal           1.44x
+NMIH     $    38.72      0.003      0.422 teal           1.42x
+FTNT     $    81.26      0.012      2.583 teal           1.16x
+LILA     $     7.72      0.001      0.428 teal           1.09x
+AMT      $   179.28     -1.147      1.968 teal           1.09x
+SIGA     $     6.70     -0.088      0.044 teal           0.84x
+TVTX     $    31.09     -0.751      0.481 teal           0.64x
+KREF     $     8.28     -0.063      0.124 teal           0.61x
+NNBR     $     1.49     -0.006      0.010 teal           0.47x
+
+====================================================================================================
+ALL ZERO TOUCH SETUPS
+====================================================================================================
+Ticker        Price       Norm        EFI Color      VolRatio Context   
+----------------------------------------------------------------------------------------------------
+PFSI     $    99.92    -34.320    -89.792 maroon         7.32x BEARISH   
+LXRX     $     1.16     -0.166     -0.571 maroon         5.08x BEARISH   
+BZH      $    21.57     -0.987     -3.415 maroon         4.68x BEARISH   
+PMT      $    11.83     -0.908     -2.795 maroon         4.18x BEARISH   
+CVCO     $   492.02   -109.337   -292.018 maroon         3.41x BEARISH   
+TBBK     $    59.44     -8.823    -17.473 maroon         3.35x BEARISH   
+MXL      $    17.35     -0.149     -2.884 maroon         3.01x BEARISH   
+RITM     $    10.94     -0.379     -1.445 maroon         2.72x BEARISH   
+OLN      $    20.81     -1.138     -4.115 maroon         2.65x BEARISH   
+RKT      $    17.93     -1.752     -6.330 maroon         2.51x BEARISH   
+OSIS     $   250.14    -16.327    -50.461 maroon         2.38x BEARISH   
+TITN     $    16.27     -0.137     -0.111 maroon         2.37x BEARISH   
+IAC      $    36.95     -0.617     -4.014 maroon         2.31x BEARISH   
+SANM     $   141.68    -11.695    -41.302 maroon         2.16x BEARISH   
+CIM      $    12.35     -0.449     -1.072 maroon         2.13x BEARISH   
+UWMC     $     4.91     -0.383     -1.349 maroon         2.12x BEARISH   
+MIR      $    24.84     -0.061     -1.564 maroon         2.09x BEARISH   
+ALV      $   121.24     -0.848     -9.198 maroon         2.03x BEARISH   
+GNTX     $    23.01     -0.965     -1.457 maroon         1.99x BEARISH   
+SKYW     $    96.52     -4.431     -6.619 maroon         1.91x BEARISH   
+OABI     $     1.82     -0.034     -0.191 maroon         1.89x BEARISH   
+GDEN     $    26.92     -0.102     -0.930 maroon         1.85x BEARISH   
+LAD      $   323.44     -2.708    -11.423 maroon         1.79x BEARISH   
+SF       $   123.30     -0.751     -8.442 maroon         1.58x BEARISH   
+XMTR     $    57.13     -2.259    -10.987 maroon         1.57x BEARISH   
+CNM      $    53.36     -0.795     -5.269 maroon         1.56x BEARISH   
+MUR      $    30.09     -0.607     -2.955 maroon         1.49x BEARISH   
+BRN      $     1.10     -0.047     -0.054 maroon         1.46x BEARISH   
+FBRT     $    10.26     -0.027      0.089 teal           1.44x BULLISH   
+KOD      $    22.77     -0.463     -6.568 maroon         1.43x BEARISH   
+LADR     $    10.97     -0.017     -0.234 maroon         1.42x BEARISH   
+NMIH     $    38.72      0.003      0.422 teal           1.42x BULLISH   
+OC       $   119.84      0.039     -2.754 orange         1.39x BEARISH   
+CUBE     $    37.53     -0.061     -0.451 maroon         1.33x BEARISH   
+IDCC     $   326.44     -3.999     -0.159 maroon         1.29x BEARISH   
+PLUG     $     2.11     -0.178     -0.448 maroon         1.27x BEARISH   
+PSA      $   276.19     -0.739     -5.896 maroon         1.27x BEARISH   
+ATEN     $    17.44     -0.194     -0.445 maroon         1.24x BEARISH   
+WEX      $   153.90     -0.457     -6.340 maroon         1.24x BEARISH   
+RWT      $     5.48     -0.128     -0.543 maroon         1.22x BEARISH   
+SUPN     $    48.16     -0.290     -2.548 maroon         1.17x BEARISH   
+FTNT     $    81.26      0.012      2.583 teal           1.16x BULLISH   
+LNT      $    65.91     -0.238     -1.216 maroon         1.16x BEARISH   
+H        $   156.37     -2.193    -11.190 maroon         1.13x BEARISH   
+NRIX     $    16.52     -0.162     -3.807 maroon         1.13x BEARISH   
+APPS     $     5.22     -0.022     -0.129 maroon         1.13x BEARISH   
+LILA     $     7.72      0.001      0.428 teal           1.09x BULLISH   
+AMT      $   179.28     -1.147      1.968 teal           1.09x BULLISH   
+ROAD     $   109.88     -2.040     -4.884 maroon         1.05x BEARISH   
+INDI     $     4.10     -0.052     -0.351 maroon         1.03x BEARISH   
+PNR      $   105.37     -0.121     -1.083 maroon         1.03x BEARISH   
+BDC      $   117.51     -0.278     -0.479 maroon         1.01x BEARISH   
+ALLY     $    42.28     -0.399     -1.449 maroon         1.00x BEARISH   
+ULCC     $     4.64     -0.157     -0.765 maroon         1.00x BEARISH   
+EAF      $    15.11     -0.634     -3.493 maroon         0.99x BEARISH   
+MP       $    58.77     -2.947    -11.472 maroon         0.96x BEARISH   
+RIOT     $    15.47     -0.470     -2.610 maroon         0.96x BEARISH   
+CVNA     $   401.11    -12.320    -91.167 maroon         0.96x BEARISH   
+ACAD     $    25.13     -0.412     -2.398 maroon         0.96x BEARISH   
+RCUS     $    21.04     -0.052     -2.406 maroon         0.95x BEARISH   
+PPSI     $     4.27     -0.111     -0.852 maroon         0.95x BEARISH   
+TREE     $    56.66     -1.207     -8.063 maroon         0.94x BEARISH   
+SEDG     $    30.95     -1.998     -5.534 maroon         0.94x BEARISH   
+CDZI     $     5.64     -0.005     -1.151 orange         0.90x BEARISH   
+BRBS     $     4.25     -0.009     -0.154 maroon         0.90x BEARISH   
+UAMY     $     7.33     -0.050     -2.977 maroon         0.88x BEARISH   
+ABNB     $   129.37     -0.529     -6.952 maroon         0.86x BEARISH   
+TNC      $    76.09     -0.473     -1.821 maroon         0.86x BEARISH   
+AMRC     $    31.34     -0.383     -1.315 maroon         0.86x BEARISH   
+SANA     $     4.43     -0.001     -0.519 maroon         0.85x BEARISH   
+SIGA     $     6.70     -0.088      0.044 teal           0.84x BULLISH   
+ORIC     $    10.26     -0.322     -1.600 maroon         0.83x BEARISH   
+SES      $     2.03     -0.046     -0.384 maroon         0.83x BEARISH   
+DAL      $    65.89     -0.082     -4.085 maroon         0.81x BEARISH   
+GCO      $    28.93     -0.829     -6.688 maroon         0.80x BEARISH   
+SVRA     $     5.40     -0.026     -0.874 maroon         0.80x BEARISH   
+ADNT     $    20.80     -0.055     -1.230 maroon         0.80x BEARISH   
+RLJ      $     7.43     -0.040     -0.218 maroon         0.77x BEARISH   
+MATV     $    12.05     -0.064     -0.990 maroon         0.76x BEARISH   
+RCKT     $     3.48     -0.042     -0.312 maroon         0.75x BEARISH   
+ZUMZ     $    24.61     -0.115     -1.046 maroon         0.74x BEARISH   
+PEB      $    11.42     -0.029     -0.745 maroon         0.73x BEARISH   
+RLMD     $     3.55     -0.114     -0.825 maroon         0.70x BEARISH   
+OCGN     $     1.45     -0.002     -0.260 maroon         0.69x BEARISH   
+TRC      $    16.09     -0.073     -0.318 maroon         0.66x BEARISH   
+QTRX     $     6.34     -0.245     -1.038 maroon         0.65x BEARISH   
+FBIO     $     3.10     -0.175     -0.795 maroon         0.65x BEARISH   
+HLLY     $     3.85     -0.040     -0.396 maroon         0.65x BEARISH   
+TVTX     $    31.09     -0.751      0.481 teal           0.64x BULLISH   
+KPTI     $     6.52     -0.067     -0.626 maroon         0.62x BEARISH   
+KREF     $     8.28     -0.063      0.124 teal           0.61x BULLISH   
+DDD      $     2.24     -0.050     -0.355 maroon         0.59x BEARISH   
+BWEN     $     3.00     -0.022     -0.640 maroon         0.58x BEARISH   
+BHVN     $    11.83     -0.199     -0.965 maroon         0.58x BEARISH   
+NVTS     $     8.58     -0.531     -2.297 maroon         0.55x BEARISH   
+CPS      $    31.37     -0.892     -1.228 maroon         0.48x BEARISH   
+NNBR     $     1.49     -0.006      0.010 teal           0.47x BULLISH   
+HRTX     $     1.32     -0.012     -0.139 maroon         0.41x BEARISH   
+CODX     $     2.41     -0.193     -1.653 maroon         0.03x BEARISH   

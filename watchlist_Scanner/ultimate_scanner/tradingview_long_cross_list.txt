@@ -1,0 +1,9 @@
+====================================================================================================
+LONG CROSS INDICATIONS - TRADINGVIEW LIST
+====================================================================================================
+Generated: 2026-02-07 21:50:46
+Total Signals: 30
+
+Copy and paste into TradingView:
+----------------------------------------------------------------------------------------------------
+ABBV,FTNT,PTGX,XYL,UAL,AN,URI,ARQT,COMM,MUR,AAL,DXC,NSIT,HAYW,APLS,CROX,ENTA,RRC,PACK,LVO,TRVI,AR,MCS,JBI,OPRT,KODK,SPRO,ESPR,USEG,XELA

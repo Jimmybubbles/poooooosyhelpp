@@ -1,0 +1,47 @@
+====================================================================================================
+RANGE LEVEL BACKTEST - TRADE TYPE COMPARISON
+====================================================================================================
+Backtest Date: 2026-02-01 22:16:30
+Lookback Period: 252 trading days
+
+TRADE TYPES:
+----------------------------------------------------------------------------------------------------
+  WITHIN_RANGE: Buy 25% dip, sell at 75% (consolidation/mean reversion)
+  RANGE_CHANGE: Buy 75% breakout, sell at next range 25% (momentum/breakout)
+
+====================================================================================================
+
+COMPARISON RESULTS:
+----------------------------------------------------------------------------------------------------
+Metric                    WITHIN_RANGE         RANGE_CHANGE         DIFFERENCE          
+----------------------------------------------------------------------------------------------------
+Total Trades              18,821               20,851               +2,030              
+Winning Trades            7,957                5,628                -2,329              
+Losing Trades             10,864               15,223               +4,359              
+Win Rate                  42.3%                27.0%                -15.3%              
+Average Win               +11.58%              +12.58%              +0.99%              
+Average Loss              -5.97%               -5.31%               +0.66%              
+Expectancy                +1.45%               -0.48%               -1.93%              
+Profit Factor             1.42                 0.88                 -0.54               
+Avg Days Held             13.1                 11.8                 -1.4                
+----------------------------------------------------------------------------------------------------
+
+====================================================================================================
+ANALYSIS:
+----------------------------------------------------------------------------------------------------
+  Win Rate: WITHIN_RANGE wins (42.3% vs 27.0%)
+  Expectancy: WITHIN_RANGE wins (+1.45% vs -0.48%)
+  Profit Factor: WITHIN_RANGE wins (1.42 vs 0.88)
+
+  SCORE: WITHIN_RANGE 3 - RANGE_CHANGE 0
+
+  WINNER: WITHIN_RANGE (Buy the dip at 25%)
+  This is a mean-reversion strategy that works well in ranging markets.
+
+INTERPRETATION:
+  - WITHIN_RANGE = Mean reversion / Consolidation play
+  - RANGE_CHANGE = Momentum / Breakout play
+  - Higher win rate doesn't always mean better (check expectancy)
+  - Both can be combined for a complete range-based system
+
+====================================================================================================

@@ -1,0 +1,49 @@
+====================================================================================================
+RANGE LEVEL BACKTEST - WEEKLY FADER COMPARISON RESULTS
+====================================================================================================
+Backtest Date: 2026-02-01 21:59:29
+Lookback Period: 252 trading days
+
+STRATEGY:
+  Entry: Price touches 25% level of range
+  Target: 75% level (+50% of range)
+  Stop: 0% level (-25% of range)
+  Theoretical R:R = 1:2
+
+FILTER TEST:
+  BASELINE: Take all valid entries
+  ENHANCED: Only enter when WEEKLY FADER is GREEN (uptrend)
+
+====================================================================================================
+
+COMPARISON RESULTS:
+----------------------------------------------------------------------------------------------------
+Metric                    BASELINE             ENHANCED (Fader)     DIFFERENCE          
+----------------------------------------------------------------------------------------------------
+Total Trades              18,821               7,985                -10,836
+Win Rate                  42.3               % 45.4               % +3.1%
+Winning Trades            7,957                3,627                -4,330
+Average Win               +11.58             % +11.80             % +0.21%
+Average Loss              -5.97              % -5.85              % +0.13%
+Expectancy                1.45++++++++++++++% 2.17++++++++++++++% +0.72%
+Profit Factor             1.42                 1.68                 +0.26
+Avg Days Held             13.1                14.8                +1.7
+----------------------------------------------------------------------------------------------------
+
+====================================================================================================
+ANALYSIS:
+----------------------------------------------------------------------------------------------------
+  Trade Reduction: 57.6% fewer trades with filter (more selective)
+  Win Rate Change: +3.1%
+  Expectancy Change: +0.72% per trade
+
+  RESULT: ✓ WEEKLY FADER FILTER IMPROVES RESULTS
+  Higher timeframe trend confirmation increases both win rate and expectancy.
+  Recommendation: Use the weekly Fader filter for better risk-adjusted returns.
+
+INTERPRETATION:
+  - Weekly Fader GREEN = price above weekly Fader line = uptrend
+  - Buying 25% dips in an uptrend should have better odds
+  - Higher timeframe alignment = fractal edge
+
+====================================================================================================

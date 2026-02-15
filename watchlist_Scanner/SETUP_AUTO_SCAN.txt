@@ -1,0 +1,86 @@
+================================================================================
+HOW TO SET UP AUTOMATIC DAILY SCANNING
+================================================================================
+
+This guide shows you how to schedule your scanners to run automatically
+every day using Windows Task Scheduler.
+
+================================================================================
+OPTION 1: WINDOWS TASK SCHEDULER (Recommended)
+================================================================================
+
+STEP 1: Open Task Scheduler
+---------------------------
+   - Press Windows key + R
+   - Type: taskschd.msc
+   - Press Enter
+
+STEP 2: Create a New Task
+-------------------------
+   - Click "Create Basic Task" in the right panel
+   - Name: "Daily Stock Scanner"
+   - Description: "Runs range level and other scanners after market close"
+   - Click Next
+
+STEP 3: Set the Trigger (When to run)
+-------------------------------------
+   - Select "Daily"
+   - Click Next
+   - Set the time: 8:00 AM (AEST) or whenever you want
+   - Recur every: 1 day
+   - Click Next
+
+STEP 4: Set the Action (What to run)
+------------------------------------
+   - Select "Start a program"
+   - Click Next
+   - Program/script: Browse to:
+     c:\Users\James\poosy\poooooosyhelpp-1\watchlist_Scanner\run_daily_scan.bat
+   - Click Next
+   - Click Finish
+
+STEP 5: Edit for Better Reliability (Optional)
+----------------------------------------------
+   - Find your new task in the list
+   - Right-click > Properties
+   - Check "Run whether user is logged on or not"
+   - Check "Run with highest privileges"
+   - Click OK
+
+DONE! Your scanner will now run automatically every day.
+
+================================================================================
+OPTION 2: QUICK MANUAL TEST
+================================================================================
+
+To test if everything works, double-click:
+   c:\Users\James\poosy\poooooosyhelpp-1\watchlist_Scanner\run_daily_scan.bat
+
+Check the results in:
+   c:\Users\James\poosy\poooooosyhelpp-1\watchlist_Scanner\buylist\
+
+================================================================================
+FILES CREATED
+================================================================================
+
+daily_auto_scan.py  - Main automation script (runs all scanners)
+run_daily_scan.bat  - Windows batch file (Task Scheduler runs this)
+buylist/auto_scan_log.txt - Log of all automated runs
+buylist/last_auto_scan.txt - Shows when last scan completed
+
+================================================================================
+TIPS
+================================================================================
+
+1. TIMING: Set it to run AFTER market close (US market closes 4 PM ET)
+   - 4:30 PM ET = 8:30 AM AEST (next day) - gives time for data to update
+
+2. DATA: Make sure your data download runs BEFORE the scanner
+   - The script tries to find and run data update scripts automatically
+
+3. CHECK LOGS: If scans aren't working, check:
+   buylist/auto_scan_log.txt
+
+4. WEEKEND: Task Scheduler will still run on weekends but data won't change
+
+================================================================================
