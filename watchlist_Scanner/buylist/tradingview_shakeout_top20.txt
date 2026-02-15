@@ -1,0 +1,11 @@
+================================================================================
+SHAKEOUT REVERSALS - TOP 20 BEST SETUPS
+================================================================================
+Generated: 2026-02-01 22:41:50
+Total symbols: 20
+================================================================================
+
+Copy the line below and paste into TradingView watchlist:
+--------------------------------------------------------------------------------
+
+AVO,CALM,CHTR,CRK,EQT,LBRDA,LBRDK,MNTK,SGMO,AUMN,BCLI,BIIB,CACC,CNX,CRGY,CTRA,EFSC,FCAP,FDBC,IONS

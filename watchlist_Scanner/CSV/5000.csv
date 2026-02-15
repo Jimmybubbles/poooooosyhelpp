@@ -3299,3 +3299,38 @@ SYBX,SYNLOGIC INC,Health Care
 FAM3,S&P MID 400 EMINI JUN 23,Cash and/or Derivatives
 ESM3,S&P500 EMINI JUN 23,Cash and/or Derivatives
 SOC,SRAX INC,Information Technology
+EURUSD=X,EUR/USD,Forex Major
+GBPUSD=X,GBP/USD,Forex Major
+USDJPY=X,USD/JPY,Forex Major
+USDCHF=X,USD/CHF,Forex Major
+AUDUSD=X,AUD/USD,Forex Major
+USDCAD=X,USD/CAD,Forex Major
+NZDUSD=X,NZD/USD,Forex Major
+EURGBP=X,EUR/GBP,Forex Cross
+EURJPY=X,EUR/JPY,Forex Cross
+GBPJPY=X,GBP/JPY,Forex Cross
+AUDJPY=X,AUD/JPY,Forex Cross
+EURAUD=X,EUR/AUD,Forex Cross
+EURCHF=X,EUR/CHF,Forex Cross
+GBPCHF=X,GBP/CHF,Forex Cross
+CADJPY=X,CAD/JPY,Forex Cross
+AUDNZD=X,AUD/NZD,Forex Cross
+GBPAUD=X,GBP/AUD,Forex Cross
+NZDJPY=X,NZD/JPY,Forex Cross
+USDMXN=X,USD/MXN,Forex Exotic
+USDZAR=X,USD/ZAR,Forex Exotic
+USDTRY=X,USD/TRY,Forex Exotic
+USDSEK=X,USD/SEK,Forex Exotic
+USDNOK=X,USD/NOK,Forex Exotic
+USDDKK=X,USD/DKK,Forex Exotic
+USDSGD=X,USD/SGD,Forex Exotic
+USDHKD=X,USD/HKD,Forex Exotic
+USDCNH=X,USD/CNH,Forex Exotic
+USDTHB=X,USD/THB,Forex Exotic
+USDPLN=X,USD/PLN,Forex Exotic
+USDHUF=X,USD/HUF,Forex Exotic
+USDCZK=X,USD/CZK,Forex Exotic
+EURPLN=X,EUR/PLN,Forex Exotic
+EURTRY=X,EUR/TRY,Forex Exotic
+GBPNZD=X,GBP/NZD,Forex Exotic
+EURNZD=X,EUR/NZD,Forex Exotic

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import sys
 
 # Add the watchlist_Scanner directory to the path
@@ -9,6 +9,13 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from EFI_Indicator import EFI_Indicator
 from PriceRangeZones import determine_trend
+
+try:
+    import yfinance as yf
+    YFINANCE_AVAILABLE = True
+except ImportError:
+    YFINANCE_AVAILABLE = False
+    print("Warning: yfinance not installed. Run 'pip install yfinance' for earnings data.")
 
 # Get the directory where this script is located
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +34,89 @@ def get_ticker_list(results_dir):
     except Exception as e:
         print(f"Error reading results directory: {e}")
         return []
+
+def get_earnings_date(ticker, days_ahead=5):
+    """
+    Get upcoming earnings date for a ticker using yfinance.
+
+    Args:
+        ticker: Stock ticker symbol
+        days_ahead: Number of days to look ahead for earnings
+
+    Returns:
+        Earnings date if within days_ahead, None otherwise
+    """
+    if not YFINANCE_AVAILABLE:
+        return None
+
+    try:
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+
+            stock = yf.Ticker(ticker)
+            today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            future_cutoff = today + timedelta(days=days_ahead)
+
+            # Try to get earnings dates from calendar first (faster)
+            try:
+                calendar = stock.calendar
+                if calendar is not None and not calendar.empty:
+                    if 'Earnings Date' in calendar.index:
+                        earnings_dates = calendar.loc['Earnings Date']
+                        if isinstance(earnings_dates, pd.Series):
+                            earnings_date = earnings_dates.iloc[0]
+                        else:
+                            earnings_date = earnings_dates
+
+                        if pd.notna(earnings_date):
+                            if isinstance(earnings_date, str):
+                                earnings_date = pd.to_datetime(earnings_date)
+                            elif hasattr(earnings_date, 'to_pydatetime'):
+                                earnings_date = earnings_date.to_pydatetime()
+
+                            if hasattr(earnings_date, 'tzinfo') and earnings_date.tzinfo is not None:
+                                earnings_date = earnings_date.replace(tzinfo=None)
+
+                            if today <= earnings_date <= future_cutoff:
+                                return earnings_date
+            except Exception:
+                pass
+
+    except Exception:
+        pass
+
+    return None
+
+def check_earnings_batch(tickers, days_ahead=5):
+    """
+    Check earnings dates for a batch of tickers.
+
+    Args:
+        tickers: List of ticker symbols
+        days_ahead: Number of days to look ahead
+
+    Returns:
+        Dictionary mapping ticker to earnings date (or None)
+    """
+    import sys
+    earnings_dict = {}
+    total = len(tickers)
+
+    print(f"\nChecking earnings dates for {total} stocks (next {days_ahead} days)...")
+    sys.stdout.flush()
+
+    for i, ticker in enumerate(tickers):
+        if (i + 1) % 25 == 0:
+            print(f"  Earnings check progress: {i + 1}/{total}...", flush=True)
+
+        earnings_date = get_earnings_date(ticker, days_ahead)
+        if earnings_date:
+            earnings_dict[ticker] = earnings_date
+            print(f"    {ticker}: Earnings on {earnings_date.strftime('%m/%d/%Y')}", flush=True)
+
+    print(f"  Found {len(earnings_dict)} stocks with earnings in next {days_ahead} days", flush=True)
+    return earnings_dict
 
 def detect_shakeout_reversal(ticker_symbol, results_dir, lookback_days=20):
     """
@@ -223,12 +313,13 @@ def detect_shakeout_reversal(ticker_symbol, results_dir, lookback_days=20):
         print(f"Error scanning {ticker_symbol}: {e}")
         return None
 
-def run_shakeout_reversal_scan(lookback_days=20):
+def run_shakeout_reversal_scan(lookback_days=20, earnings_filter_days=None):
     """
     Run the Shakeout Reversal scan across all tickers
 
     Args:
         lookback_days: Days to look back for shakeout (default 20)
+        earnings_filter_days: If set, only show stocks with earnings in next N days (default None = no filter)
     """
     print("=" * 80)
     print("SHAKEOUT REVERSAL SCANNER")
@@ -239,6 +330,8 @@ def run_shakeout_reversal_scan(lookback_days=20):
     print("  1. Price broke below previous month low (shakeout)")
     print("  2. EFI turning positive (reversal momentum)")
     print("  3. Stock in uptrend (pullback buy)")
+    if earnings_filter_days:
+        print(f"  4. Earnings within next {earnings_filter_days} days")
     print()
     print("STRATEGY:")
     print("  Enter when weak hands get shaken out and smart money steps in")
@@ -266,10 +359,30 @@ def run_shakeout_reversal_scan(lookback_days=20):
     print()
     print(f"Scan complete!")
     print(f"Found {len(all_setups)} shakeout reversal setups")
+
+    # Apply earnings filter if requested
+    earnings_dict = {}
+    if earnings_filter_days and YFINANCE_AVAILABLE:
+        setup_tickers = [s['ticker'] for s in all_setups]
+        earnings_dict = check_earnings_batch(setup_tickers, earnings_filter_days)
+
+        # Filter to only stocks with upcoming earnings
+        all_setups_with_earnings = []
+        for setup in all_setups:
+            if setup['ticker'] in earnings_dict:
+                setup['earnings_date'] = earnings_dict[setup['ticker']]
+                all_setups_with_earnings.append(setup)
+
+        print(f"\nFiltered to {len(all_setups_with_earnings)} stocks with earnings in next {earnings_filter_days} days")
+        all_setups = all_setups_with_earnings
+    elif earnings_filter_days and not YFINANCE_AVAILABLE:
+        print("\nWarning: yfinance not installed. Cannot filter by earnings.")
+        print("Run: pip install yfinance")
+
     print()
 
     if not all_setups:
-        print("No shakeout reversal setups found.")
+        print("No shakeout reversal setups found matching criteria.")
         return
 
     # Sort by signal strength (best setups first)
@@ -298,23 +411,45 @@ def run_shakeout_reversal_scan(lookback_days=20):
     report_lines.append("=" * 80)
     report_lines.append("")
 
+    # Check if we have earnings data
+    has_earnings_data = any('earnings_date' in s for s in all_setups)
+
     # TOP 20 BEST SETUPS (by signal strength)
     report_lines.append("TOP 20 BEST SETUPS (Highest Signal Strength):")
-    report_lines.append("=" * 80)
-    report_lines.append(f"{'Ticker':<8} {'Price':<10} {'EFI':<10} {'Strength':<9} {'Recovery%':<11} {'Days':<6} {'Status':<20}")
-    report_lines.append("-" * 80)
+    report_lines.append("=" * 100)
+    if has_earnings_data:
+        report_lines.append(f"{'Ticker':<8} {'Price':<10} {'EFI':<10} {'Strength':<9} {'Recovery%':<11} {'Days':<6} {'Earnings':<12} {'Status':<15}")
+    else:
+        report_lines.append(f"{'Ticker':<8} {'Price':<10} {'EFI':<10} {'Strength':<9} {'Recovery%':<11} {'Days':<6} {'Status':<20}")
+    report_lines.append("-" * 100)
 
     for setup in all_setups[:20]:
         status = "RECLAIMED" if setup['reclaimed_prev_month_low'] else "EMERGING"
-        report_lines.append(
-            f"{setup['ticker']:<8} "
-            f"${setup['current_price']:<9.2f} "
-            f"{setup['current_fi_color']:<10} "
-            f"{setup['signal_strength']:<9} "
-            f"{setup['recovery_from_shakeout_pct']:>9.2f}% "
-            f"{setup['days_since_shakeout']:<6} "
-            f"{status}"
-        )
+        earnings_str = ""
+        if 'earnings_date' in setup and setup['earnings_date']:
+            earnings_str = setup['earnings_date'].strftime('%m/%d/%Y')
+
+        if has_earnings_data:
+            report_lines.append(
+                f"{setup['ticker']:<8} "
+                f"${setup['current_price']:<9.2f} "
+                f"{setup['current_fi_color']:<10} "
+                f"{setup['signal_strength']:<9} "
+                f"{setup['recovery_from_shakeout_pct']:>9.2f}% "
+                f"{setup['days_since_shakeout']:<6} "
+                f"{earnings_str:<12} "
+                f"{status}"
+            )
+        else:
+            report_lines.append(
+                f"{setup['ticker']:<8} "
+                f"${setup['current_price']:<9.2f} "
+                f"{setup['current_fi_color']:<10} "
+                f"{setup['signal_strength']:<9} "
+                f"{setup['recovery_from_shakeout_pct']:>9.2f}% "
+                f"{setup['days_since_shakeout']:<6} "
+                f"{status}"
+            )
 
     report_lines.append("")
     report_lines.append("=" * 80)
@@ -432,17 +567,36 @@ def run_shakeout_reversal_scan(lookback_days=20):
         f.write(report_text)
 
     # Create TradingView lists
-    create_tradingview_lists(confirmed_reversals, emerging_reversals, all_setups[:20])
+    create_tradingview_lists(confirmed_reversals, emerging_reversals, all_setups[:20], all_setups)
 
     # Print to console
     print(report_text)
     print(f"Report saved to: {output_file}")
 
-def create_tradingview_lists(confirmed_reversals, emerging_reversals, top_20):
+def create_tradingview_lists(confirmed_reversals, emerging_reversals, top_20, all_setups):
     """Create TradingView watchlists for different categories"""
 
+    # ALL SETUPS - Combined list
+    all_tickers_file = os.path.join(buylist_dir, 'tradingview_shakeout_ALL.txt')
+    with open(all_tickers_file, 'w', encoding='utf-8') as f:
+        f.write("=" * 80 + "\n")
+        f.write("SHAKEOUT REVERSALS - ALL SETUPS\n")
+        f.write("=" * 80 + "\n")
+        f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Total symbols: {len(all_setups)}\n")
+        f.write("=" * 80 + "\n\n")
+        f.write("Copy the line below and paste into TradingView watchlist:\n")
+        f.write("-" * 80 + "\n\n")
+
+        if all_setups:
+            tickers = [s['ticker'] for s in all_setups]
+            f.write(",".join(tickers) + "\n")
+
+    print(f"\nTradingView list saved: {all_tickers_file}")
+
     # Confirmed Reversals - Strong Buy
-    with open(os.path.join(buylist_dir, 'tradingview_shakeout_confirmed.txt'), 'w', encoding='utf-8') as f:
+    confirmed_file = os.path.join(buylist_dir, 'tradingview_shakeout_confirmed.txt')
+    with open(confirmed_file, 'w', encoding='utf-8') as f:
         f.write("=" * 80 + "\n")
         f.write("SHAKEOUT REVERSALS - CONFIRMED (Strong Buy)\n")
         f.write("=" * 80 + "\n")
@@ -454,15 +608,13 @@ def create_tradingview_lists(confirmed_reversals, emerging_reversals, top_20):
 
         if confirmed_reversals:
             tickers = [s['ticker'] for s in confirmed_reversals]
-            f.write(",".join(tickers) + "\n\n")
-            f.write("-" * 80 + "\n\n")
-            f.write("Individual symbols (one per line):\n")
-            f.write("-" * 80 + "\n")
-            for ticker in tickers:
-                f.write(ticker + "\n")
+            f.write(",".join(tickers) + "\n")
+
+    print(f"TradingView list saved: {confirmed_file}")
 
     # Emerging Reversals - Watch List
-    with open(os.path.join(buylist_dir, 'tradingview_shakeout_emerging.txt'), 'w', encoding='utf-8') as f:
+    emerging_file = os.path.join(buylist_dir, 'tradingview_shakeout_emerging.txt')
+    with open(emerging_file, 'w', encoding='utf-8') as f:
         f.write("=" * 80 + "\n")
         f.write("SHAKEOUT REVERSALS - EMERGING (Watch List)\n")
         f.write("=" * 80 + "\n")
@@ -474,15 +626,13 @@ def create_tradingview_lists(confirmed_reversals, emerging_reversals, top_20):
 
         if emerging_reversals:
             tickers = [s['ticker'] for s in emerging_reversals]
-            f.write(",".join(tickers) + "\n\n")
-            f.write("-" * 80 + "\n\n")
-            f.write("Individual symbols (one per line):\n")
-            f.write("-" * 80 + "\n")
-            for ticker in tickers:
-                f.write(ticker + "\n")
+            f.write(",".join(tickers) + "\n")
+
+    print(f"TradingView list saved: {emerging_file}")
 
     # Top 20 - Best Setups
-    with open(os.path.join(buylist_dir, 'tradingview_shakeout_top20.txt'), 'w', encoding='utf-8') as f:
+    top20_file = os.path.join(buylist_dir, 'tradingview_shakeout_top20.txt')
+    with open(top20_file, 'w', encoding='utf-8') as f:
         f.write("=" * 80 + "\n")
         f.write("SHAKEOUT REVERSALS - TOP 20 BEST SETUPS\n")
         f.write("=" * 80 + "\n")
@@ -494,13 +644,45 @@ def create_tradingview_lists(confirmed_reversals, emerging_reversals, top_20):
 
         if top_20:
             tickers = [s['ticker'] for s in top_20]
-            f.write(",".join(tickers) + "\n\n")
-            f.write("-" * 80 + "\n\n")
-            f.write("Individual symbols (one per line):\n")
+            f.write(",".join(tickers) + "\n")
+
+    print(f"TradingView list saved: {top20_file}")
+
+    # Earnings filter list (if earnings data present)
+    setups_with_earnings = [s for s in all_setups if 'earnings_date' in s and s['earnings_date']]
+    if setups_with_earnings:
+        earnings_file = os.path.join(buylist_dir, 'tradingview_shakeout_EARNINGS.txt')
+        with open(earnings_file, 'w', encoding='utf-8') as f:
+            f.write("=" * 80 + "\n")
+            f.write("SHAKEOUT REVERSALS - WITH UPCOMING EARNINGS\n")
+            f.write("=" * 80 + "\n")
+            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Total symbols: {len(setups_with_earnings)}\n")
+            f.write("=" * 80 + "\n\n")
+            f.write("STOCKS WITH EARNINGS IN NEXT 5 DAYS:\n")
             f.write("-" * 80 + "\n")
-            for ticker in tickers:
-                f.write(ticker + "\n")
+            for s in sorted(setups_with_earnings, key=lambda x: x['earnings_date']):
+                f.write(f"{s['ticker']:<8} Earnings: {s['earnings_date'].strftime('%m/%d/%Y')}\n")
+            f.write("\n")
+            f.write("Copy the line below and paste into TradingView watchlist:\n")
+            f.write("-" * 80 + "\n\n")
+            tickers = [s['ticker'] for s in setups_with_earnings]
+            f.write(",".join(tickers) + "\n")
+
+        print(f"TradingView list saved: {earnings_file}")
 
 if __name__ == "__main__":
-    # You can adjust lookback_days (default 20 trading days ~ 1 month)
-    run_shakeout_reversal_scan(lookback_days=20)
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Shakeout Reversal Scanner')
+    parser.add_argument('--earnings', '-e', type=int, default=None,
+                        help='Filter for stocks with earnings in next N days (e.g., --earnings 5)')
+    parser.add_argument('--lookback', '-l', type=int, default=20,
+                        help='Days to look back for shakeout (default: 20)')
+
+    args = parser.parse_args()
+
+    # Run the scanner
+    # Use --earnings 5 to filter for upcoming earnings
+    # Without --earnings flag, shows all setups
+    run_shakeout_reversal_scan(lookback_days=args.lookback, earnings_filter_days=args.earnings)

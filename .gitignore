@@ -1,0 +1,24 @@
+# Data files (too large for git)
+watchlist_Scanner/updated_Results_for_scan/
+watchlist_Scanner/aussieMarketScan/asx_data/
+watchlist_Scanner/ASXSCANNER/asx_data/
+
+# Scan results (regenerated daily)
+watchlist_Scanner/buylist/daily_scan_*.txt
+watchlist_Scanner/buylist/range_score_report_*.txt
+watchlist_Scanner/buylist/last_auto_scan.txt
+watchlist_Scanner/buylist/auto_scan_log.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+nul
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

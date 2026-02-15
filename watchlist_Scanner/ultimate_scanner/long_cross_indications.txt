@@ -1,0 +1,49 @@
+====================================================================================================
+LONG CROSS INDICATIONS SCANNER - RESULTS
+====================================================================================================
+Scan Date: 2026-02-07 21:50:46
+
+CRITERIA:
+  1. Normalized Price crosses ABOVE 0 (Close crosses above 68 EMA)
+  2. EFI Histogram changes from ORANGE/MAROON to LIME/TEAL
+  3. Jimmy Squeeze Channel actively PRINTING
+  4. Fader line is GREEN
+
+Total Signals Found: 30
+====================================================================================================
+
+Ticker   Date            Price      Norm Cross           EFI Change  Ch Days  Score
+----------------------------------------------------------------------------------------------------
+ABBV     02/06/2026   $ 223.43   -2.86->  1.51     ORANGE->LIME            9d     79
+FTNT     02/06/2026   $  82.76   -2.20->  1.59     MAROON->LIME            4d     77
+PTGX     02/06/2026   $  84.49   -1.16->  2.58     MAROON->LIME            4d     77
+XYL      02/06/2026   $ 142.12   -1.19->  1.64     MAROON->LIME            5d     77
+UAL      02/06/2026   $ 115.91   -0.44->  9.11     MAROON->LIME            3d     76
+AN       02/06/2026   $ 216.65   -6.23->  6.21     MAROON->LIME            1d     75
+URI      02/06/2026   $ 899.55  -15.95-> 34.79     ORANGE->LIME            1d     75
+ARQT     02/06/2026   $  27.32   -0.07->  1.14     ORANGE->LIME            1d     71
+COMM     02/06/2026   $  18.98   -0.06->  1.17     MAROON->LIME           14d     69
+MUR      02/06/2026   $  32.11   -0.18->  1.38     MAROON->LIME            1d     69
+AAL      02/06/2026   $  15.24   -0.14->  0.92     MAROON->LIME            1d     66
+DXC      02/06/2026   $  15.20   -0.22->  0.77     MAROON->LIME            1d     57
+NSIT     02/06/2026   $  89.14   -6.65->  0.21     ORANGE->LIME            2d     56
+HAYW     02/06/2026   $  16.71   -0.04->  0.67     MAROON->LIME            3d     53
+APLS     02/06/2026   $  23.49   -0.56->  0.36     MAROON->LIME            7d     52
+CROX     02/06/2026   $  85.81   -0.89->  0.42     MAROON->LIME            5d     51
+ENTA     02/06/2026   $  13.51   -0.02->  0.51     MAROON->LIME            4d     46
+RRC      02/06/2026   $  36.57   -0.10->  0.46     MAROON->LIME            2d     46
+PACK     02/06/2026   $   5.75   -0.40->  0.42     MAROON->LIME            1d     45
+LVO      02/06/2026   $   5.08   -0.46->  0.43     MAROON->LIME           13d     44
+TRVI     02/06/2026   $  11.46   -0.22->  0.29     MAROON->LIME            4d     43
+AR       02/06/2026   $  34.37   -0.10->  0.41     MAROON->LIME            4d     40
+MCS      02/06/2026   $  15.62   -0.10->  0.30     ORANGE->LIME            2d     40
+JBI      02/06/2026   $   7.27   -0.32->  0.04     MAROON->LIME           10d     37
+OPRT     02/06/2026   $   5.62   -0.05->  0.21     MAROON->LIME            4d     35
+KODK     02/06/2026   $   7.70   -0.25->  0.10     MAROON->LIME            1d     32
+SPRO     02/06/2026   $   2.42   -0.03->  0.09     ORANGE->LIME            1d     29
+ESPR     02/06/2026   $   3.40   -0.14->  0.07     MAROON->LIME            7d     20
+USEG     02/06/2026   $   1.07   -0.03->  0.02     MAROON->LIME            5d     18
+XELA     02/06/2026   $   0.07   -0.03->  0.02     MAROON->LIME           28d     15
+
+TradingView Ticker List:
+ABBV,FTNT,PTGX,XYL,UAL,AN,URI,ARQT,COMM,MUR,AAL,DXC,NSIT,HAYW,APLS,CROX,ENTA,RRC,PACK,LVO,TRVI,AR,MCS,JBI,OPRT,KODK,SPRO,ESPR,USEG,XELA

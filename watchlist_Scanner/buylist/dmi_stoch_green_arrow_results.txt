@@ -1,0 +1,37 @@
+====================================================================================================
+DMI STOCHASTIC GREEN ARROW SCANNER - RESULTS
+====================================================================================================
+Scan Date: 2026-02-07 20:35:16
+
+PATTERN:
+  1. DMI Stochastic drops into oversold zone (<= 10)
+  2. Stays in oversold for 2+ candles (black arrows)
+  3. Crosses back above oversold (green arrow = BUY)
+
+Parameters: DMI=32, Stoch=50, Smooth=9
+Oversold=10, Min bars in OS=2
+
+Total Signals: 19
+
+====================================================================================================
+Ticker        Price    Stoch   BarsOS   VolRatio Signal              
+----------------------------------------------------------------------------------------------------
+OSG      $     6.11     12.3       18       0.60x STRONG              
+HGTY     $    12.60     10.9       13       0.56x STRONG              
+M        $    22.70     13.4       12       1.01x STRONG              
+OHI      $    45.28     12.1       10       1.05x STRONG              
+WELL     $   195.92     11.4       10       0.96x STRONG              
+PLUS     $    86.82     11.0        8       1.81x STRONG              
+NGS      $    36.48     10.4        8       1.47x STRONG              
+WST      $   248.95     13.7        8       1.28x STRONG              
+C        $   122.69     12.2        7       1.01x STRONG              
+MPW      $     5.36     12.8        7       0.80x STRONG              
+IMXI     $    15.55     12.2        6       0.73x STRONG              
+IAS      $    10.34     13.5        5       8.77x STRONG              
+H        $   162.87     13.9        5       1.58x STRONG              
+GDEN     $    27.69     11.0        5       0.42x STRONG              
+SF       $   130.61     11.9        4       1.42x STRONG              
+SBRA     $    19.03     12.4        3       1.10x STRONG              
+VSCO     $    62.44     11.3        3       0.61x STRONG              
+HSIC     $    79.72     11.0        2       1.57x MODERATE            
+SKY      $    83.59     11.8        2       1.22x MODERATE            
