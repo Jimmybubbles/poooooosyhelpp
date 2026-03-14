@@ -37,7 +37,7 @@ for file_name in os.listdir(input_directory):
             end_date = datetime.now().strftime('%Y-%m-%d')
 
             # Download new data with 1-day interval
-            new_data = yf.download(ticker_symbol, start=start_date, end=end_date, interval="1d", auto_adjust=True)
+            new_data = yf.download(ticker_symbol + '.AX', start=start_date, end=end_date, interval="1d", auto_adjust=True)
 
             # Check if the DataFrame is empty
             if new_data.empty:

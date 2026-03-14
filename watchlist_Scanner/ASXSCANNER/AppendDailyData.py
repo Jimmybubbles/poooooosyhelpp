@@ -56,19 +56,26 @@ def get_last_date_in_csv(file_path):
         return None
 
 def append_new_data(ticker):
-    """Download and append only new data for a ticker"""
+    """Download and append only new data for a ticker.
+
+    Returns:
+        'ok'      - success or already up to date
+        'skip'    - file not found
+        'deleted' - file existed but was corrupt/failed, deleted
+    """
     file_path = os.path.join(results_directory, f'{ticker}.csv')
 
     # Check if file exists
     if not os.path.exists(file_path):
         print("File not found, skipping")
-        return False
+        return 'skip'
 
     # Get the last date in the file
     last_date = get_last_date_in_csv(file_path)
     if last_date is None:
-        print("Could not read last date")
-        return False
+        print("Could not read last date - deleting corrupt file")
+        os.remove(file_path)
+        return 'deleted'
 
     # Calculate start date (day after last date in file)
     start_date = last_date + timedelta(days=1)
@@ -77,15 +84,15 @@ def append_new_data(ticker):
     # Check if we need to download anything
     if start_date >= today:
         print(f"Up to date")
-        return True
+        return 'ok'
 
     try:
         # Download new data
-        new_data = yf.download(ticker, start=start_date, end=today, progress=False, auto_adjust=True)
+        new_data = yf.download(ticker + '.AX', start=start_date, end=today, progress=False, auto_adjust=True)
 
         if new_data.empty:
             print("No new data")
-            return True
+            return 'ok'
 
         # Read existing data
         existing_data = pd.read_csv(file_path, index_col=0)
@@ -116,11 +123,13 @@ def append_new_data(ticker):
         combined_data.to_csv(file_path)
 
         print(f"Added {len(new_data)} new rows")
-        return True
+        return 'ok'
 
     except Exception as e:
-        print(f"Error: {str(e)[:50]}")
-        return False
+        print(f"Error: {str(e)[:50]} - deleting failed file")
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        return 'deleted'
 
 # Main execution
 if __name__ == "__main__":
@@ -138,20 +147,24 @@ if __name__ == "__main__":
     success_count = 0
     skip_count = 0
     error_count = 0
+    deleted_tickers = []
 
     # Process each ticker
     for i, ticker in enumerate(tickers, 1):
         print(f"[{i}/{len(tickers)}] Processing {ticker}...", end=" ")
         result = append_new_data(ticker)
 
-        if result:
+        if result == 'ok':
             success_count += 1
-        else:
+        elif result == 'skip':
+            skip_count += 1
+        elif result == 'deleted':
             error_count += 1
+            deleted_tickers.append(ticker)
 
         # Show progress every 100 tickers
         if i % 100 == 0:
-            print(f"\nProgress: {i}/{len(tickers)} processed ({success_count} updated, {error_count} errors)")
+            print(f"\nProgress: {i}/{len(tickers)} processed ({success_count} updated, {error_count} deleted, {skip_count} skipped)")
             print()
 
     # Summary
@@ -160,6 +173,11 @@ if __name__ == "__main__":
     print("=" * 80)
     print(f"Total tickers: {len(tickers)}")
     print(f"Successfully updated: {success_count}")
-    print(f"Errors: {error_count}")
+    print(f"Skipped (no file): {skip_count}")
+    print(f"Failed & deleted: {error_count}")
+    if deleted_tickers:
+        print(f"\nDeleted files:")
+        for t in deleted_tickers:
+            print(f"  - {t}.csv")
     print(f"Completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 80)

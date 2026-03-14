@@ -3334,3 +3334,298 @@ EURPLN=X,EUR/PLN,Forex Exotic
 EURTRY=X,EUR/TRY,Forex Exotic
 GBPNZD=X,GBP/NZD,Forex Exotic
 EURNZD=X,EUR/NZD,Forex Exotic
+SPY,SPDR S&P 500 ETF,ETF Index
+QQQ,Invesco QQQ Trust,ETF Index
+IWM,iShares Russell 2000 ETF,ETF Index
+DIA,SPDR Dow Jones ETF,ETF Index
+VTI,Vanguard Total Stock Market ETF,ETF Index
+VOO,Vanguard S&P 500 ETF,ETF Index
+XLF,Financial Select Sector SPDR,ETF Sector
+XLE,Energy Select Sector SPDR,ETF Sector
+XLK,Technology Select Sector SPDR,ETF Sector
+XLV,Health Care Select Sector SPDR,ETF Sector
+XLP,Consumer Staples Select SPDR,ETF Sector
+XLI,Industrial Select Sector SPDR,ETF Sector
+XLB,Materials Select Sector SPDR,ETF Sector
+XLU,Utilities Select Sector SPDR,ETF Sector
+XLRE,Real Estate Select Sector SPDR,ETF Sector
+XLC,Communication Services SPDR,ETF Sector
+XLY,Consumer Discretionary SPDR,ETF Sector
+TAN,Invesco Solar ETF,ETF Thematic
+ICLN,iShares Global Clean Energy ETF,ETF Thematic
+QCLN,First Trust NASDAQ Clean Edge,ETF Thematic
+ARKK,ARK Innovation ETF,ETF Thematic
+ARKG,ARK Genomic Revolution ETF,ETF Thematic
+ARKF,ARK Fintech Innovation ETF,ETF Thematic
+ARKW,ARK Next Gen Internet ETF,ETF Thematic
+ARKQ,ARK Autonomous Tech ETF,ETF Thematic
+SOXX,iShares Semiconductor ETF,ETF Thematic
+SMH,VanEck Semiconductor ETF,ETF Thematic
+HACK,ETFMG Prime Cyber Security ETF,ETF Thematic
+CIBR,First Trust NASDAQ Cybersecurity,ETF Thematic
+BOTZ,Global X Robotics & AI ETF,ETF Thematic
+ROBO,ROBO Global Robotics ETF,ETF Thematic
+CLOU,Global X Cloud Computing ETF,ETF Thematic
+WCLD,WisdomTree Cloud Computing ETF,ETF Thematic
+DRIV,Global X Autonomous & EV ETF,ETF Thematic
+LIT,Global X Lithium & Battery ETF,ETF Thematic
+REMX,VanEck Rare Earth ETF,ETF Thematic
+URA,Global X Uranium ETF,ETF Thematic
+JETS,US Global Jets ETF,ETF Thematic
+BLOK,Amplify Blockchain ETF,ETF Thematic
+BITO,ProShares Bitcoin Strategy ETF,ETF Thematic
+IBIT,iShares Bitcoin Trust ETF,ETF Thematic
+GLD,SPDR Gold Shares,ETF Commodity
+SLV,iShares Silver Trust,ETF Commodity
+USO,United States Oil Fund,ETF Commodity
+UNG,United States Natural Gas Fund,ETF Commodity
+GDX,VanEck Gold Miners ETF,ETF Commodity
+GDXJ,VanEck Junior Gold Miners ETF,ETF Commodity
+XME,SPDR S&P Metals & Mining ETF,ETF Commodity
+XOP,SPDR S&P Oil & Gas Exploration ETF,ETF Sector
+AMLP,Alerian MLP ETF,ETF Sector
+KRE,SPDR S&P Regional Banking ETF,ETF Sector
+XHB,SPDR S&P Homebuilders ETF,ETF Sector
+ITB,iShares US Home Construction ETF,ETF Sector
+TLT,iShares 20+ Year Treasury ETF,ETF Bond
+HYG,iShares iBoxx High Yield Corp Bond,ETF Bond
+LQD,iShares iBoxx Investment Grade Bond,ETF Bond
+AGG,iShares Core US Aggregate Bond,ETF Bond
+BND,Vanguard Total Bond Market ETF,ETF Bond
+EEM,iShares MSCI Emerging Markets ETF,ETF International
+EFA,iShares MSCI EAFE ETF,ETF International
+VWO,Vanguard FTSE Emerging Markets ETF,ETF International
+VXUS,Vanguard Total Intl Stock ETF,ETF International
+VEA,Vanguard FTSE Developed Markets ETF,ETF International
+VGK,Vanguard FTSE Europe ETF,ETF International
+IEMG,iShares Core MSCI EM ETF,ETF International
+KWEB,KraneShares CSI China Internet ETF,ETF International
+FXI,iShares China Large-Cap ETF,ETF International
+MCHI,iShares MSCI China ETF,ETF International
+INDA,iShares MSCI India ETF,ETF International
+EWJ,iShares MSCI Japan ETF,ETF International
+EWZ,iShares MSCI Brazil ETF,ETF International
+EWY,iShares MSCI South Korea ETF,ETF International
+ASHR,Xtrackers Harvest CSI 300 China,ETF International
+VNQ,Vanguard Real Estate ETF,ETF Real Estate
+VNQI,Vanguard Global ex-US Real Estate,ETF Real Estate
+SOXL,Direxion Semiconductor Bull 3X,ETF Leveraged
+TQQQ,ProShares UltraPro QQQ 3X,ETF Leveraged
+SQQQ,ProShares UltraPro Short QQQ 3X,ETF Leveraged
+SPXL,Direxion Daily S&P 500 Bull 3X,ETF Leveraged
+TNA,Direxion Small Cap Bull 3X,ETF Leveraged
+TMF,Direxion 20+ Yr Treasury Bull 3X,ETF Leveraged
+UVXY,ProShares Ultra VIX Short-Term,ETF Volatility
+A200.AX,BetaShares Australia 200 ETF,Unknown
+A2M.AX,The a2 Milk Company Ltd,Unknown
+AAA.AX,Betashares Australian High Interest Cash ETF,Unknown
+ABC.AX,Adbri Ltd,Unknown
+ABP.AX,Abacus Property Group,Unknown
+AFI.AX,Australian Foundation Investment Company Ltd,Unknown
+AGL.AX,AGL Energy Ltd,Unknown
+AIA.AX,Auckland International Airport Ltd,Unknown
+ALD.AX,Ampol Ltd,Unknown
+ALL.AX,Aristocrat Leisure Ltd,Unknown
+ALQ.AX,Als Ltd,Unknown
+ALU.AX,Altium Ltd,Unknown
+ALX.AX,Atlas Arteria,Unknown
+AMC.AX,Amcor Plc,Unknown
+AMP.AX,AMP Ltd,Unknown
+ANN.AX,Ansell Ltd,Unknown
+ANZ.AX,Australia and New Zealand Banking Group Ltd,Unknown
+APA.AX,APA Group,Unknown
+APE.AX,Eagers Automotive Ltd,Unknown
+APT.AX,Afterpay Ltd,Unknown
+APX.AX,Appen Ltd,Unknown
+ARB.AX,ARB Corporation Ltd,Unknown
+ARG.AX,Argo Investments Ltd,Unknown
+ASIA.AX,BetaShares Asia Technology Tigers ETF,Unknown
+AST.AX,Ausnet Services Ltd,Unknown
+ASX.AX,ASX Ltd,Unknown
+AWC.AX,Alumina Ltd,Unknown
+AZJ.AX,Aurizon Holdings Ltd,Unknown
+BAP.AX,Bapcor Ltd,Unknown
+BBOZ.AX,BetaShares Australian Equities Strong Bear,Unknown
+BEAR.AX,BetaShares Australian Equities Bear,Unknown
+BEN.AX,Bendigo and Adelaide Bank Ltd,Unknown
+BGA.AX,Bega Cheese Ltd,Unknown
+BHP.AX,BHP Group Ltd,Unknown
+BIN.AX,Bingo Industries Ltd,Unknown
+BKW.AX,Brickworks Ltd,Unknown
+BLD.AX,Boral Ltd,Unknown
+BOQ.AX,Bank of Queensland Ltd,Unknown
+BPT.AX,Beach Energy Ltd,Unknown
+BRG.AX,Breville Group Ltd,Unknown
+BSL.AX,Bluescope Steel Ltd,Unknown
+BWP.AX,BWP Trust,Unknown
+BXB.AX,Brambles Ltd,Unknown
+CAR.AX,Carsales.com Ltd,Unknown
+CBA.AX,Commonwealth Bank of Australia,Unknown
+CCL.AX,Coca-Cola Amatil Ltd,Unknown
+CCP.AX,Credit Corp Group Ltd,Unknown
+CDA.AX,Codan Ltd,Unknown
+CGF.AX,Challenger Ltd,Unknown
+CHC.AX,Charter Hall Group,Unknown
+CHN.AX,Chalice Mining Ltd,Unknown
+CIA.AX,Champion Iron Ltd,Unknown
+CIM.AX,Cimic Group Ltd,Unknown
+CLW.AX,Charter Hall Long Wale REIT,Unknown
+CMW.AX,Cromwell Property Group,Unknown
+CNU.AX,Chorus Ltd,Unknown
+COH.AX,Cochlear Ltd,Unknown
+COL.AX,Coles Group Ltd,Unknown
+CPU.AX,Computershare Ltd,Unknown
+CQR.AX,Charter Hall Retail REIT,Unknown
+CSL.AX,CSL Ltd,Unknown
+CSR.AX,CSR Ltd,Unknown
+CTD.AX,Corporate Travel Management Ltd,Unknown
+CWN.AX,Crown Resorts Ltd,Unknown
+CWY.AX,Cleanaway Waste Management Ltd,Unknown
+DEG.AX,De Grey Mining Ltd,Unknown
+DHG.AX,Domain Holdings Australia Ltd,Unknown
+DHHF.AX,BetaShares Diversified All Growth ETF,Unknown
+DMP.AX,Domino's PIZZA Enterprises Ltd,Unknown
+DOW.AX,Downer Edi Ltd,Unknown
+DRR.AX,Deterra Royalties Ltd,Unknown
+DXS.AX,Dexus,Unknown
+EBO.AX,Ebos Group Ltd,Unknown
+ELD.AX,Elders Ltd,Unknown
+EML.AX,EML Payments Ltd,Unknown
+ETHI.AX,BetaShares Global Sustainability Leaders ETF,Unknown
+EVN.AX,Evolution Mining Ltd,Unknown
+EVT.AX,Event Hospitality and Entertainment Ltd,Unknown
+FBU.AX,Fletcher Building Ltd,Unknown
+FLT.AX,Flight Centre Travel Group Ltd,Unknown
+FMG.AX,Fortescue Metals Group Ltd,Unknown
+FPH.AX,Fisher & Paykel Healthcare Corporation Ltd,Unknown
+GMG.AX,Goodman Group,Unknown
+GNE.AX,Genesis Energy Ltd,Unknown
+GOLD.AX,ETFS Physical Gold,Unknown
+GOZ.AX,Growthpoint Properties Australia,Unknown
+GPT.AX,GPT Group,Unknown
+GXY.AX,Galaxy Resources Ltd,Unknown
+HACK.AX,BetaShares Global Cybersecurity ETF,Unknown
+HLS.AX,Healius Ltd,Unknown
+HVN.AX,Harvey Norman Holdings Ltd,Unknown
+IAG.AX,Insurance Australia Group Ltd,Unknown
+IEL.AX,Idp Education Ltd,Unknown
+IFL.AX,IOOF Holdings Ltd,Unknown
+IFT.AX,Infratil Ltd,Unknown
+IGO.AX,IGO Ltd,Unknown
+ILU.AX,Iluka Resources Ltd,Unknown
+IOO.AX,Ishares Global 100 ETF,Unknown
+IOZ.AX,Ishares Core S&P/ASX 200 ETF,Unknown
+IPL.AX,Incitec Pivot Ltd,Unknown
+IRE.AX,Iress Ltd,Unknown
+IVV.AX,Ishares S&P 500 ETF,Unknown
+JBH.AX,JB Hi-Fi Ltd,Unknown
+JHX.AX,James Hardie Industries Plc,Unknown
+LFG.AX,Liberty Financial Group,Unknown
+LFS.AX,Latitude Group Holdings Ltd,Unknown
+LLC.AX,Lendlease Group,Unknown
+LNK.AX,Link Administration Holdings Ltd,Unknown
+LYC.AX,Lynas Rare EARTHS Ltd,Unknown
+MCY.AX,Mercury NZ Ltd,Unknown
+MEZ.AX,Meridian Energy Ltd,Unknown
+MFG.AX,Magellan Financial Group Ltd,Unknown
+MGR.AX,Mirvac Group,Unknown
+MIN.AX,Mineral Resources Ltd,Unknown
+MLT.AX,Milton Corporation Ltd,Unknown
+MP1.AX,Megaport Ltd,Unknown
+MPL.AX,Medibank Private Ltd,Unknown
+MQG.AX,Macquarie Group Ltd,Unknown
+MTS.AX,Metcash Ltd,Unknown
+NAB.AX,National Australia Bank Ltd,Unknown
+NCM.AX,Newcrest Mining Ltd,Unknown
+NDQ.AX,BetaShares NASDAQ 100 ETF,Unknown
+NEC.AX,Nine Entertainment Co. Holdings Ltd,Unknown
+NHF.AX,Nib Holdings Ltd,Unknown
+NIC.AX,Nickel Mines Ltd,Unknown
+NSR.AX,National Storage REIT,Unknown
+NST.AX,Northern Star Resources Ltd,Unknown
+NUF.AX,Nufarm Ltd,Unknown
+NWL.AX,Netwealth Group Ltd,Unknown
+NXT.AX,NEXTDC Ltd,Unknown
+ORA.AX,Orora Ltd,Unknown
+ORE.AX,Orocobre Ltd,Unknown
+ORG.AX,Origin Energy Ltd,Unknown
+ORI.AX,Orica Ltd,Unknown
+OSH.AX,Oil Search Ltd,Unknown
+OZL.AX,OZ Minerals Ltd,Unknown
+PBH.AX,Pointsbet Holdings Ltd,Unknown
+PDL.AX,Pendal Group Ltd,Unknown
+PLS.AX,Pilbara Minerals Ltd,Unknown
+PME.AX,Pro Medicus Ltd,Unknown
+PMV.AX,Premier Investments Ltd,Unknown
+PNI.AX,Pinnacle Investment Management Group Ltd,Unknown
+PNV.AX,Polynovo Ltd,Unknown
+PPT.AX,Perpetual Ltd,Unknown
+PTM.AX,Platinum Asset Management Ltd,Unknown
+QAN.AX,Qantas Airways Ltd,Unknown
+QAU.AX,BetaShares Gold Bullion ETF - Currency Hedged,Unknown
+QBE.AX,QBE Insurance Group Ltd,Unknown
+QUB.AX,QUBE Holdings Ltd,Unknown
+REA.AX,REA Group Ltd,Unknown
+REH.AX,Reece Ltd,Unknown
+RHC.AX,Ramsay Health Care Ltd,Unknown
+RIO.AX,RIO Tinto Ltd,Unknown
+RMD.AX,Resmed Inc,Unknown
+RRL.AX,Regis Resources Ltd,Unknown
+RWC.AX,Reliance Worldwide Corporation Ltd,Unknown
+S32.AX,SOUTH32 Ltd,Unknown
+SCG.AX,Scentre Group,Unknown
+SCP.AX,Shopping Centres Australasia Property Group,Unknown
+SDF.AX,Steadfast Group Ltd,Unknown
+SEK.AX,Seek Ltd,Unknown
+SGM.AX,Sims Ltd,Unknown
+SGP.AX,Stockland,Unknown
+SGR.AX,The Star Entertainment Group Ltd,Unknown
+SHL.AX,Sonic Healthcare Ltd,Unknown
+SKC.AX,Skycity Entertainment Group Ltd,Unknown
+SKI.AX,Spark Infrastructure Group,Unknown
+SLK.AX,Sealink Travel Group Ltd,Unknown
+SNZ.AX,Summerset Group Holdings Ltd,Unknown
+SOL.AX,Washington H Soul Pattinson & Company Ltd,Unknown
+SPK.AX,Spark New Zealand Ltd,Unknown
+STO.AX,Santos Ltd,Unknown
+STW.AX,SPDR S&P/ASX 200 Fund,Unknown
+SUL.AX,Super Retail Group Ltd,Unknown
+SUN.AX,Suncorp Group Ltd,Unknown
+SVW.AX,Seven Group Holdings Ltd,Unknown
+SYD.AX,Sydney Airport,Unknown
+TAH.AX,Tabcorp Holdings Ltd,Unknown
+TCL.AX,Transurban Group,Unknown
+TLS.AX,Telstra Corporation Ltd,Unknown
+TLT.AX,Tilt Renewables Ltd,Unknown
+TNE.AX,Technology One Ltd,Unknown
+TPG.AX,TPG Telecom Ltd,Unknown
+TWE.AX,Treasury Wine Estates Ltd,Unknown
+TYR.AX,Tyro Payments Ltd,Unknown
+VAF.AX,Vanguard Australian Fixed Interest Index ETF,Unknown
+VAP.AX,Vanguard Australian Property Securities INDEX ETF,Unknown
+VAS.AX,Vanguard Australian Shares INDEX ETF,Unknown
+VCX.AX,Vicinity Centres,Unknown
+VDHG.AX,Vanguard Diversified High Growth Index ETF,Unknown
+VEA.AX,Viva Energy Group Ltd,Unknown
+VEU.AX,Vanguard All-World Ex-US Shares INDEX ETF,Unknown
+VGB.AX,Vanguard Australian Government Bond Index ETF,Unknown
+VGE.AX,Vanguard FTSE Emerging Markets Shares ETF,Unknown
+VGS.AX,Vanguard MSCI INDEX International Shares ETF,Unknown
+VHY.AX,Vanguard Australian Shares High Yield ETF,Unknown
+VOC.AX,Vocus Group Ltd,Unknown
+VTS.AX,Vanguard US Total Market Shares INDEX ETF,Unknown
+VUK.AX,Virgin Money Uk Plc,Unknown
+WAM.AX,WAM Capital Ltd,Unknown
+WBC.AX,Westpac Banking Corporation,Unknown
+WEB.AX,Webjet Ltd,Unknown
+WES.AX,Wesfarmers Ltd,Unknown
+WOR.AX,Worley Ltd,Unknown
+WOW.AX,Woolworths Group Ltd,Unknown
+WPL.AX,Woodside Petroleum Ltd,Unknown
+WPR.AX,Waypoint REIT,Unknown
+WTC.AX,Wisetech Global Ltd,Unknown
+XRO.AX,Xero Ltd,Unknown
+YAL.AX,Yancoal Australia Ltd,Unknown
+YMAX.AX,BetaShares S&P 500 Yield Maximiser Fund,Unknown
+Z1P.AX,ZIP Co Ltd,Unknown
+ZIM.AX,Zimplats Holdings Ltd,Unknown

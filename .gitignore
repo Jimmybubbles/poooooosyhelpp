@@ -22,3 +22,10 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Database credentials - never commit this
+watchlist_Scanner/db_config.py
+db_config.py
+
+# PythonAnywhere notes
+watchlist_Scanner/pythonAnywhere.md
