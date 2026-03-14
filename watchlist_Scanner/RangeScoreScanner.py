@@ -15,11 +15,12 @@ FILTERS (must pass):
   - Weekly Fader GREEN (uptrend bias on higher timeframe)
 
 SCORE SYSTEM (indicators layered on top of range):
-  - Channel consolidation at level:    +25 pts
-  - EFI price line (normprice) > 0:    +20 pts
-  - EFI force index < 0 (exhaustion):  +20 pts
-  - Daily Fader green:                 +15 pts
-  - DMI Stoch in/near oversold:        +15 pts
+  - Supertrend UP (trend confirmation): +20 pts
+  - Channel consolidation at level:     +20 pts
+  - EFI price line (normprice) > 0:     +15 pts
+  - EFI force index < 0 (exhaustion):   +15 pts
+  - DMI Stoch in/near oversold:         +15 pts
+  - Daily Fader green:                  +10 pts
   - Volume above average:              +5 pts
 
 Max score = 100
@@ -49,6 +50,10 @@ OUTPUT_DIR = os.path.join(script_dir, 'buylist')
 MAX_PRICE = 10.0
 MIN_PRICE = 0.50
 MIN_DATA_ROWS = 100
+
+# Supertrend parameters (matching Pine Script: ATR 26, Factor 5)
+SUPERTREND_ATR_PERIOD = 26
+SUPERTREND_FACTOR = 5.0
 
 # Channel parameters (from JimmyChannelScan)
 CHANNEL_EMA_FAST = 5
@@ -115,6 +120,74 @@ def get_range_info(price):
 # ============================================================
 # INDICATOR SCORING FUNCTIONS
 # ============================================================
+
+def calculate_supertrend(df, atr_period=SUPERTREND_ATR_PERIOD, factor=SUPERTREND_FACTOR):
+    """
+    Calculate Supertrend indicator (matches Pine Script v6: ATR 26, Factor 5).
+    Returns 'up' if bullish (direction < 0), 'down' if bearish.
+    """
+    try:
+        high = df['High'].values.astype(float)
+        low = df['Low'].values.astype(float)
+        close = df['Close'].values.astype(float)
+        n = len(close)
+
+        if n < atr_period + 1:
+            return 'neutral'
+
+        atr = talib.ATR(high, low, close, timeperiod=atr_period)
+        hl2 = (high + low) / 2.0
+
+        # Initialize arrays
+        upper_band = np.full(n, np.nan)
+        lower_band = np.full(n, np.nan)
+        supertrend = np.full(n, np.nan)
+        direction = np.zeros(n)  # 1 = down (bearish), -1 = up (bullish)
+
+        for i in range(atr_period, n):
+            upper_band[i] = hl2[i] + factor * atr[i]
+            lower_band[i] = hl2[i] - factor * atr[i]
+
+        # First valid bar
+        direction[atr_period] = -1
+        supertrend[atr_period] = lower_band[atr_period]
+
+        for i in range(atr_period + 1, n):
+            # Adjust bands based on previous values (Pine logic)
+            if lower_band[i] > lower_band[i - 1] or close[i - 1] < lower_band[i - 1]:
+                pass  # keep current lower_band
+            else:
+                lower_band[i] = lower_band[i - 1]
+
+            if upper_band[i] < upper_band[i - 1] or close[i - 1] > upper_band[i - 1]:
+                pass  # keep current upper_band
+            else:
+                upper_band[i] = upper_band[i - 1]
+
+            # Direction logic
+            if direction[i - 1] == -1:  # was bullish
+                if close[i] < lower_band[i]:
+                    direction[i] = 1  # flip to bearish
+                    supertrend[i] = upper_band[i]
+                else:
+                    direction[i] = -1  # stay bullish
+                    supertrend[i] = lower_band[i]
+            else:  # was bearish
+                if close[i] > upper_band[i]:
+                    direction[i] = -1  # flip to bullish
+                    supertrend[i] = lower_band[i]
+                else:
+                    direction[i] = 1  # stay bearish
+                    supertrend[i] = upper_band[i]
+
+        # Pine Script: direction < 0 = uptrend
+        if direction[-1] < 0:
+            return 'up'
+        else:
+            return 'down'
+    except Exception:
+        return 'neutral'
+
 
 def calculate_weekly_fader(df):
     """
@@ -298,13 +371,19 @@ def scan_stock(ticker):
         score = 0
         score_breakdown = []
 
-        # 1. Channel consolidation (+25)
+        # 1. Supertrend UP = trend confirmation (+20)
+        supertrend_dir = calculate_supertrend(df)
+        if supertrend_dir == 'up':
+            score += 20
+            score_breakdown.append("Supertrend UP +20")
+
+        # 2. Channel consolidation (+20)
         has_channel = detect_channel(df)
         if has_channel:
-            score += 25
-            score_breakdown.append("Channel +25")
+            score += 20
+            score_breakdown.append("Channel +20")
 
-        # 2. EFI price line (normprice) > 0 (+20)
+        # 3. EFI price line (normprice) > 0 (+15)
         efi = EFI_Indicator()
         efi_results = efi.calculate(df)
         normprice = efi_results['normalized_price'].iloc[-1]
@@ -312,19 +391,13 @@ def scan_stock(ticker):
         fi_color = efi_results['fi_color'].iloc[-1]
 
         if normprice > 0:
-            score += 20
-            score_breakdown.append("EFI PriceLine>0 +20")
-
-        # 3. EFI force index < 0 = selling exhaustion (+20)
-        if force_index < 0:
-            score += 20
-            score_breakdown.append("EFI FI<0 (exhaustion) +20")
-
-        # 4. Daily Fader green (+15)
-        daily_fader = calculate_daily_fader(df)
-        if daily_fader == 'green':
             score += 15
-            score_breakdown.append("Daily Fader GREEN +15")
+            score_breakdown.append("EFI PriceLine>0 +15")
+
+        # 4. EFI force index < 0 = selling exhaustion (+15)
+        if force_index < 0:
+            score += 15
+            score_breakdown.append("EFI FI<0 (exhaustion) +15")
 
         # 5. DMI Stoch near/in oversold (+15)
         dmi_stoch = calculate_dmi_stochastic(df)
@@ -335,7 +408,13 @@ def scan_stock(ticker):
             score += 10
             score_breakdown.append(f"DMI Stoch near OS({dmi_stoch:.0f}) +10")
 
-        # 6. Volume above average (+5)
+        # 6. Daily Fader green (+10)
+        daily_fader = calculate_daily_fader(df)
+        if daily_fader == 'green':
+            score += 10
+            score_breakdown.append("Daily Fader GREEN +10")
+
+        # 7. Volume above average (+5)
         avg_vol = df['Volume'].iloc[-20:].mean()
         current_vol = df['Volume'].iloc[-1]
         vol_ratio = current_vol / avg_vol if avg_vol > 0 else 0
@@ -360,6 +439,7 @@ def scan_stock(ticker):
             'score_breakdown': score_breakdown,
             'weekly_fader': weekly_fader,
             'daily_fader': daily_fader,
+            'supertrend': supertrend_dir,
             'has_channel': has_channel,
             'normprice': normprice,
             'force_index': force_index,
@@ -381,7 +461,7 @@ def run_scan():
     print("=" * 90)
     print()
     print("FILTERS: Price <= $10 | 25% zone | Weekly Fader GREEN")
-    print("SCORING: Channel(25) + PriceLine>0(20) + FI<0(20) + DailyFader(15) + DMIStoch(15) + Vol(5)")
+    print("SCORING: Supertrend(20) + Channel(20) + PriceLine>0(15) + FI<0(15) + DMIStoch(15) + Fader(10) + Vol(5)")
     print()
 
     csv_files = [f for f in os.listdir(CSV_DIR) if f.endswith('.csv')]
@@ -425,7 +505,7 @@ def build_report(results):
     lines.append("  Indicators = Score (how good is the setup)")
     lines.append("")
     lines.append("FILTERS: Price <= $10 | 25% zone | Weekly Fader GREEN")
-    lines.append("SCORE:   Channel(25) + PriceLine>0(20) + FI<0(20) + Fader(15) + DMI(15) + Vol(5) = /100")
+    lines.append("SCORE:   ST(20) + Channel(20) + PriceLine>0(15) + FI<0(15) + DMI(15) + Fader(10) + Vol(5) = /100")
     lines.append("")
     lines.append(f"Total Setups Found: {len(results)}")
     lines.append("")
@@ -442,6 +522,8 @@ def build_report(results):
 
     for r in results:
         signals = []
+        if r['supertrend'] == 'up':
+            signals.append("ST")
         if r['has_channel']:
             signals.append("CH")
         if r['normprice'] > 0:
@@ -478,7 +560,7 @@ def build_report(results):
         lines.append(f"  Range: {r['range']}  |  Position: {r['position_pct']:.0f}%")
         lines.append(f"  Entry: ${r['entry']:.2f}  |  Stop: ${r['stop']:.2f}  |  Target: ${r['target']:.2f}")
         lines.append(f"  Risk: ${r['risk']:.2f}  |  Reward: ${r['reward']:.2f}  |  R:R = 1:{r['rr']:.1f}")
-        lines.append(f"  Weekly Fader: {r['weekly_fader'].upper()}  |  Daily Fader: {r['daily_fader'].upper()}")
+        lines.append(f"  Weekly Fader: {r['weekly_fader'].upper()}  |  Daily Fader: {r['daily_fader'].upper()}  |  Supertrend: {r['supertrend'].upper()}")
         lines.append(f"  EFI PriceLine: {r['normprice']:.3f}  |  Force Index: {r['force_index']:.3f} ({r['fi_color']})")
         lines.append(f"  DMI Stoch: {r['dmi_stoch']:.1f}  |  Channel: {'YES' if r['has_channel'] else 'No'}")
         lines.append(f"  Volume: {r['vol_ratio']:.2f}x avg")

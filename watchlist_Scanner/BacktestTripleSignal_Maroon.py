@@ -406,19 +406,19 @@ def run_maroon_backtest(hold_days=63):
     report_lines.append("")
     report_lines.append("KEY INSIGHTS:")
     if win_rate > 50:
-        report_lines.append(f"  ✓ Win rate of {win_rate:.1f}% shows strong edge with MAROON signals")
+        report_lines.append(f"  [+] Win rate of {win_rate:.1f}% shows strong edge with MAROON signals")
     else:
-        report_lines.append(f"  ⚠ Win rate of {win_rate:.1f}% - consider additional filters")
+        report_lines.append(f"  [!] Win rate of {win_rate:.1f}% - consider additional filters")
 
     if avg_pnl > 0:
-        report_lines.append(f"  ✓ Positive average return of {avg_pnl:.2f}% validates deep oversold entry")
+        report_lines.append(f"  [+] Positive average return of {avg_pnl:.2f}% validates deep oversold entry")
     else:
-        report_lines.append(f"  ⚠ Negative average return of {avg_pnl:.2f}%")
+        report_lines.append(f"  [!] Negative average return of {avg_pnl:.2f}%")
 
     if median_pnl > avg_pnl:
-        report_lines.append(f"  ⚠ Median > Average suggests some large losers pulling down average")
+        report_lines.append(f"  [!] Median > Average suggests some large losers pulling down average")
     elif avg_pnl > median_pnl:
-        report_lines.append(f"  ✓ Average > Median suggests some large winners boosting performance")
+        report_lines.append(f"  [+] Average > Median suggests some large winners boosting performance")
 
     report_lines.append("")
     report_lines.append("COMPARISON TO STANDARD TRIPLE SIGNAL:")

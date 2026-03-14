@@ -1,7 +1,7 @@
 ================================================================================
 ULTIMATE HIGH PROBABILITY SCANNER - RESULTS
 ================================================================================
-Scan Date: 2026-02-15 08:30:51
+Scan Date: 2026-03-14 09:57:40
 
 STRATEGY CRITERIA:
   1. Jimmy Squeeze Channel PRINTING on scan day (EMA5/26 within ATR distance)
@@ -13,165 +13,231 @@ QUALITY SCORE:
   Based on consolidation duration, oversold level, EFI strength, volume
   Higher score = higher probability setup
 
-Total High Probability Setups Found: 154
+Total High Probability Setups Found: 220
 ================================================================================
 
 TOP HIGH PROBABILITY SETUPS (sorted by quality score):
 --------------------------------------------------------------------------------
 Ticker   Score   Days   Range    Pos%   Norm    EFI      Fader   Vol  
 ------------------------------------------------------------------------------------------
-CMPR     79      8      3.5%     -11%   1.62    MAROON   RED     1.9x 
-RPT      76      3      2.6%     -34%   3.14    MAROON   RED     2.9x 
+GTLS     82      23     0.3%     9%     0.97    MAROON   RED     1.4x 
+CRS      76      1      3.3%     -108%  7.62    MAROON   RED     1.7x 
+FIVE     76      1      2.7%     -9%    11.46   MAROON   RED     1.5x 
 REVG     76      1      2.3%     -23%   2.95    MAROON   RED     2.4x 
+WASH     75      6      2.3%     -61%   0.90    MAROON   RED     1.9x 
+CW       75      2      2.8%     -86%   13.05   MAROON   RED     1.5x 
 CUBI     73      2      2.6%     13%    2.50    MAROON   RED     1.4x 
-CHRW     66      1      2.2%     -140%  7.01    ORANGE   RED     2.1x 
-TNL      65      1      2.0%     -5%    1.39    MAROON   GREEN   1.3x 
-BHF      65      30     1.2%     20%    1.35    MAROON   RED     0.8x 
+SCHL     65      2      2.8%     24%    1.16    ORANGE   RED     1.5x 
 ACET     65      2      4.1%     -54%   1.80    ORANGE   RED     1.5x 
+HOLX     64      2      0.5%     -0%    0.50    MAROON   RED     1.7x 
+CHD      63      3      1.7%     -90%   2.15    MAROON   RED     1.2x 
 VSEC     62      4      3.1%     64%    12.55   ORANGE   RED     1.4x 
+HAL      62      1      2.5%     -46%   1.29    MAROON   RED     1.2x 
 GES      61      14     0.7%     38%    0.15    MAROON   GREEN   23.6x
-ORA      60      2      2.1%     -80%   2.38    MAROON   RED     1.2x 
-GTLS     58      4      0.4%     30%    1.93    ORANGE   RED     1.3x 
-TXRH     57      3      1.9%     -22%   2.21    MAROON   RED     1.1x 
-COGT     56      12     3.9%     1%     2.43    MAROON   RED     0.5x 
-CBL      56      10     1.9%     -104%  0.04    MAROON   RED     2.0x 
-ALV      56      11     1.7%     66%    2.24    MAROON   RED     0.6x 
+AL       60      8      0.3%     -26%   0.24    MAROON   RED     1.7x 
+HLX      59      1      3.3%     55%    0.74    ORANGE   RED     2.0x 
+KLAC     59      4      3.2%     -21%   30.99   ORANGE   RED     1.3x 
+PCVX     59      2      3.8%     -70%   1.65    MAROON   RED     1.2x 
+MKTX     58      2      2.0%     23%    2.43    MAROON   RED     1.1x 
+SEE      57      28     0.7%     27%    0.71    MAROON   RED     0.8x 
+RBC      57      1      1.9%     -77%   22.73   MAROON   RED     1.1x 
+BIIB     56      9      2.3%     -83%   0.77    MAROON   RED     1.2x 
+SRCE     56      11     2.0%     31%    1.19    MAROON   RED     1.0x 
+AAP      56      12     4.0%     32%    0.98    MAROON   RED     1.0x 
+TNA      55      2      3.9%     62%    3.30    ORANGE   RED     1.3x 
 BRBS     55      11     2.1%     21%    0.03    MAROON   RED     1.5x 
-UTHR     54      9      2.0%     7%     3.77    MAROON   GREEN   0.8x 
-SNDX     54      2      3.9%     8%     0.82    MAROON   RED     1.1x 
-USD      52      5      4.5%     28%    1.16    MAROON   RED     0.7x 
+JBL      54      8      3.1%     10%    7.00    MAROON   RED     0.6x 
+MBIN     54      8      2.6%     -4%    2.06    MAROON   RED     0.8x 
+SMTC     54      6      4.2%     12%    3.40    ORANGE   RED     1.2x 
+CAH      54      7      1.8%     -24%   5.30    MAROON   RED     0.9x 
+NHI      54      7      1.8%     32%    2.51    MAROON   RED     0.5x 
+STRL     54      7      4.5%     -4%    17.37   MAROON   RED     0.6x 
+NVEC     53      7      3.2%     23%    0.10    MAROON   RED     1.4x 
+BE       53      6      7.0%     64%    16.95   MAROON   RED     0.6x 
+FN       53      6      5.0%     -32%   9.16    MAROON   RED     0.7x 
+KO       53      6      1.2%     4%     2.22    MAROON   RED     0.6x 
+NIC      53      6      2.3%     3%     5.72    MAROON   RED     0.4x 
+WINA     53      6      3.6%     43%    7.17    MAROON   GREEN   0.9x 
+KRG      53      1      1.5%     -13%   0.70    MAROON   RED     1.2x 
+CB       52      5      1.4%     77%    11.79   MAROON   RED     1.0x 
+CC       52      5      4.6%     51%    1.33    MAROON   RED     0.8x 
+EGP      52      5      1.5%     -31%   1.82    MAROON   RED     0.7x 
+ROG      52      5      2.7%     -51%   2.66    MAROON   RED     0.6x 
+RRBI     52      5      2.2%     46%    5.41    MAROON   RED     0.8x 
+CACI     52      4      2.8%     57%    12.69   MAROON   GREEN   1.0x 
+DE       52      4      2.0%     -82%   22.61   MAROON   RED     0.7x 
+DGX      52      4      1.7%     11%    6.12    MAROON   RED     0.7x 
+L        52      4      1.3%     -13%   1.17    MAROON   RED     0.6x 
+CFLT     52      3      1.0%     72%    1.33    MAROON   RED     0.7x 
+CGNX     52      3      3.0%     -101%  1.91    MAROON   RED     0.9x 
+GNRC     52      3      3.4%     -63%   10.53   MAROON   RED     0.9x 
+MCK      52      3      1.9%     93%    52.64   MAROON   RED     0.9x 
+PEN      52      23     1.5%     -7%    9.07    ORANGE   RED     0.5x 
+TDY      52      3      1.8%     -53%   26.43   MAROON   RED     0.8x 
+WPC      52      3      1.4%     -4%    1.45    MAROON   RED     0.7x 
 BCOW     51      1      0.7%     -1%    0.04    MAROON   RED     1.9x 
-SBCF     51      2      2.1%     -7%    0.62    MAROON   RED     1.2x 
-LEG      51      2      2.6%     -61%   0.40    ORANGE   RED     1.6x 
-AXL      51      1      3.6%     -199%  0.00    MAROON   RED     2.3x 
-BTU      50      1      4.0%     10%    2.30    MAROON   RED     1.0x 
-DAL      50      1      2.6%     -5%    1.61    MAROON   RED     0.8x 
-FBK      50      1      2.0%     43%    1.47    MAROON   RED     0.6x 
+AEIS     51      2      3.5%     17%    29.78   MAROON   RED     0.5x 
+AMGN     51      2      1.8%     -8%    13.12   MAROON   RED     0.6x 
+IDCC     51      2      3.4%     45%    10.68   MAROON   RED     0.8x 
+KMT      51      2      2.6%     12%    3.23    MAROON   RED     1.0x 
+O        51      2      1.2%     22%    2.16    MAROON   RED     0.9x 
+PECO     51      2      1.3%     26%    1.13    MAROON   RED     0.6x 
+ATI      50      1      2.6%     -128%  9.17    MAROON   RED     0.8x 
+DNLI     50      1      4.4%     58%    1.15    MAROON   RED     0.8x 
+ES       50      1      1.7%     61%    2.13    MAROON   RED     0.7x 
+ESE      50      1      2.5%     26%    18.89   MAROON   RED     0.5x 
 FBRX     50      1      7.3%     -44%   2.84    MAROON   RED     0.7x 
-HLF      50      1      2.8%     3%     1.68    MAROON   RED     0.9x 
-INBX     50      1      5.3%     -33%   2.00    MAROON   RED     0.7x 
-IONS     50      1      2.4%     -27%   2.39    MAROON   RED     0.8x 
-TTMI     50      1      4.8%     49%    10.90   MAROON   RED     0.4x 
-RYI      48      1      2.8%     -111%  0.64    MAROON   RED     1.1x 
+HWM      50      1      2.3%     -110%  7.53    MAROON   RED     0.9x 
+PL       50      1      5.7%     66%    2.68    MAROON   RED     0.8x 
+RSG      50      1      1.4%     53%    3.72    MAROON   RED     0.7x 
+SPB      50      1      2.3%     -14%   4.53    MAROON   RED     0.9x 
+SXI      50      1      3.0%     33%    7.64    MAROON   RED     1.0x 
+UCTT     50      1      4.7%     57%    8.89    MAROON   RED     0.4x 
+VRTX     50      1      2.2%     -3%    5.74    MAROON   RED     0.7x 
+PDLB     50      16     2.2%     16%    0.10    ORANGE   RED     1.6x 
+VECO     50      6      4.0%     34%    0.17    MAROON   GREEN   1.4x 
+AMT      49      3      2.0%     41%    1.45    ORANGE   RED     1.2x 
+VIRT     49      1      2.3%     -43%   0.94    MAROON   RED     0.7x 
 HBI      48      12     2.3%     -14%   0.07    ORANGE   RED     8.1x 
-MDT      47      2      1.5%     -25%   0.53    MAROON   RED     1.2x 
 AGX      46      2      4.7%     64%    20.89   ORANGE   RED     1.1x 
 TBPH     46      5      3.0%     51%    1.08    ORANGE   RED     1.1x 
 SEMR     46      2      1.2%     50%    0.80    MAROON   RED     0.9x 
-ALEC     45      1      6.1%     66%    0.08    MAROON   RED     1.4x 
 BKTI     45      10     4.0%     13%    2.17    ORANGE   RED     0.5x 
-CWST     44      2      2.2%     71%    3.39    ORANGE   RED     1.1x 
-BWXT     44      8      3.1%     63%    7.60    ORANGE   RED     0.7x 
-ALB      44      7      3.7%     47%    18.44   ORANGE   RED     0.7x 
+CSCO     45      20     1.9%     28%    0.80    ORANGE   GREEN   0.8x 
+CBL      44      1      1.9%     -6%    0.76    MAROON   RED     0.6x 
+CBAN     44      5      2.1%     -2%    0.65    MAROON   RED     1.0x 
+INTC     44      8      4.2%     49%    2.03    ORANGE   GREEN   0.9x 
+HASI     44      7      2.2%     -45%   0.60    MAROON   RED     0.5x 
 OLMA     44      7      5.3%     -3%    2.28    ORANGE   RED     0.7x 
-IRWD     43      4      5.6%     34%    0.65    MAROON   RED     0.7x 
+PLXS     44      7      3.1%     14%    10.11   ORANGE   RED     0.7x 
+URA      44      7      3.7%     8%     2.29    ORANGE   RED     0.5x 
 CDNA     43      3      3.9%     10%    0.82    ORANGE   RED     1.1x 
-IMVT     43      6      3.7%     26%    1.12    ORANGE   RED     0.8x 
+AMAT     43      6      3.1%     10%    25.27   ORANGE   RED     0.7x 
+FORM     43      6      3.9%     59%    11.64   ORANGE   RED     0.5x 
+GILD     43      6      1.9%     22%    6.75    ORANGE   RED     0.6x 
+MSM      43      6      2.1%     37%    1.71    ORANGE   RED     0.8x 
+MYRG     43      6      3.6%     10%    10.65   ORANGE   RED     0.7x 
+TER      43      6      3.5%     -38%   27.37   ORANGE   RED     0.6x 
+TRNS     43      6      3.7%     56%    4.09    ORANGE   RED     0.8x 
 INFA     43      54     0.4%     9%     0.12    ORANGE   RED     0.0x 
-CLB      42      5      3.3%     28%    1.23    ORANGE   RED     0.8x 
-BANC     42      2      2.2%     2%     0.64    MAROON   RED     0.8x 
-PEN      42      4      1.9%     48%    21.31   ORANGE   RED     0.2x 
-UFPT     42      1      3.4%     -31%   5.63    ORANGE   RED     1.0x 
+FRT      43      2      1.4%     -80%   0.68    MAROON   RED     0.5x 
+RNR      42      5      1.8%     14%    7.85    ORANGE   RED     0.6x 
+SKT      42      1      1.7%     1%     0.67    MAROON   RED     0.6x 
+HII      42      4      2.6%     -10%   21.76   ORANGE   RED     0.6x 
+KEX      42      4      2.2%     -16%   3.73    ORANGE   RED     1.0x 
+SON      42      4      1.9%     52%    3.34    ORANGE   RED     0.6x 
+VICR     42      4      5.1%     37%    23.09   ORANGE   RED     0.7x 
+FR       42      5      1.6%     -14%   0.97    ORANGE   RED     0.6x 
 FEIM     42      3      5.1%     34%    5.80    ORANGE   RED     0.6x 
+GLW      42      3      3.5%     -3%    13.92   ORANGE   RED     0.5x 
+HSY      42      3      1.8%     -33%   9.23    ORANGE   RED     0.6x 
 LPCN     42      3      5.5%     55%    1.95    ORANGE   RED     0.7x 
+MCD      42      3      1.3%     38%    6.67    ORANGE   RED     0.8x 
+NHC      42      3      2.4%     98%    11.77   ORANGE   RED     0.5x 
 OSS      42      3      6.7%     37%    1.24    ORANGE   RED     0.5x 
-VSCO     42      3      3.6%     64%    6.60    ORANGE   RED     0.7x 
-CSCO     41      1      1.9%     -119%  0.03    ORANGE   RED     1.6x 
+PDFS     41      7      3.7%     -12%   0.51    MAROON   RED     0.8x 
+VTI      41      9      0.9%     -48%   0.57    ORANGE   RED     1.1x 
 ALHC     41      2      3.1%     59%    1.61    ORANGE   RED     0.7x 
-ASH      41      2      2.3%     -11%   1.92    ORANGE   RED     0.8x 
-BK       41      2      1.7%     -71%   1.20    ORANGE   RED     0.7x 
-ESQ      41      2      2.7%     27%    2.69    ORANGE   RED     0.6x 
-FFIV     41      2      2.6%     79%    3.58    ORANGE   RED     0.5x 
-FRPT     41      2      3.2%     47%    3.36    ORANGE   RED     0.8x 
-GS       41      2      2.1%     -53%   17.45   ORANGE   RED     0.8x 
-JXN      41      2      2.1%     10%    4.84    ORANGE   RED     0.7x 
-LLY      41      2      2.5%     31%    26.01   ORANGE   RED     0.6x 
-NTRS     41      2      1.8%     23%    5.28    ORANGE   RED     0.7x 
-PFG      41      2      1.7%     -90%   1.11    ORANGE   RED     0.7x 
-SNDR     41      2      2.5%     19%    1.50    ORANGE   RED     0.6x 
-STT      41      2      1.9%     -28%   1.66    ORANGE   RED     0.6x 
-WERN     41      2      2.9%     -27%   1.58    ORANGE   RED     0.7x 
+BMY      41      2      1.7%     -20%   2.33    ORANGE   RED     0.7x 
+DLX      41      2      2.4%     -17%   1.48    ORANGE   RED     0.8x 
+HON      41      2      1.5%     -14%   9.65    ORANGE   RED     0.8x 
+ICHR     41      2      5.0%     2%     6.62    ORANGE   RED     0.5x 
+LAMR     41      2      1.7%     38%    2.72    ORANGE   RED     0.6x 
+PSTL     41      2      1.7%     26%    1.13    ORANGE   RED     0.6x 
+T        41      2      1.7%     88%    1.14    ORANGE   RED     0.8x 
+TJX      41      2      1.4%     -27%   1.17    ORANGE   RED     0.6x 
+TRV      41      2      1.5%     83%    9.38    ORANGE   RED     0.6x 
+TTC      41      2      1.8%     -52%   4.46    ORANGE   RED     0.8x 
+WTM      41      2      1.8%     92%    86.08   ORANGE   RED     0.5x 
+XME      41      2      2.6%     -22%   6.41    ORANGE   RED     0.7x 
+NWE      41      1      1.7%     21%    1.27    ORANGE   RED     1.0x 
 ASTS     40      1      7.0%     63%    15.36   ORANGE   RED     0.9x 
-BE       40      1      7.0%     37%    16.86   ORANGE   RED     0.7x 
-BFH      40      1      2.6%     -35%   1.04    ORANGE   RED     0.5x 
+COHR     40      1      5.3%     44%    28.20   ORANGE   RED     0.6x 
+DIOD     40      1      3.6%     25%    3.48    ORANGE   RED     1.0x 
 FRGE     40      1      1.1%     96%    4.21    ORANGE   GREEN   1.0x 
 HYMC     40      1      7.1%     -13%   8.71    ORANGE   RED     0.6x 
-INTC     40      1      4.2%     59%    4.34    ORANGE   RED     0.5x 
-SATS     40      1      3.7%     28%    10.50   ORANGE   RED     0.7x 
-UAL      40      1      3.0%     14%    1.65    ORANGE   GREEN   0.8x 
+PSA      40      1      1.7%     23%    7.56    ORANGE   RED     0.8x 
+PSMT     40      1      2.2%     40%    7.07    ORANGE   RED     0.9x 
+REG      40      1      1.4%     27%    2.48    ORANGE   RED     0.6x 
+GD       40      3      1.7%     -15%   0.55    MAROON   RED     0.9x 
+GME      40      1      2.8%     -11%   0.17    MAROON   RED     1.2x 
+DBRG     40      14     1.4%     60%    0.72    ORANGE   RED     0.6x 
+LRN      40      2      3.4%     73%    0.95    ORANGE   RED     0.6x 
 TWIN     39      3      3.8%     -38%   0.32    ORANGE   RED     1.3x 
-INCY     39      4      2.6%     -5%    0.88    ORANGE   RED     0.7x 
-AGNC     39      7      1.4%     30%    0.42    MAROON   RED     0.7x 
+UE       39      5      1.7%     46%    0.47    MAROON   RED     0.8x 
 NVFY     39      3      3.8%     59%    0.48    MAROON   RED     0.8x 
+CINF     38      5      1.6%     22%    0.43    MAROON   RED     1.0x 
+PFE      38      8      1.7%     -4%    0.37    MAROON   RED     1.0x 
+ADTN     38      7      3.6%     51%    0.39    MAROON   RED     0.6x 
+TROX     38      6      5.4%     61%    0.80    ORANGE   RED     0.9x 
 FTK      37      3      5.1%     59%    0.81    ORANGE   RED     0.6x 
-COLL     37      10     2.7%     -5%    0.67    ORANGE   RED     0.5x 
 SCS      37      3      1.4%     58%    0.30    ORANGE   GREEN   1.3x 
 VNDA     37      2      4.2%     64%    0.82    ORANGE   RED     0.9x 
-CINF     36      1      1.5%     8%     0.36    MAROON   RED     1.0x 
+FAST     36      2      1.9%     13%    0.81    ORANGE   RED     0.7x 
+ARMK     36      4      2.0%     28%    0.58    ORANGE   RED     1.1x 
 PDEX     36      12     4.6%     23%    0.59    ORANGE   RED     0.8x 
 UBCP     36      11     2.0%     47%    0.21    MAROON   GREEN   0.8x 
-FWRD     36      1      3.8%     -63%   0.41    MAROON   RED     0.8x 
-MAC      35      2      2.3%     24%    0.31    ORANGE   RED     1.2x 
-RRR      35      1      2.3%     -39%   0.36    MAROON   RED     1.0x 
-PDLB     35      2      2.2%     24%    0.34    MAROON   RED     0.4x 
-VREX     34      2      3.2%     37%    0.71    ORANGE   RED     0.7x 
-DNLI     34      2      4.4%     -59%   0.31    MAROON   RED     0.7x 
-AMLX     34      8      4.9%     51%    0.58    ORANGE   RED     0.4x 
-WAFD     33      2      1.8%     57%    0.69    ORANGE   RED     0.8x 
-FHN      33      1      1.9%     2%     0.71    ORANGE   RED     0.5x 
-ARDX     33      4      4.0%     -60%   0.25    MAROON   RED     0.7x 
+HUN      35      2      4.6%     -1%    0.37    MAROON   GREEN   1.0x 
+LBTYK    35      1      2.6%     43%    0.38    MAROON   RED     0.4x 
+CLDT     35      1      2.3%     -24%   0.18    MAROON   RED     1.1x 
+INVA     34      6      2.3%     4%     0.64    ORANGE   RED     0.8x 
+GNL      33      3      1.6%     3%     0.27    MAROON   RED     0.9x 
 DBI      33      3      5.2%     30%    0.67    ORANGE   RED     0.8x 
 TRDA     33      2      4.6%     -4%    0.67    ORANGE   RED     0.7x 
 SNV      33      1      1.9%     -22%   0.69    ORANGE   RED     0.0x 
-JACK     33      4      4.4%     11%    0.47    ORANGE   RED     1.1x 
+TITN     32      1      3.4%     -59%   0.28    MAROON   RED     1.0x 
+TNDM     32      6      4.9%     2%     0.57    ORANGE   RED     0.7x 
 ANNX     32      2      4.8%     -27%   0.65    ORANGE   RED     0.9x 
-OXM      32      1      4.4%     55%    0.26    MAROON   GREEN   0.6x 
 SLS      32      2      6.8%     30%    0.64    ORANGE   RED     0.7x 
-BXMT     31      1      1.6%     55%    0.22    MAROON   GREEN   0.7x 
 APYX     31      1      5.0%     25%    0.21    MAROON   RED     0.6x 
 PTN      31      5      11.4%    4%     0.13    MAROON   RED     0.3x 
-TTEK     31      1      2.5%     -88%   0.35    ORANGE   RED     1.1x 
+NTLA     30      3      6.5%     8%     0.16    MAROON   RED     0.7x 
+GTX      30      2      2.5%     -131%  0.17    MAROON   RED     0.5x 
+AMLX     30      7      5.1%     -6%    0.05    MAROON   RED     0.8x 
 IVR      30      2      1.7%     79%    0.43    ORANGE   RED     1.1x 
 PCH      30      5      2.0%     3%     0.48    ORANGE   RED     0.0x 
-BOOT     29      2      3.4%     39%    0.51    ORANGE   RED     0.5x 
-CBSH     28      1      1.7%     27%    0.12    MAROON   RED     1.0x 
+GERN     30      5      5.4%     33%    0.08    MAROON   RED     0.7x 
+FPI      29      1      1.9%     -197%  0.16    MAROON   RED     0.7x 
+UNIT     29      2      3.9%     -24%   0.12    MAROON   RED     0.9x 
+NSSC     29      7      2.9%     -2%    0.30    ORANGE   RED     1.1x 
+XPRO     29      7      3.6%     -39%   0.41    ORANGE   RED     0.7x 
+AVO      29      1      2.4%     10%    0.53    ORANGE   RED     0.8x 
+WU       28      2      2.4%     10%    0.09    MAROON   GREEN   0.8x 
+ORIC     28      2      5.6%     16%    0.48    ORANGE   RED     0.9x 
+RWT      28      6      2.6%     -42%   0.00    MAROON   RED     0.4x 
 MNOV     28      1      3.8%     33%    0.09    MAROON   RED     0.6x 
-MBUU     28      1      3.4%     29%    0.48    ORANGE   RED     0.8x 
-EB       28      5      1.3%     86%    0.40    ORANGE   RED     0.4x 
 VCNX     27      1      10.8%    -43%   0.07    MAROON   RED     0.1x 
 DX       26      5      1.3%     36%    0.35    ORANGE   RED     0.5x 
 KALV     26      18     4.9%     -17%   0.08    ORANGE   RED     0.6x 
-GT       26      2      2.9%     29%    0.40    ORANGE   RED     0.9x 
-RUN      26      3      6.0%     39%    0.37    ORANGE   RED     0.8x 
-XPOF     26      2      4.3%     82%    0.39    ORANGE   GREEN   0.5x 
-ZNTL     25      7      6.6%     4%     0.25    ORANGE   RED     0.3x 
-VEL      25      3      2.1%     24%    0.33    ORANGE   RED     0.9x 
+MFA      26      1      1.7%     -55%   0.02    MAROON   RED     1.0x 
+ALL      25      4      1.8%     7%     0.34    ORANGE   RED     0.5x 
+SPY      25      8      0.8%     -61%   0.02    ORANGE   RED     1.1x 
 LTRX     24      2      5.6%     -8%    0.34    ORANGE   RED     0.8x 
 JAKK     24      4      2.9%     26%    0.29    ORANGE   RED     0.9x 
 TALK     23      2      3.5%     61%    0.30    ORANGE   RED     0.4x 
-MATW     23      10     2.8%     -6%    0.13    ORANGE   RED     0.6x 
+TGNA     23      2      1.1%     -30%   0.27    ORANGE   RED     0.7x 
 NAUT     23      7      6.1%     51%    0.17    ORANGE   RED     0.7x 
-LAZ      22      1      2.9%     -17%   0.26    ORANGE   RED     0.4x 
 DMAC     22      1      5.2%     37%    0.25    ORANGE   RED     0.7x 
-FHB      22      3      2.0%     -25%   0.21    ORANGE   RED     0.7x 
 MRKR     21      7      7.2%     -20%   0.12    ORANGE   RED     0.5x 
 PGEN     21      2      6.0%     -11%   0.12    ORANGE   RED     1.0x 
 KLXE     21      2      7.1%     42%    0.21    ORANGE   RED     0.7x 
 CERS     21      5      4.5%     -44%   0.13    ORANGE   RED     0.8x 
-AHCO     20      2      3.0%     28%    0.17    ORANGE   RED     0.7x 
-MNKD     20      7      3.6%     14%    0.05    ORANGE   RED     0.5x 
 RAVE     20      2      4.6%     75%    0.14    ORANGE   RED     0.9x 
+IAC      19      4      2.5%     43%    0.09    ORANGE   RED     0.7x 
+CMCSA    19      3      2.0%     -54%   0.09    ORANGE   RED     0.7x 
 BNED     19      3      4.1%     60%    0.09    ORANGE   RED     0.7x 
 CABA     19      2      6.9%     59%    0.11    ORANGE   RED     0.6x 
+CWT      18      1      1.9%     45%    0.11    ORANGE   RED     0.5x 
 HYLN     18      6      5.4%     13%    0.01    ORANGE   RED     0.8x 
 OLPX     18      2      4.7%     21%    0.09    ORANGE   RED     0.7x 
 QRHC     18      3      6.2%     16%    0.07    ORANGE   RED     0.4x 
-AHH      17      1      1.9%     22%    0.07    ORANGE   RED     0.6x 
+LFST     18      2      3.0%     -27%   0.06    ORANGE   RED     1.0x 
 VYNE     17      2      6.1%     60%    0.04    ORANGE   RED     0.4x 
-AIV      17      3      1.4%     -10%   0.02    ORANGE   RED     0.6x 
+IDYA     17      2      3.7%     36%    0.03    ORANGE   RED     0.9x 
 FATE     17      3      6.9%     53%    0.01    ORANGE   RED     0.8x 
 OPTT     17      3      9.5%     48%    0.01    ORANGE   RED     0.2x 
 RMTI     17      2      6.5%     78%    0.03    ORANGE   RED     0.2x 
+CNK      17      2      3.1%     -17%   0.03    ORANGE   RED     0.6x 
 XPL      17      1      5.0%     83%    0.04    ORANGE   RED     0.5x 
 BBIG     16      2      46.6%    37%    0.00    ORANGE   RED     0.0x 
 
@@ -179,41 +245,58 @@ BBIG     16      2      46.6%    37%    0.00    ORANGE   RED     0.0x
 DETAILED SIGNALS:
 ================================================================================
 
-SIGNAL #1 - CMPR - Quality Score: 79/100
+SIGNAL #1 - GTLS - Quality Score: 82/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $74.27
-  Consolidation:       8 days
-  Range:               $74.57 - $77.19 (3.5%)
-  Position in Range:   -11% (lower third = buy zone)
-  Normalized Price:    1.62 (DIVERGENCE)
-  Force Index:         -4.05 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $206.80
+  Consolidation:       23 days
+  Range:               $206.74 - $207.39 (0.3%)
+  Position in Range:   9% (lower third = buy zone)
+  Normalized Price:    0.97 (DIVERGENCE)
+  Force Index:         -0.56 (MAROON)
   Fader Signal:        RED
-  Volume:              1.9x average
+  Volume:              1.4x average
 
-  SETUP: CMPR consolidating for 8 days,
+  SETUP: GTLS consolidating for 23 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 79/100
+         Quality score: 82/100
 
-SIGNAL #2 - RPT - Quality Score: 76/100
+SIGNAL #2 - CRS - Quality Score: 76/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $14.71
-  Consolidation:       3 days
-  Range:               $14.84 - $15.23 (2.6%)
-  Position in Range:   -34% (lower third = buy zone)
-  Normalized Price:    3.14 (DIVERGENCE)
-  Force Index:         -1.46 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $361.28
+  Consolidation:       1 days
+  Range:               $374.50 - $386.75 (3.3%)
+  Position in Range:   -108% (lower third = buy zone)
+  Normalized Price:    7.62 (DIVERGENCE)
+  Force Index:         -58.53 (MAROON)
   Fader Signal:        RED
-  Volume:              2.9x average
+  Volume:              1.7x average
 
-  SETUP: RPT consolidating for 3 days,
+  SETUP: CRS consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 76/100
 
-SIGNAL #3 - REVG - Quality Score: 76/100
+SIGNAL #3 - FIVE - Quality Score: 76/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $210.36
+  Consolidation:       1 days
+  Range:               $210.86 - $216.49 (2.7%)
+  Position in Range:   -9% (lower third = buy zone)
+  Normalized Price:    11.46 (DIVERGENCE)
+  Force Index:         -15.00 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.5x average
+
+  SETUP: FIVE consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 76/100
+
+SIGNAL #4 - REVG - Quality Score: 76/100
 --------------------------------------------------------------------------------
   Date:                01/30/2026
   Current Price:       $63.90
@@ -230,7 +313,41 @@ SIGNAL #3 - REVG - Quality Score: 76/100
          Fader RED confirming bullish momentum.
          Quality score: 76/100
 
-SIGNAL #4 - CUBI - Quality Score: 73/100
+SIGNAL #5 - WASH - Quality Score: 75/100
+--------------------------------------------------------------------------------
+  Date:                03/06/2026
+  Current Price:       $33.25
+  Consolidation:       6 days
+  Range:               $33.72 - $34.49 (2.3%)
+  Position in Range:   -61% (lower third = buy zone)
+  Normalized Price:    0.90 (DIVERGENCE)
+  Force Index:         -2.30 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.9x average
+
+  SETUP: WASH consolidating for 6 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 75/100
+
+SIGNAL #6 - CW - Quality Score: 75/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $656.02
+  Consolidation:       2 days
+  Range:               $672.11 - $690.87 (2.8%)
+  Position in Range:   -86% (lower third = buy zone)
+  Normalized Price:    13.05 (DIVERGENCE)
+  Force Index:         -69.85 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.5x average
+
+  SETUP: CW consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 75/100
+
+SIGNAL #7 - CUBI - Quality Score: 73/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $76.28
@@ -247,58 +364,24 @@ SIGNAL #4 - CUBI - Quality Score: 73/100
          Fader RED confirming bullish momentum.
          Quality score: 73/100
 
-SIGNAL #5 - CHRW - Quality Score: 66/100
+SIGNAL #8 - SCHL - Quality Score: 65/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $176.01
-  Consolidation:       1 days
-  Range:               $181.65 - $185.67 (2.2%)
-  Position in Range:   -140% (lower third = buy zone)
-  Normalized Price:    7.01 (DIVERGENCE)
-  Force Index:         -25.29 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $33.80
+  Consolidation:       2 days
+  Range:               $33.58 - $34.52 (2.8%)
+  Position in Range:   24% (lower third = buy zone)
+  Normalized Price:    1.16 (DIVERGENCE)
+  Force Index:         -0.93 (ORANGE)
   Fader Signal:        RED
-  Volume:              2.1x average
+  Volume:              1.5x average
 
-  SETUP: CHRW consolidating for 1 days,
+  SETUP: SCHL consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 66/100
-
-SIGNAL #6 - TNL - Quality Score: 65/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $70.84
-  Consolidation:       1 days
-  Range:               $70.91 - $72.36 (2.0%)
-  Position in Range:   -5% (lower third = buy zone)
-  Normalized Price:    1.39 (DIVERGENCE)
-  Force Index:         -2.19 (MAROON)
-  Fader Signal:        GREEN
-  Volume:              1.3x average
-
-  SETUP: TNL consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader GREEN confirming bullish momentum.
          Quality score: 65/100
 
-SIGNAL #7 - BHF - Quality Score: 65/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $63.84
-  Consolidation:       30 days
-  Range:               $63.69 - $64.43 (1.2%)
-  Position in Range:   20% (lower third = buy zone)
-  Normalized Price:    1.35 (DIVERGENCE)
-  Force Index:         -0.25 (MAROON)
-  Fader Signal:        RED
-  Volume:              0.8x average
-
-  SETUP: BHF consolidating for 30 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 65/100
-
-SIGNAL #8 - ACET - Quality Score: 65/100
+SIGNAL #9 - ACET - Quality Score: 65/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $7.03
@@ -315,7 +398,41 @@ SIGNAL #8 - ACET - Quality Score: 65/100
          Fader RED confirming bullish momentum.
          Quality score: 65/100
 
-SIGNAL #9 - VSEC - Quality Score: 62/100
+SIGNAL #10 - HOLX - Quality Score: 64/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $75.12
+  Consolidation:       2 days
+  Range:               $75.12 - $75.48 (0.5%)
+  Position in Range:   -0% (lower third = buy zone)
+  Normalized Price:    0.50 (DIVERGENCE)
+  Force Index:         -0.58 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.7x average
+
+  SETUP: HOLX consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 64/100
+
+SIGNAL #11 - CHD - Quality Score: 63/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $97.75
+  Consolidation:       3 days
+  Range:               $99.23 - $100.87 (1.7%)
+  Position in Range:   -90% (lower third = buy zone)
+  Normalized Price:    2.15 (DIVERGENCE)
+  Force Index:         -6.53 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: CHD consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 63/100
+
+SIGNAL #12 - VSEC - Quality Score: 62/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $199.99
@@ -332,7 +449,24 @@ SIGNAL #9 - VSEC - Quality Score: 62/100
          Fader RED confirming bullish momentum.
          Quality score: 62/100
 
-SIGNAL #10 - GES - Quality Score: 61/100
+SIGNAL #13 - HAL - Quality Score: 62/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $33.69
+  Consolidation:       1 days
+  Range:               $34.09 - $34.96 (2.5%)
+  Position in Range:   -46% (lower third = buy zone)
+  Normalized Price:    1.29 (DIVERGENCE)
+  Force Index:         -2.43 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: HAL consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 62/100
+
+SIGNAL #14 - GES - Quality Score: 61/100
 --------------------------------------------------------------------------------
   Date:                01/22/2026
   Current Price:       $16.81
@@ -349,109 +483,194 @@ SIGNAL #10 - GES - Quality Score: 61/100
          Fader GREEN confirming bullish momentum.
          Quality score: 61/100
 
-SIGNAL #11 - ORA - Quality Score: 60/100
+SIGNAL #15 - AL - Quality Score: 60/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $118.19
-  Consolidation:       2 days
-  Range:               $120.16 - $122.64 (2.1%)
-  Position in Range:   -80% (lower third = buy zone)
-  Normalized Price:    2.38 (DIVERGENCE)
-  Force Index:         -9.35 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $64.52
+  Consolidation:       8 days
+  Range:               $64.57 - $64.75 (0.3%)
+  Position in Range:   -26% (lower third = buy zone)
+  Normalized Price:    0.24 (DIVERGENCE)
+  Force Index:         -0.33 (MAROON)
   Fader Signal:        RED
-  Volume:              1.2x average
+  Volume:              1.7x average
 
-  SETUP: ORA consolidating for 2 days,
+  SETUP: AL consolidating for 8 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 60/100
 
-SIGNAL #12 - GTLS - Quality Score: 58/100
+SIGNAL #16 - HLX - Quality Score: 59/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $206.77
+  Date:                03/13/2026
+  Current Price:       $8.82
+  Consolidation:       1 days
+  Range:               $8.66 - $8.95 (3.3%)
+  Position in Range:   55% (lower third = buy zone)
+  Normalized Price:    0.74 (DIVERGENCE)
+  Force Index:         -0.38 (ORANGE)
+  Fader Signal:        RED
+  Volume:              2.0x average
+
+  SETUP: HLX consolidating for 1 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 59/100
+
+SIGNAL #17 - KLAC - Quality Score: 59/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $1418.64
   Consolidation:       4 days
-  Range:               $206.54 - $207.31 (0.4%)
-  Position in Range:   30% (lower third = buy zone)
-  Normalized Price:    1.93 (DIVERGENCE)
-  Force Index:         -0.67 (ORANGE)
+  Range:               $1428.16 - $1473.99 (3.2%)
+  Position in Range:   -21% (lower third = buy zone)
+  Normalized Price:    30.99 (DIVERGENCE)
+  Force Index:         -59.22 (ORANGE)
   Fader Signal:        RED
   Volume:              1.3x average
 
-  SETUP: GTLS consolidating for 4 days,
+  SETUP: KLAC consolidating for 4 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 58/100
+         Quality score: 59/100
 
-SIGNAL #13 - TXRH - Quality Score: 57/100
+SIGNAL #18 - PCVX - Quality Score: 59/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $180.90
-  Consolidation:       3 days
-  Range:               $181.69 - $185.21 (1.9%)
-  Position in Range:   -22% (lower third = buy zone)
-  Normalized Price:    2.21 (DIVERGENCE)
-  Force Index:         -7.22 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $54.58
+  Consolidation:       2 days
+  Range:               $56.08 - $58.23 (3.8%)
+  Position in Range:   -70% (lower third = buy zone)
+  Normalized Price:    1.65 (DIVERGENCE)
+  Force Index:         -7.21 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: PCVX consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 59/100
+
+SIGNAL #19 - MKTX - Quality Score: 58/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $180.12
+  Consolidation:       2 days
+  Range:               $179.27 - $182.91 (2.0%)
+  Position in Range:   23% (lower third = buy zone)
+  Normalized Price:    2.43 (DIVERGENCE)
+  Force Index:         -6.07 (MAROON)
   Fader Signal:        RED
   Volume:              1.1x average
 
-  SETUP: TXRH consolidating for 3 days,
+  SETUP: MKTX consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 58/100
+
+SIGNAL #20 - SEE - Quality Score: 57/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $41.84
+  Consolidation:       28 days
+  Range:               $41.76 - $42.05 (0.7%)
+  Position in Range:   27% (lower third = buy zone)
+  Normalized Price:    0.71 (DIVERGENCE)
+  Force Index:         -0.22 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: SEE consolidating for 28 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 57/100
 
-SIGNAL #14 - COGT - Quality Score: 56/100
+SIGNAL #21 - RBC - Quality Score: 57/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $36.53
-  Consolidation:       12 days
-  Range:               $36.51 - $37.93 (3.9%)
-  Position in Range:   1% (lower third = buy zone)
-  Normalized Price:    2.43 (DIVERGENCE)
-  Force Index:         -1.40 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $536.37
+  Consolidation:       1 days
+  Range:               $544.56 - $555.18 (1.9%)
+  Position in Range:   -77% (lower third = buy zone)
+  Normalized Price:    22.73 (DIVERGENCE)
+  Force Index:         -43.96 (MAROON)
   Fader Signal:        RED
-  Volume:              0.5x average
+  Volume:              1.1x average
 
-  SETUP: COGT consolidating for 12 days,
+  SETUP: RBC consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 57/100
+
+SIGNAL #22 - BIIB - Quality Score: 56/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $181.55
+  Consolidation:       9 days
+  Range:               $185.12 - $189.39 (2.3%)
+  Position in Range:   -83% (lower third = buy zone)
+  Normalized Price:    0.77 (DIVERGENCE)
+  Force Index:         -12.75 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: BIIB consolidating for 9 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 56/100
 
-SIGNAL #15 - CBL - Quality Score: 56/100
+SIGNAL #23 - SRCE - Quality Score: 56/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $35.05
-  Consolidation:       10 days
-  Range:               $35.74 - $36.41 (1.9%)
-  Position in Range:   -104% (lower third = buy zone)
-  Normalized Price:    0.04 (DIVERGENCE)
-  Force Index:         -1.98 (MAROON)
-  Fader Signal:        RED
-  Volume:              2.0x average
-
-  SETUP: CBL consolidating for 10 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 56/100
-
-SIGNAL #16 - ALV - Quality Score: 56/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $124.98
+  Date:                03/13/2026
+  Current Price:       $67.78
   Consolidation:       11 days
-  Range:               $123.58 - $125.71 (1.7%)
-  Position in Range:   66% (lower third = buy zone)
-  Normalized Price:    2.24 (DIVERGENCE)
-  Force Index:         -0.18 (MAROON)
+  Range:               $67.35 - $68.71 (2.0%)
+  Position in Range:   31% (lower third = buy zone)
+  Normalized Price:    1.19 (DIVERGENCE)
+  Force Index:         -0.44 (MAROON)
   Fader Signal:        RED
-  Volume:              0.6x average
+  Volume:              1.0x average
 
-  SETUP: ALV consolidating for 11 days,
+  SETUP: SRCE consolidating for 11 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 56/100
 
-SIGNAL #17 - BRBS - Quality Score: 55/100
+SIGNAL #24 - AAP - Quality Score: 56/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $51.73
+  Consolidation:       12 days
+  Range:               $51.08 - $53.14 (4.0%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    0.98 (DIVERGENCE)
+  Force Index:         -1.18 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: AAP consolidating for 12 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 56/100
+
+SIGNAL #25 - TNA - Quality Score: 55/100
+--------------------------------------------------------------------------------
+  Date:                02/13/2026
+  Current Price:       $53.97
+  Consolidation:       2 days
+  Range:               $52.70 - $54.75 (3.9%)
+  Position in Range:   62% (lower third = buy zone)
+  Normalized Price:    3.30 (DIVERGENCE)
+  Force Index:         -0.76 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.3x average
+
+  SETUP: TNA consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 55/100
+
+SIGNAL #26 - BRBS - Quality Score: 55/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $4.30
@@ -468,58 +687,500 @@ SIGNAL #17 - BRBS - Quality Score: 55/100
          Fader RED confirming bullish momentum.
          Quality score: 55/100
 
-SIGNAL #18 - UTHR - Quality Score: 54/100
+SIGNAL #27 - JBL - Quality Score: 54/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $473.66
-  Consolidation:       9 days
-  Range:               $473.01 - $482.28 (2.0%)
-  Position in Range:   7% (lower third = buy zone)
-  Normalized Price:    3.77 (DIVERGENCE)
-  Force Index:         -4.74 (MAROON)
-  Fader Signal:        GREEN
-  Volume:              0.8x average
-
-  SETUP: UTHR consolidating for 9 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader GREEN confirming bullish momentum.
-         Quality score: 54/100
-
-SIGNAL #19 - SNDX - Quality Score: 54/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $20.48
-  Consolidation:       2 days
-  Range:               $20.42 - $21.22 (3.9%)
-  Position in Range:   8% (lower third = buy zone)
-  Normalized Price:    0.82 (DIVERGENCE)
-  Force Index:         -1.01 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $250.65
+  Consolidation:       8 days
+  Range:               $249.90 - $257.61 (3.1%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    7.00 (DIVERGENCE)
+  Force Index:         -7.34 (MAROON)
   Fader Signal:        RED
-  Volume:              1.1x average
+  Volume:              0.6x average
 
-  SETUP: SNDX consolidating for 2 days,
+  SETUP: JBL consolidating for 8 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 54/100
 
-SIGNAL #20 - USD - Quality Score: 52/100
+SIGNAL #28 - MBIN - Quality Score: 54/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $55.27
-  Consolidation:       5 days
-  Range:               $54.58 - $57.03 (4.5%)
-  Position in Range:   28% (lower third = buy zone)
-  Normalized Price:    1.16 (DIVERGENCE)
-  Force Index:         -1.89 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $41.66
+  Consolidation:       8 days
+  Range:               $41.70 - $42.79 (2.6%)
+  Position in Range:   -4% (lower third = buy zone)
+  Normalized Price:    2.06 (DIVERGENCE)
+  Force Index:         -1.65 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: MBIN consolidating for 8 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 54/100
+
+SIGNAL #29 - SMTC - Quality Score: 54/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $84.85
+  Consolidation:       6 days
+  Range:               $84.42 - $87.98 (4.2%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    3.40 (DIVERGENCE)
+  Force Index:         -3.72 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: SMTC consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 54/100
+
+SIGNAL #30 - CAH - Quality Score: 54/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $217.08
+  Consolidation:       7 days
+  Range:               $218.04 - $221.98 (1.8%)
+  Position in Range:   -24% (lower third = buy zone)
+  Normalized Price:    5.30 (DIVERGENCE)
+  Force Index:         -6.79 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: CAH consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 54/100
+
+SIGNAL #31 - NHI - Quality Score: 54/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $85.17
+  Consolidation:       7 days
+  Range:               $84.69 - $86.19 (1.8%)
+  Position in Range:   32% (lower third = buy zone)
+  Normalized Price:    2.51 (DIVERGENCE)
+  Force Index:         -1.40 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: NHI consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 54/100
+
+SIGNAL #32 - STRL - Quality Score: 54/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $398.12
+  Consolidation:       7 days
+  Range:               $398.89 - $416.92 (4.5%)
+  Position in Range:   -4% (lower third = buy zone)
+  Normalized Price:    17.37 (DIVERGENCE)
+  Force Index:         -31.12 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: STRL consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 54/100
+
+SIGNAL #33 - NVEC - Quality Score: 53/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $67.38
+  Consolidation:       7 days
+  Range:               $66.90 - $69.02 (3.2%)
+  Position in Range:   23% (lower third = buy zone)
+  Normalized Price:    0.10 (DIVERGENCE)
+  Force Index:         -1.79 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.4x average
+
+  SETUP: NVEC consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 53/100
+
+SIGNAL #34 - BE - Quality Score: 53/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $154.51
+  Consolidation:       6 days
+  Range:               $147.96 - $158.26 (7.0%)
+  Position in Range:   64% (lower third = buy zone)
+  Normalized Price:    16.95 (DIVERGENCE)
+  Force Index:         -2.31 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: BE consolidating for 6 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 53/100
+
+SIGNAL #35 - FN - Quality Score: 53/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $502.14
+  Consolidation:       6 days
+  Range:               $510.17 - $535.63 (5.0%)
+  Position in Range:   -32% (lower third = buy zone)
+  Normalized Price:    9.16 (DIVERGENCE)
+  Force Index:         -57.26 (MAROON)
   Fader Signal:        RED
   Volume:              0.7x average
 
-  SETUP: USD consolidating for 5 days,
+  SETUP: FN consolidating for 6 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 53/100
+
+SIGNAL #36 - KO - Quality Score: 53/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $77.34
+  Consolidation:       6 days
+  Range:               $77.31 - $78.22 (1.2%)
+  Position in Range:   4% (lower third = buy zone)
+  Normalized Price:    2.22 (DIVERGENCE)
+  Force Index:         -1.74 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: KO consolidating for 6 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 53/100
+
+SIGNAL #37 - NIC - Quality Score: 53/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $149.21
+  Consolidation:       6 days
+  Range:               $149.09 - $152.50 (2.3%)
+  Position in Range:   3% (lower third = buy zone)
+  Normalized Price:    5.72 (DIVERGENCE)
+  Force Index:         -5.18 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.4x average
+
+  SETUP: NIC consolidating for 6 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 53/100
+
+SIGNAL #38 - WINA - Quality Score: 53/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $449.51
+  Consolidation:       6 days
+  Range:               $442.70 - $458.48 (3.6%)
+  Position in Range:   43% (lower third = buy zone)
+  Normalized Price:    7.17 (DIVERGENCE)
+  Force Index:         -5.31 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
+
+  SETUP: WINA consolidating for 6 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 53/100
+
+SIGNAL #39 - KRG - Quality Score: 53/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $25.14
+  Consolidation:       1 days
+  Range:               $25.19 - $25.56 (1.5%)
+  Position in Range:   -13% (lower third = buy zone)
+  Normalized Price:    0.70 (DIVERGENCE)
+  Force Index:         -1.11 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: KRG consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 53/100
+
+SIGNAL #40 - CB - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $328.97
+  Consolidation:       5 days
+  Range:               $325.47 - $330.01 (1.4%)
+  Position in Range:   77% (lower third = buy zone)
+  Normalized Price:    11.79 (DIVERGENCE)
+  Force Index:         -1.42 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: CB consolidating for 5 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 52/100
 
-SIGNAL #21 - BCOW - Quality Score: 51/100
+SIGNAL #41 - CC - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $17.57
+  Consolidation:       5 days
+  Range:               $17.16 - $17.96 (4.6%)
+  Position in Range:   51% (lower third = buy zone)
+  Normalized Price:    1.33 (DIVERGENCE)
+  Force Index:         -0.21 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: CC consolidating for 5 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #42 - EGP - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $187.61
+  Consolidation:       5 days
+  Range:               $188.49 - $191.30 (1.5%)
+  Position in Range:   -31% (lower third = buy zone)
+  Normalized Price:    1.82 (DIVERGENCE)
+  Force Index:         -6.38 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: EGP consolidating for 5 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #43 - ROG - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $102.48
+  Consolidation:       5 days
+  Range:               $103.89 - $106.67 (2.7%)
+  Position in Range:   -51% (lower third = buy zone)
+  Normalized Price:    2.66 (DIVERGENCE)
+  Force Index:         -7.10 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: ROG consolidating for 5 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #44 - RRBI - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $87.05
+  Consolidation:       5 days
+  Range:               $86.18 - $88.08 (2.2%)
+  Position in Range:   46% (lower third = buy zone)
+  Normalized Price:    5.41 (DIVERGENCE)
+  Force Index:         -2.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: RRBI consolidating for 5 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #45 - CACI - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $606.72
+  Consolidation:       4 days
+  Range:               $597.19 - $613.86 (2.8%)
+  Position in Range:   57% (lower third = buy zone)
+  Normalized Price:    12.69 (DIVERGENCE)
+  Force Index:         -3.37 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.0x average
+
+  SETUP: CACI consolidating for 4 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #46 - DE - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $577.50
+  Consolidation:       4 days
+  Range:               $587.24 - $599.06 (2.0%)
+  Position in Range:   -82% (lower third = buy zone)
+  Normalized Price:    22.61 (DIVERGENCE)
+  Force Index:         -46.11 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: DE consolidating for 4 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #47 - DGX - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $199.70
+  Consolidation:       4 days
+  Range:               $199.33 - $202.66 (1.7%)
+  Position in Range:   11% (lower third = buy zone)
+  Normalized Price:    6.12 (DIVERGENCE)
+  Force Index:         -6.54 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: DGX consolidating for 4 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #48 - L - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $108.02
+  Consolidation:       4 days
+  Range:               $108.21 - $109.62 (1.3%)
+  Position in Range:   -13% (lower third = buy zone)
+  Normalized Price:    1.17 (DIVERGENCE)
+  Force Index:         -2.69 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: L consolidating for 4 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #49 - CFLT - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $30.67
+  Consolidation:       3 days
+  Range:               $30.45 - $30.76 (1.0%)
+  Position in Range:   72% (lower third = buy zone)
+  Normalized Price:    1.33 (DIVERGENCE)
+  Force Index:         -0.07 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: CFLT consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #50 - CGNX - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $47.98
+  Consolidation:       3 days
+  Range:               $49.45 - $50.91 (3.0%)
+  Position in Range:   -101% (lower third = buy zone)
+  Normalized Price:    1.91 (DIVERGENCE)
+  Force Index:         -6.61 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: CGNX consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #51 - GNRC - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $200.53
+  Consolidation:       3 days
+  Range:               $204.86 - $211.76 (3.4%)
+  Position in Range:   -63% (lower third = buy zone)
+  Normalized Price:    10.53 (DIVERGENCE)
+  Force Index:         -25.33 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: GNRC consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #52 - MCK - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $940.91
+  Consolidation:       3 days
+  Range:               $924.76 - $942.07 (1.9%)
+  Position in Range:   93% (lower third = buy zone)
+  Normalized Price:    52.64 (DIVERGENCE)
+  Force Index:         -8.74 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: MCK consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #53 - PEN - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $336.18
+  Consolidation:       23 days
+  Range:               $336.53 - $341.46 (1.5%)
+  Position in Range:   -7% (lower third = buy zone)
+  Normalized Price:    9.07 (DIVERGENCE)
+  Force Index:         -4.87 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: PEN consolidating for 23 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #54 - TDY - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $638.91
+  Consolidation:       3 days
+  Range:               $645.16 - $656.95 (1.8%)
+  Position in Range:   -53% (lower third = buy zone)
+  Normalized Price:    26.43 (DIVERGENCE)
+  Force Index:         -39.73 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: TDY consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #55 - WPC - Quality Score: 52/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $71.49
+  Consolidation:       3 days
+  Range:               $71.53 - $72.52 (1.4%)
+  Position in Range:   -4% (lower third = buy zone)
+  Normalized Price:    1.45 (DIVERGENCE)
+  Force Index:         -1.95 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: WPC consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 52/100
+
+SIGNAL #56 - BCOW - Quality Score: 51/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $11.02
@@ -536,109 +1197,177 @@ SIGNAL #21 - BCOW - Quality Score: 51/100
          Fader RED confirming bullish momentum.
          Quality score: 51/100
 
-SIGNAL #22 - SBCF - Quality Score: 51/100
+SIGNAL #57 - AEIS - Quality Score: 51/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $33.23
+  Date:                03/13/2026
+  Current Price:       $302.02
   Consolidation:       2 days
-  Range:               $33.28 - $33.98 (2.1%)
-  Position in Range:   -7% (lower third = buy zone)
-  Normalized Price:    0.62 (DIVERGENCE)
-  Force Index:         -1.47 (MAROON)
+  Range:               $300.21 - $310.70 (3.5%)
+  Position in Range:   17% (lower third = buy zone)
+  Normalized Price:    29.78 (DIVERGENCE)
+  Force Index:         -21.75 (MAROON)
   Fader Signal:        RED
-  Volume:              1.2x average
+  Volume:              0.5x average
 
-  SETUP: SBCF consolidating for 2 days,
+  SETUP: AEIS consolidating for 2 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 51/100
 
-SIGNAL #23 - LEG - Quality Score: 51/100
+SIGNAL #58 - AMGN - Quality Score: 51/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $11.73
+  Date:                03/13/2026
+  Current Price:       $366.21
   Consolidation:       2 days
-  Range:               $11.92 - $12.23 (2.6%)
-  Position in Range:   -61% (lower third = buy zone)
-  Normalized Price:    0.40 (DIVERGENCE)
-  Force Index:         -1.01 (ORANGE)
-  Fader Signal:        RED
-  Volume:              1.6x average
-
-  SETUP: LEG consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 51/100
-
-SIGNAL #24 - AXL - Quality Score: 51/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $7.25
-  Consolidation:       1 days
-  Range:               $7.81 - $8.09 (3.6%)
-  Position in Range:   -199% (lower third = buy zone)
-  Normalized Price:    0.00 (DIVERGENCE)
-  Force Index:         -2.01 (MAROON)
-  Fader Signal:        RED
-  Volume:              2.3x average
-
-  SETUP: AXL consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 51/100
-
-SIGNAL #25 - BTU - Quality Score: 50/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $34.45
-  Consolidation:       1 days
-  Range:               $34.31 - $35.67 (4.0%)
-  Position in Range:   10% (lower third = buy zone)
-  Normalized Price:    2.30 (DIVERGENCE)
-  Force Index:         -2.57 (MAROON)
-  Fader Signal:        RED
-  Volume:              1.0x average
-
-  SETUP: BTU consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 50/100
-
-SIGNAL #26 - DAL - Quality Score: 50/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $69.00
-  Consolidation:       1 days
-  Range:               $69.10 - $70.90 (2.6%)
-  Position in Range:   -5% (lower third = buy zone)
-  Normalized Price:    1.61 (DIVERGENCE)
-  Force Index:         -3.52 (MAROON)
-  Fader Signal:        RED
-  Volume:              0.8x average
-
-  SETUP: DAL consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 50/100
-
-SIGNAL #27 - FBK - Quality Score: 50/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $59.00
-  Consolidation:       1 days
-  Range:               $58.49 - $59.69 (2.0%)
-  Position in Range:   43% (lower third = buy zone)
-  Normalized Price:    1.47 (DIVERGENCE)
-  Force Index:         -1.28 (MAROON)
+  Range:               $366.75 - $373.50 (1.8%)
+  Position in Range:   -8% (lower third = buy zone)
+  Normalized Price:    13.12 (DIVERGENCE)
+  Force Index:         -15.71 (MAROON)
   Fader Signal:        RED
   Volume:              0.6x average
 
-  SETUP: FBK consolidating for 1 days,
+  SETUP: AMGN consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 51/100
+
+SIGNAL #59 - IDCC - Quality Score: 51/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $359.07
+  Consolidation:       2 days
+  Range:               $353.67 - $365.57 (3.4%)
+  Position in Range:   45% (lower third = buy zone)
+  Normalized Price:    10.68 (DIVERGENCE)
+  Force Index:         -10.61 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: IDCC consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 51/100
+
+SIGNAL #60 - KMT - Quality Score: 51/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $38.19
+  Consolidation:       2 days
+  Range:               $38.07 - $39.05 (2.6%)
+  Position in Range:   12% (lower third = buy zone)
+  Normalized Price:    3.23 (DIVERGENCE)
+  Force Index:         -2.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: KMT consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 51/100
+
+SIGNAL #61 - O - Quality Score: 51/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $64.44
+  Consolidation:       2 days
+  Range:               $64.27 - $65.05 (1.2%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    2.16 (DIVERGENCE)
+  Force Index:         -1.62 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: O consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 51/100
+
+SIGNAL #62 - PECO - Quality Score: 51/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $38.17
+  Consolidation:       2 days
+  Range:               $38.04 - $38.54 (1.3%)
+  Position in Range:   26% (lower third = buy zone)
+  Normalized Price:    1.13 (DIVERGENCE)
+  Force Index:         -0.99 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: PECO consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 51/100
+
+SIGNAL #63 - ATI - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $141.97
+  Consolidation:       1 days
+  Range:               $146.92 - $150.78 (2.6%)
+  Position in Range:   -128% (lower third = buy zone)
+  Normalized Price:    9.17 (DIVERGENCE)
+  Force Index:         -23.36 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: ATI consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 50/100
 
-SIGNAL #28 - FBRX - Quality Score: 50/100
+SIGNAL #64 - DNLI - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $20.57
+  Consolidation:       1 days
+  Range:               $20.06 - $20.93 (4.4%)
+  Position in Range:   58% (lower third = buy zone)
+  Normalized Price:    1.15 (DIVERGENCE)
+  Force Index:         -0.37 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: DNLI consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #65 - ES - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $73.10
+  Consolidation:       1 days
+  Range:               $72.33 - $73.59 (1.7%)
+  Position in Range:   61% (lower third = buy zone)
+  Normalized Price:    2.13 (DIVERGENCE)
+  Force Index:         -1.36 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: ES consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #66 - ESE - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $263.82
+  Consolidation:       1 days
+  Range:               $262.14 - $268.58 (2.5%)
+  Position in Range:   26% (lower third = buy zone)
+  Normalized Price:    18.89 (DIVERGENCE)
+  Force Index:         -14.65 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: ESE consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #67 - FBRX - Quality Score: 50/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $27.59
@@ -655,92 +1384,194 @@ SIGNAL #28 - FBRX - Quality Score: 50/100
          Fader RED confirming bullish momentum.
          Quality score: 50/100
 
-SIGNAL #29 - HLF - Quality Score: 50/100
+SIGNAL #68 - HWM - Quality Score: 50/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $15.90
+  Date:                03/13/2026
+  Current Price:       $236.75
   Consolidation:       1 days
-  Range:               $15.89 - $16.33 (2.8%)
-  Position in Range:   3% (lower third = buy zone)
-  Normalized Price:    1.68 (DIVERGENCE)
-  Force Index:         -1.29 (MAROON)
+  Range:               $242.76 - $248.24 (2.3%)
+  Position in Range:   -110% (lower third = buy zone)
+  Normalized Price:    7.53 (DIVERGENCE)
+  Force Index:         -28.31 (MAROON)
   Fader Signal:        RED
   Volume:              0.9x average
 
-  SETUP: HLF consolidating for 1 days,
+  SETUP: HWM consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 50/100
 
-SIGNAL #30 - INBX - Quality Score: 50/100
+SIGNAL #69 - PL - Quality Score: 50/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $75.80
+  Date:                03/13/2026
+  Current Price:       $24.79
   Consolidation:       1 days
-  Range:               $77.13 - $81.22 (5.3%)
-  Position in Range:   -33% (lower third = buy zone)
-  Normalized Price:    2.00 (DIVERGENCE)
-  Force Index:         -9.71 (MAROON)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: INBX consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 50/100
-
-SIGNAL #31 - IONS - Quality Score: 50/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $80.60
-  Consolidation:       1 days
-  Range:               $81.14 - $83.09 (2.4%)
-  Position in Range:   -27% (lower third = buy zone)
-  Normalized Price:    2.39 (DIVERGENCE)
-  Force Index:         -5.04 (MAROON)
+  Range:               $23.90 - $25.25 (5.7%)
+  Position in Range:   66% (lower third = buy zone)
+  Normalized Price:    2.68 (DIVERGENCE)
+  Force Index:         -0.49 (MAROON)
   Fader Signal:        RED
   Volume:              0.8x average
 
-  SETUP: IONS consolidating for 1 days,
+  SETUP: PL consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 50/100
 
-SIGNAL #32 - TTMI - Quality Score: 50/100
+SIGNAL #70 - RSG - Quality Score: 50/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $91.80
+  Date:                03/13/2026
+  Current Price:       $224.28
   Consolidation:       1 days
-  Range:               $89.68 - $93.98 (4.8%)
-  Position in Range:   49% (lower third = buy zone)
-  Normalized Price:    10.90 (DIVERGENCE)
-  Force Index:         -6.22 (MAROON)
+  Range:               $222.60 - $225.79 (1.4%)
+  Position in Range:   53% (lower third = buy zone)
+  Normalized Price:    3.72 (DIVERGENCE)
+  Force Index:         -3.97 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: RSG consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #71 - SPB - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $73.72
+  Consolidation:       1 days
+  Range:               $73.95 - $75.67 (2.3%)
+  Position in Range:   -14% (lower third = buy zone)
+  Normalized Price:    4.53 (DIVERGENCE)
+  Force Index:         -4.85 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: SPB consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #72 - SXI - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $253.96
+  Consolidation:       1 days
+  Range:               $251.47 - $259.00 (3.0%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    7.64 (DIVERGENCE)
+  Force Index:         -7.64 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: SXI consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #73 - UCTT - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $54.97
+  Consolidation:       1 days
+  Range:               $53.55 - $56.06 (4.7%)
+  Position in Range:   57% (lower third = buy zone)
+  Normalized Price:    8.89 (DIVERGENCE)
+  Force Index:         -3.44 (MAROON)
   Fader Signal:        RED
   Volume:              0.4x average
 
-  SETUP: TTMI consolidating for 1 days,
+  SETUP: UCTT consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 50/100
 
-SIGNAL #33 - RYI - Quality Score: 48/100
+SIGNAL #74 - VRTX - Quality Score: 50/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $27.03
+  Date:                03/13/2026
+  Current Price:       $469.34
   Consolidation:       1 days
-  Range:               $27.91 - $28.70 (2.8%)
-  Position in Range:   -111% (lower third = buy zone)
-  Normalized Price:    0.64 (DIVERGENCE)
-  Force Index:         -3.58 (MAROON)
+  Range:               $469.70 - $480.07 (2.2%)
+  Position in Range:   -3% (lower third = buy zone)
+  Normalized Price:    5.74 (DIVERGENCE)
+  Force Index:         -16.50 (MAROON)
   Fader Signal:        RED
-  Volume:              1.1x average
+  Volume:              0.7x average
 
-  SETUP: RYI consolidating for 1 days,
+  SETUP: VRTX consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 48/100
+         Quality score: 50/100
 
-SIGNAL #34 - HBI - Quality Score: 48/100
+SIGNAL #75 - PDLB - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/06/2026
+  Current Price:       $16.38
+  Consolidation:       16 days
+  Range:               $16.32 - $16.68 (2.2%)
+  Position in Range:   16% (lower third = buy zone)
+  Normalized Price:    0.10 (DIVERGENCE)
+  Force Index:         -0.15 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.6x average
+
+  SETUP: PDLB consolidating for 16 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #76 - VECO - Quality Score: 50/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $30.95
+  Consolidation:       6 days
+  Range:               $30.54 - $31.76 (4.0%)
+  Position in Range:   34% (lower third = buy zone)
+  Normalized Price:    0.17 (DIVERGENCE)
+  Force Index:         -0.51 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              1.4x average
+
+  SETUP: VECO consolidating for 6 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 50/100
+
+SIGNAL #77 - AMT - Quality Score: 49/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $184.41
+  Consolidation:       3 days
+  Range:               $182.89 - $186.56 (2.0%)
+  Position in Range:   41% (lower third = buy zone)
+  Normalized Price:    1.45 (DIVERGENCE)
+  Force Index:         -2.46 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: AMT consolidating for 3 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 49/100
+
+SIGNAL #78 - VIRT - Quality Score: 49/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $39.09
+  Consolidation:       1 days
+  Range:               $39.47 - $40.36 (2.3%)
+  Position in Range:   -43% (lower third = buy zone)
+  Normalized Price:    0.94 (DIVERGENCE)
+  Force Index:         -2.96 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: VIRT consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 49/100
+
+SIGNAL #79 - HBI - Quality Score: 48/100
 --------------------------------------------------------------------------------
   Date:                12/02/2025
   Current Price:       $6.47
@@ -757,24 +1588,7 @@ SIGNAL #34 - HBI - Quality Score: 48/100
          Fader RED confirming bullish momentum.
          Quality score: 48/100
 
-SIGNAL #35 - MDT - Quality Score: 47/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $99.49
-  Consolidation:       2 days
-  Range:               $99.87 - $101.38 (1.5%)
-  Position in Range:   -25% (lower third = buy zone)
-  Normalized Price:    0.53 (DIVERGENCE)
-  Force Index:         -3.58 (MAROON)
-  Fader Signal:        RED
-  Volume:              1.2x average
-
-  SETUP: MDT consolidating for 2 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 47/100
-
-SIGNAL #36 - AGX - Quality Score: 46/100
+SIGNAL #80 - AGX - Quality Score: 46/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $352.09
@@ -791,7 +1605,7 @@ SIGNAL #36 - AGX - Quality Score: 46/100
          Fader RED confirming bullish momentum.
          Quality score: 46/100
 
-SIGNAL #37 - TBPH - Quality Score: 46/100
+SIGNAL #81 - TBPH - Quality Score: 46/100
 --------------------------------------------------------------------------------
   Date:                02/13/2026
   Current Price:       $19.53
@@ -808,7 +1622,7 @@ SIGNAL #37 - TBPH - Quality Score: 46/100
          Fader RED confirming bullish momentum.
          Quality score: 46/100
 
-SIGNAL #38 - SEMR - Quality Score: 46/100
+SIGNAL #82 - SEMR - Quality Score: 46/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $11.81
@@ -825,24 +1639,7 @@ SIGNAL #38 - SEMR - Quality Score: 46/100
          Fader RED confirming bullish momentum.
          Quality score: 46/100
 
-SIGNAL #39 - ALEC - Quality Score: 45/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $1.87
-  Consolidation:       1 days
-  Range:               $1.80 - $1.91 (6.1%)
-  Position in Range:   66% (lower third = buy zone)
-  Normalized Price:    0.08 (DIVERGENCE)
-  Force Index:         -0.08 (MAROON)
-  Fader Signal:        RED
-  Volume:              1.4x average
-
-  SETUP: ALEC consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 45/100
-
-SIGNAL #40 - BKTI - Quality Score: 45/100
+SIGNAL #83 - BKTI - Quality Score: 45/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $77.45
@@ -859,58 +1656,92 @@ SIGNAL #40 - BKTI - Quality Score: 45/100
          Fader RED confirming bullish momentum.
          Quality score: 45/100
 
-SIGNAL #41 - CWST - Quality Score: 44/100
+SIGNAL #84 - CSCO - Quality Score: 45/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $103.72
-  Consolidation:       2 days
-  Range:               $102.14 - $104.35 (2.2%)
-  Position in Range:   71% (lower third = buy zone)
-  Normalized Price:    3.39 (DIVERGENCE)
-  Force Index:         -0.64 (ORANGE)
-  Fader Signal:        RED
-  Volume:              1.1x average
+  Date:                03/13/2026
+  Current Price:       $78.33
+  Consolidation:       20 days
+  Range:               $77.92 - $79.39 (1.9%)
+  Position in Range:   28% (lower third = buy zone)
+  Normalized Price:    0.80 (DIVERGENCE)
+  Force Index:         -0.30 (ORANGE)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
 
-  SETUP: CWST consolidating for 2 days,
+  SETUP: CSCO consolidating for 20 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 45/100
+
+SIGNAL #85 - CBL - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $36.92
+  Consolidation:       1 days
+  Range:               $36.96 - $37.67 (1.9%)
+  Position in Range:   -6% (lower third = buy zone)
+  Normalized Price:    0.76 (DIVERGENCE)
+  Force Index:         -1.39 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: CBL consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 44/100
 
-SIGNAL #42 - BWXT - Quality Score: 44/100
+SIGNAL #86 - CBAN - Quality Score: 44/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $200.40
+  Date:                03/06/2026
+  Current Price:       $19.70
+  Consolidation:       5 days
+  Range:               $19.71 - $20.12 (2.1%)
+  Position in Range:   -2% (lower third = buy zone)
+  Normalized Price:    0.65 (DIVERGENCE)
+  Force Index:         -0.72 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: CBAN consolidating for 5 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 44/100
+
+SIGNAL #87 - INTC - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $45.77
   Consolidation:       8 days
-  Range:               $196.54 - $202.70 (3.1%)
-  Position in Range:   63% (lower third = buy zone)
-  Normalized Price:    7.60 (DIVERGENCE)
-  Force Index:         -0.19 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
+  Range:               $44.84 - $46.74 (4.2%)
+  Position in Range:   49% (lower third = buy zone)
+  Normalized Price:    2.03 (DIVERGENCE)
+  Force Index:         -0.05 (ORANGE)
+  Fader Signal:        GREEN
+  Volume:              0.9x average
 
-  SETUP: BWXT consolidating for 8 days,
+  SETUP: INTC consolidating for 8 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
+         Fader GREEN confirming bullish momentum.
          Quality score: 44/100
 
-SIGNAL #43 - ALB - Quality Score: 44/100
+SIGNAL #88 - HASI - Quality Score: 44/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $166.35
+  Date:                03/13/2026
+  Current Price:       $35.41
   Consolidation:       7 days
-  Range:               $163.56 - $169.56 (3.7%)
-  Position in Range:   47% (lower third = buy zone)
-  Normalized Price:    18.44 (DIVERGENCE)
-  Force Index:         -4.46 (ORANGE)
+  Range:               $35.76 - $36.54 (2.2%)
+  Position in Range:   -45% (lower third = buy zone)
+  Normalized Price:    0.60 (DIVERGENCE)
+  Force Index:         -1.69 (MAROON)
   Fader Signal:        RED
-  Volume:              0.7x average
+  Volume:              0.5x average
 
-  SETUP: ALB consolidating for 7 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+  SETUP: HASI consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 44/100
 
-SIGNAL #44 - OLMA - Quality Score: 44/100
+SIGNAL #89 - OLMA - Quality Score: 44/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $25.36
@@ -927,24 +1758,41 @@ SIGNAL #44 - OLMA - Quality Score: 44/100
          Fader RED confirming bullish momentum.
          Quality score: 44/100
 
-SIGNAL #45 - IRWD - Quality Score: 43/100
+SIGNAL #90 - PLXS - Quality Score: 44/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $4.50
-  Consolidation:       4 days
-  Range:               $4.42 - $4.66 (5.6%)
-  Position in Range:   34% (lower third = buy zone)
-  Normalized Price:    0.65 (DIVERGENCE)
-  Force Index:         -0.29 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $190.74
+  Consolidation:       7 days
+  Range:               $189.94 - $195.75 (3.1%)
+  Position in Range:   14% (lower third = buy zone)
+  Normalized Price:    10.11 (DIVERGENCE)
+  Force Index:         -5.81 (ORANGE)
   Fader Signal:        RED
   Volume:              0.7x average
 
-  SETUP: IRWD consolidating for 4 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+  SETUP: PLXS consolidating for 7 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 43/100
+         Quality score: 44/100
 
-SIGNAL #46 - CDNA - Quality Score: 43/100
+SIGNAL #91 - URA - Quality Score: 44/100
+--------------------------------------------------------------------------------
+  Date:                02/13/2026
+  Current Price:       $51.91
+  Consolidation:       7 days
+  Range:               $51.75 - $53.65 (3.7%)
+  Position in Range:   8% (lower third = buy zone)
+  Normalized Price:    2.29 (DIVERGENCE)
+  Force Index:         -3.08 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: URA consolidating for 7 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 44/100
+
+SIGNAL #92 - CDNA - Quality Score: 43/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $19.47
@@ -961,24 +1809,126 @@ SIGNAL #46 - CDNA - Quality Score: 43/100
          Fader RED confirming bullish momentum.
          Quality score: 43/100
 
-SIGNAL #47 - IMVT - Quality Score: 43/100
+SIGNAL #93 - AMAT - Quality Score: 43/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $25.75
+  Date:                03/13/2026
+  Current Price:       $341.53
   Consolidation:       6 days
-  Range:               $25.51 - $26.46 (3.7%)
-  Position in Range:   26% (lower third = buy zone)
-  Normalized Price:    1.12 (DIVERGENCE)
-  Force Index:         -0.66 (ORANGE)
+  Range:               $340.45 - $350.95 (3.1%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    25.27 (DIVERGENCE)
+  Force Index:         -15.07 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.8x average
+  Volume:              0.7x average
 
-  SETUP: IMVT consolidating for 6 days,
+  SETUP: AMAT consolidating for 6 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 43/100
 
-SIGNAL #48 - INFA - Quality Score: 43/100
+SIGNAL #94 - FORM - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $89.92
+  Consolidation:       6 days
+  Range:               $87.89 - $91.31 (3.9%)
+  Position in Range:   59% (lower third = buy zone)
+  Normalized Price:    11.64 (DIVERGENCE)
+  Force Index:         -2.80 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: FORM consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #95 - GILD - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $144.99
+  Consolidation:       6 days
+  Range:               $144.37 - $147.16 (1.9%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    6.75 (DIVERGENCE)
+  Force Index:         -3.70 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: GILD consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #96 - MSM - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $91.23
+  Consolidation:       6 days
+  Range:               $90.51 - $92.44 (2.1%)
+  Position in Range:   37% (lower third = buy zone)
+  Normalized Price:    1.71 (DIVERGENCE)
+  Force Index:         -1.03 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: MSM consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #97 - MYRG - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $261.13
+  Consolidation:       6 days
+  Range:               $260.16 - $269.50 (3.6%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    10.65 (DIVERGENCE)
+  Force Index:         -11.53 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: MYRG consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #98 - TER - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $286.42
+  Consolidation:       6 days
+  Range:               $290.29 - $300.55 (3.5%)
+  Position in Range:   -38% (lower third = buy zone)
+  Normalized Price:    27.37 (DIVERGENCE)
+  Force Index:         -28.71 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: TER consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #99 - TRNS - Quality Score: 43/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $73.95
+  Consolidation:       6 days
+  Range:               $72.45 - $75.13 (3.7%)
+  Position in Range:   56% (lower third = buy zone)
+  Normalized Price:    4.09 (DIVERGENCE)
+  Force Index:         -1.54 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: TRNS consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #100 - INFA - Quality Score: 43/100
 --------------------------------------------------------------------------------
   Date:                11/19/2025
   Current Price:       $24.79
@@ -995,75 +1945,143 @@ SIGNAL #48 - INFA - Quality Score: 43/100
          Fader RED confirming bullish momentum.
          Quality score: 43/100
 
-SIGNAL #49 - CLB - Quality Score: 42/100
+SIGNAL #101 - FRT - Quality Score: 43/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $18.56
-  Consolidation:       5 days
-  Range:               $18.39 - $19.00 (3.3%)
-  Position in Range:   28% (lower third = buy zone)
-  Normalized Price:    1.23 (DIVERGENCE)
-  Force Index:         -0.66 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $104.49
+  Consolidation:       2 days
+  Range:               $105.68 - $107.16 (1.4%)
+  Position in Range:   -80% (lower third = buy zone)
+  Normalized Price:    0.68 (DIVERGENCE)
+  Force Index:         -5.28 (MAROON)
   Fader Signal:        RED
-  Volume:              0.8x average
+  Volume:              0.5x average
 
-  SETUP: CLB consolidating for 5 days,
+  SETUP: FRT consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 43/100
+
+SIGNAL #102 - RNR - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $293.78
+  Consolidation:       5 days
+  Range:               $293.04 - $298.43 (1.8%)
+  Position in Range:   14% (lower third = buy zone)
+  Normalized Price:    7.85 (DIVERGENCE)
+  Force Index:         -6.26 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: RNR consolidating for 5 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 42/100
 
-SIGNAL #50 - BANC - Quality Score: 42/100
+SIGNAL #103 - SKT - Quality Score: 42/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $20.00
-  Consolidation:       2 days
-  Range:               $19.99 - $20.43 (2.2%)
-  Position in Range:   2% (lower third = buy zone)
-  Normalized Price:    0.64 (DIVERGENCE)
-  Force Index:         -0.72 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $35.15
+  Consolidation:       1 days
+  Range:               $35.14 - $35.76 (1.7%)
+  Position in Range:   1% (lower third = buy zone)
+  Normalized Price:    0.67 (DIVERGENCE)
+  Force Index:         -1.53 (MAROON)
   Fader Signal:        RED
-  Volume:              0.8x average
+  Volume:              0.6x average
 
-  SETUP: BANC consolidating for 2 days,
+  SETUP: SKT consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 42/100
 
-SIGNAL #51 - PEN - Quality Score: 42/100
+SIGNAL #104 - HII - Quality Score: 42/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $339.30
+  Date:                03/13/2026
+  Current Price:       $415.71
   Consolidation:       4 days
-  Range:               $336.27 - $342.57 (1.9%)
-  Position in Range:   48% (lower third = buy zone)
-  Normalized Price:    21.31 (DIVERGENCE)
-  Force Index:         -7.76 (ORANGE)
+  Range:               $416.75 - $427.55 (2.6%)
+  Position in Range:   -10% (lower third = buy zone)
+  Normalized Price:    21.76 (DIVERGENCE)
+  Force Index:         -19.07 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.2x average
+  Volume:              0.6x average
 
-  SETUP: PEN consolidating for 4 days,
+  SETUP: HII consolidating for 4 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 42/100
 
-SIGNAL #52 - UFPT - Quality Score: 42/100
+SIGNAL #105 - KEX - Quality Score: 42/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $245.81
-  Consolidation:       1 days
-  Range:               $248.49 - $257.03 (3.4%)
-  Position in Range:   -31% (lower third = buy zone)
-  Normalized Price:    5.63 (DIVERGENCE)
-  Force Index:         -21.56 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $124.95
+  Consolidation:       4 days
+  Range:               $125.40 - $128.14 (2.2%)
+  Position in Range:   -16% (lower third = buy zone)
+  Normalized Price:    3.73 (DIVERGENCE)
+  Force Index:         -5.19 (ORANGE)
   Fader Signal:        RED
   Volume:              1.0x average
 
-  SETUP: UFPT consolidating for 1 days,
+  SETUP: KEX consolidating for 4 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 42/100
 
-SIGNAL #53 - FEIM - Quality Score: 42/100
+SIGNAL #106 - SON - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $53.32
+  Consolidation:       4 days
+  Range:               $52.79 - $53.81 (1.9%)
+  Position in Range:   52% (lower third = buy zone)
+  Normalized Price:    3.34 (DIVERGENCE)
+  Force Index:         -1.23 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: SON consolidating for 4 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #107 - VICR - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $172.57
+  Consolidation:       4 days
+  Range:               $169.35 - $178.04 (5.1%)
+  Position in Range:   37% (lower third = buy zone)
+  Normalized Price:    23.09 (DIVERGENCE)
+  Force Index:         -11.56 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: VICR consolidating for 4 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #108 - FR - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $60.11
+  Consolidation:       5 days
+  Range:               $60.24 - $61.20 (1.6%)
+  Position in Range:   -14% (lower third = buy zone)
+  Normalized Price:    0.97 (DIVERGENCE)
+  Force Index:         -1.96 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: FR consolidating for 5 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #109 - FEIM - Quality Score: 42/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $52.23
@@ -1080,7 +2098,41 @@ SIGNAL #53 - FEIM - Quality Score: 42/100
          Fader RED confirming bullish momentum.
          Quality score: 42/100
 
-SIGNAL #54 - LPCN - Quality Score: 42/100
+SIGNAL #110 - GLW - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $129.12
+  Consolidation:       3 days
+  Range:               $129.26 - $133.85 (3.5%)
+  Position in Range:   -3% (lower third = buy zone)
+  Normalized Price:    13.92 (DIVERGENCE)
+  Force Index:         -12.58 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: GLW consolidating for 3 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #111 - HSY - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $217.09
+  Consolidation:       3 days
+  Range:               $218.40 - $222.41 (1.8%)
+  Position in Range:   -33% (lower third = buy zone)
+  Normalized Price:    9.23 (DIVERGENCE)
+  Force Index:         -11.83 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: HSY consolidating for 3 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #112 - LPCN - Quality Score: 42/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $8.49
@@ -1097,7 +2149,41 @@ SIGNAL #54 - LPCN - Quality Score: 42/100
          Fader RED confirming bullish momentum.
          Quality score: 42/100
 
-SIGNAL #55 - OSS - Quality Score: 42/100
+SIGNAL #113 - MCD - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $326.46
+  Consolidation:       3 days
+  Range:               $324.90 - $328.99 (1.3%)
+  Position in Range:   38% (lower third = buy zone)
+  Normalized Price:    6.67 (DIVERGENCE)
+  Force Index:         -4.16 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: MCD consolidating for 3 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #114 - NHC - Quality Score: 42/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $161.44
+  Consolidation:       3 days
+  Range:               $157.66 - $161.52 (2.4%)
+  Position in Range:   98% (lower third = buy zone)
+  Normalized Price:    11.77 (DIVERGENCE)
+  Force Index:         -0.15 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: NHC consolidating for 3 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 42/100
+
+SIGNAL #115 - OSS - Quality Score: 42/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $9.24
@@ -1114,41 +2200,41 @@ SIGNAL #55 - OSS - Quality Score: 42/100
          Fader RED confirming bullish momentum.
          Quality score: 42/100
 
-SIGNAL #56 - VSCO - Quality Score: 42/100
+SIGNAL #116 - PDFS - Quality Score: 41/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $58.54
-  Consolidation:       3 days
-  Range:               $57.21 - $59.29 (3.6%)
-  Position in Range:   64% (lower third = buy zone)
-  Normalized Price:    6.60 (DIVERGENCE)
-  Force Index:         -0.53 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $31.77
+  Consolidation:       7 days
+  Range:               $31.92 - $33.09 (3.7%)
+  Position in Range:   -12% (lower third = buy zone)
+  Normalized Price:    0.51 (DIVERGENCE)
+  Force Index:         -1.80 (MAROON)
   Fader Signal:        RED
-  Volume:              0.7x average
+  Volume:              0.8x average
 
-  SETUP: VSCO consolidating for 3 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+  SETUP: PDFS consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 42/100
+         Quality score: 41/100
 
-SIGNAL #57 - CSCO - Quality Score: 41/100
+SIGNAL #117 - VTI - Quality Score: 41/100
 --------------------------------------------------------------------------------
   Date:                02/13/2026
-  Current Price:       $76.85
-  Consolidation:       1 days
-  Range:               $78.60 - $80.08 (1.9%)
-  Position in Range:   -119% (lower third = buy zone)
-  Normalized Price:    0.03 (DIVERGENCE)
-  Force Index:         -8.03 (ORANGE)
+  Current Price:       $336.65
+  Consolidation:       9 days
+  Range:               $338.04 - $340.97 (0.9%)
+  Position in Range:   -48% (lower third = buy zone)
+  Normalized Price:    0.57 (DIVERGENCE)
+  Force Index:         -6.18 (ORANGE)
   Fader Signal:        RED
-  Volume:              1.6x average
+  Volume:              1.1x average
 
-  SETUP: CSCO consolidating for 1 days,
+  SETUP: VTI consolidating for 9 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 41/100
 
-SIGNAL #58 - ALHC - Quality Score: 41/100
+SIGNAL #118 - ALHC - Quality Score: 41/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $21.75
@@ -1165,228 +2251,228 @@ SIGNAL #58 - ALHC - Quality Score: 41/100
          Fader RED confirming bullish momentum.
          Quality score: 41/100
 
-SIGNAL #59 - ASH - Quality Score: 41/100
+SIGNAL #119 - BMY - Quality Score: 41/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $60.93
+  Date:                03/13/2026
+  Current Price:       $59.08
   Consolidation:       2 days
-  Range:               $61.09 - $62.50 (2.3%)
-  Position in Range:   -11% (lower third = buy zone)
-  Normalized Price:    1.92 (DIVERGENCE)
-  Force Index:         -2.61 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.8x average
-
-  SETUP: ASH consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #60 - BK - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $117.74
-  Consolidation:       2 days
-  Range:               $119.17 - $121.19 (1.7%)
-  Position in Range:   -71% (lower third = buy zone)
-  Normalized Price:    1.20 (DIVERGENCE)
-  Force Index:         -6.52 (ORANGE)
+  Range:               $59.28 - $60.29 (1.7%)
+  Position in Range:   -20% (lower third = buy zone)
+  Normalized Price:    2.33 (DIVERGENCE)
+  Force Index:         -2.50 (ORANGE)
   Fader Signal:        RED
   Volume:              0.7x average
 
-  SETUP: BK consolidating for 2 days,
+  SETUP: BMY consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 41/100
 
-SIGNAL #61 - ESQ - Quality Score: 41/100
+SIGNAL #120 - DLX - Quality Score: 41/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $108.93
+  Date:                03/13/2026
+  Current Price:       $26.56
   Consolidation:       2 days
-  Range:               $108.13 - $111.08 (2.7%)
-  Position in Range:   27% (lower third = buy zone)
-  Normalized Price:    2.69 (DIVERGENCE)
-  Force Index:         -3.83 (ORANGE)
+  Range:               $26.66 - $27.29 (2.4%)
+  Position in Range:   -17% (lower third = buy zone)
+  Normalized Price:    1.48 (DIVERGENCE)
+  Force Index:         -1.59 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.6x average
+  Volume:              0.8x average
 
-  SETUP: ESQ consolidating for 2 days,
+  SETUP: DLX consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 41/100
 
-SIGNAL #62 - FFIV - Quality Score: 41/100
+SIGNAL #121 - HON - Quality Score: 41/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $273.93
+  Date:                03/13/2026
+  Current Price:       $234.50
   Consolidation:       2 days
-  Range:               $268.49 - $275.37 (2.6%)
-  Position in Range:   79% (lower third = buy zone)
-  Normalized Price:    3.58 (DIVERGENCE)
-  Force Index:         -1.21 (ORANGE)
+  Range:               $235.01 - $238.60 (1.5%)
+  Position in Range:   -14% (lower third = buy zone)
+  Normalized Price:    9.65 (DIVERGENCE)
+  Force Index:         -9.03 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: HON consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #122 - ICHR - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $41.43
+  Consolidation:       2 days
+  Range:               $41.38 - $43.46 (5.0%)
+  Position in Range:   2% (lower third = buy zone)
+  Normalized Price:    6.62 (DIVERGENCE)
+  Force Index:         -5.25 (ORANGE)
   Fader Signal:        RED
   Volume:              0.5x average
 
-  SETUP: FFIV consolidating for 2 days,
+  SETUP: ICHR consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 41/100
 
-SIGNAL #63 - FRPT - Quality Score: 41/100
+SIGNAL #123 - LAMR - Quality Score: 41/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $67.72
+  Date:                03/13/2026
+  Current Price:       $134.14
   Consolidation:       2 days
-  Range:               $66.72 - $68.87 (3.2%)
-  Position in Range:   47% (lower third = buy zone)
-  Normalized Price:    3.36 (DIVERGENCE)
-  Force Index:         -2.27 (ORANGE)
+  Range:               $133.27 - $135.54 (1.7%)
+  Position in Range:   38% (lower third = buy zone)
+  Normalized Price:    2.72 (DIVERGENCE)
+  Force Index:         -2.71 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: LAMR consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #124 - PSTL - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $19.25
+  Consolidation:       2 days
+  Range:               $19.16 - $19.49 (1.7%)
+  Position in Range:   26% (lower third = buy zone)
+  Normalized Price:    1.13 (DIVERGENCE)
+  Force Index:         -0.71 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: PSTL consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #125 - T - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $27.72
+  Consolidation:       2 days
+  Range:               $27.32 - $27.78 (1.7%)
+  Position in Range:   88% (lower third = buy zone)
+  Normalized Price:    1.14 (DIVERGENCE)
+  Force Index:         -0.31 (ORANGE)
   Fader Signal:        RED
   Volume:              0.8x average
 
-  SETUP: FRPT consolidating for 2 days,
+  SETUP: T consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 41/100
 
-SIGNAL #64 - GS - Quality Score: 41/100
+SIGNAL #126 - TJX - Quality Score: 41/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $905.14
+  Date:                03/13/2026
+  Current Price:       $155.43
   Consolidation:       2 days
-  Range:               $915.46 - $934.87 (2.1%)
-  Position in Range:   -53% (lower third = buy zone)
-  Normalized Price:    17.45 (DIVERGENCE)
-  Force Index:         -47.22 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.8x average
-
-  SETUP: GS consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #65 - JXN - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $113.80
-  Consolidation:       2 days
-  Range:               $113.56 - $115.99 (2.1%)
-  Position in Range:   10% (lower third = buy zone)
-  Normalized Price:    4.84 (DIVERGENCE)
-  Force Index:         -4.72 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: JXN consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #66 - LLY - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $1040.00
-  Consolidation:       2 days
-  Range:               $1031.87 - $1057.69 (2.5%)
-  Position in Range:   31% (lower third = buy zone)
-  Normalized Price:    26.01 (DIVERGENCE)
-  Force Index:         -0.57 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.6x average
-
-  SETUP: LLY consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #67 - NTRS - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $146.38
-  Consolidation:       2 days
-  Range:               $145.76 - $148.44 (1.8%)
-  Position in Range:   23% (lower third = buy zone)
-  Normalized Price:    5.28 (DIVERGENCE)
-  Force Index:         -4.25 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: NTRS consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #68 - PFG - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $90.39
-  Consolidation:       2 days
-  Range:               $91.78 - $93.32 (1.7%)
-  Position in Range:   -90% (lower third = buy zone)
-  Normalized Price:    1.11 (DIVERGENCE)
-  Force Index:         -6.16 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: PFG consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #69 - SNDR - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $28.73
-  Consolidation:       2 days
-  Range:               $28.59 - $29.31 (2.5%)
-  Position in Range:   19% (lower third = buy zone)
-  Normalized Price:    1.50 (DIVERGENCE)
-  Force Index:         -1.17 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.6x average
-
-  SETUP: SNDR consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #70 - STT - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $127.97
-  Consolidation:       2 days
-  Range:               $128.65 - $131.11 (1.9%)
-  Position in Range:   -28% (lower third = buy zone)
-  Normalized Price:    1.66 (DIVERGENCE)
-  Force Index:         -4.66 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.6x average
-
-  SETUP: STT consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 41/100
-
-SIGNAL #71 - WERN - Quality Score: 41/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $33.21
-  Consolidation:       2 days
-  Range:               $33.47 - $34.43 (2.9%)
+  Range:               $156.05 - $158.30 (1.4%)
   Position in Range:   -27% (lower third = buy zone)
-  Normalized Price:    1.58 (DIVERGENCE)
-  Force Index:         -2.90 (ORANGE)
+  Normalized Price:    1.17 (DIVERGENCE)
+  Force Index:         -5.26 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.7x average
+  Volume:              0.6x average
 
-  SETUP: WERN consolidating for 2 days,
+  SETUP: TJX consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 41/100
 
-SIGNAL #72 - ASTS - Quality Score: 40/100
+SIGNAL #127 - TRV - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $302.49
+  Consolidation:       2 days
+  Range:               $298.81 - $303.23 (1.5%)
+  Position in Range:   83% (lower third = buy zone)
+  Normalized Price:    9.38 (DIVERGENCE)
+  Force Index:         -2.41 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: TRV consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #128 - TTC - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $95.49
+  Consolidation:       2 days
+  Range:               $96.37 - $98.08 (1.8%)
+  Position in Range:   -52% (lower third = buy zone)
+  Normalized Price:    4.46 (DIVERGENCE)
+  Force Index:         -5.46 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: TTC consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #129 - WTM - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $2194.70
+  Consolidation:       2 days
+  Range:               $2158.48 - $2198.05 (1.8%)
+  Position in Range:   92% (lower third = buy zone)
+  Normalized Price:    86.08 (DIVERGENCE)
+  Force Index:         -1.80 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: WTM consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #130 - XME - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                02/13/2026
+  Current Price:       $117.83
+  Consolidation:       2 days
+  Range:               $118.49 - $121.54 (2.6%)
+  Position in Range:   -22% (lower third = buy zone)
+  Normalized Price:    6.41 (DIVERGENCE)
+  Force Index:         -7.66 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: XME consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #131 - NWE - Quality Score: 41/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $68.42
+  Consolidation:       1 days
+  Range:               $68.17 - $69.35 (1.7%)
+  Position in Range:   21% (lower third = buy zone)
+  Normalized Price:    1.27 (DIVERGENCE)
+  Force Index:         -0.83 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: NWE consolidating for 1 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 41/100
+
+SIGNAL #132 - ASTS - Quality Score: 40/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $101.79
@@ -1403,41 +2489,41 @@ SIGNAL #72 - ASTS - Quality Score: 40/100
          Fader RED confirming bullish momentum.
          Quality score: 40/100
 
-SIGNAL #73 - BE - Quality Score: 40/100
+SIGNAL #133 - COHR - Quality Score: 40/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $139.74
+  Date:                03/13/2026
+  Current Price:       $242.76
   Consolidation:       1 days
-  Range:               $136.25 - $145.74 (7.0%)
-  Position in Range:   37% (lower third = buy zone)
-  Normalized Price:    16.86 (DIVERGENCE)
-  Force Index:         -15.00 (ORANGE)
+  Range:               $237.18 - $249.73 (5.3%)
+  Position in Range:   44% (lower third = buy zone)
+  Normalized Price:    28.20 (DIVERGENCE)
+  Force Index:         -17.80 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.7x average
+  Volume:              0.6x average
 
-  SETUP: BE consolidating for 1 days,
+  SETUP: COHR consolidating for 1 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 40/100
 
-SIGNAL #74 - BFH - Quality Score: 40/100
+SIGNAL #134 - DIOD - Quality Score: 40/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $72.37
+  Date:                03/13/2026
+  Current Price:       $63.88
   Consolidation:       1 days
-  Range:               $73.04 - $74.95 (2.6%)
-  Position in Range:   -35% (lower third = buy zone)
-  Normalized Price:    1.04 (DIVERGENCE)
-  Force Index:         -4.65 (ORANGE)
+  Range:               $63.31 - $65.57 (3.6%)
+  Position in Range:   25% (lower third = buy zone)
+  Normalized Price:    3.48 (DIVERGENCE)
+  Force Index:         -1.66 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.5x average
+  Volume:              1.0x average
 
-  SETUP: BFH consolidating for 1 days,
+  SETUP: DIOD consolidating for 1 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 40/100
 
-SIGNAL #75 - FRGE - Quality Score: 40/100
+SIGNAL #135 - FRGE - Quality Score: 40/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $44.65
@@ -1454,7 +2540,7 @@ SIGNAL #75 - FRGE - Quality Score: 40/100
          Fader GREEN confirming bullish momentum.
          Quality score: 40/100
 
-SIGNAL #76 - HYMC - Quality Score: 40/100
+SIGNAL #136 - HYMC - Quality Score: 40/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $34.59
@@ -1471,58 +2557,126 @@ SIGNAL #76 - HYMC - Quality Score: 40/100
          Fader RED confirming bullish momentum.
          Quality score: 40/100
 
-SIGNAL #77 - INTC - Quality Score: 40/100
+SIGNAL #137 - PSA - Quality Score: 40/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $46.79
+  Date:                03/13/2026
+  Current Price:       $297.72
   Consolidation:       1 days
-  Range:               $45.64 - $47.57 (4.2%)
-  Position in Range:   59% (lower third = buy zone)
-  Normalized Price:    4.34 (DIVERGENCE)
-  Force Index:         -2.11 (ORANGE)
+  Range:               $296.53 - $301.68 (1.7%)
+  Position in Range:   23% (lower third = buy zone)
+  Normalized Price:    7.56 (DIVERGENCE)
+  Force Index:         -10.19 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.5x average
-
-  SETUP: INTC consolidating for 1 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 40/100
-
-SIGNAL #78 - SATS - Quality Score: 40/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $113.15
-  Consolidation:       1 days
-  Range:               $111.99 - $116.16 (3.7%)
-  Position in Range:   28% (lower third = buy zone)
-  Normalized Price:    10.50 (DIVERGENCE)
-  Force Index:         -1.96 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: SATS consolidating for 1 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 40/100
-
-SIGNAL #79 - UAL - Quality Score: 40/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $109.29
-  Consolidation:       1 days
-  Range:               $108.83 - $112.13 (3.0%)
-  Position in Range:   14% (lower third = buy zone)
-  Normalized Price:    1.65 (DIVERGENCE)
-  Force Index:         -3.46 (ORANGE)
-  Fader Signal:        GREEN
   Volume:              0.8x average
 
-  SETUP: UAL consolidating for 1 days,
+  SETUP: PSA consolidating for 1 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader GREEN confirming bullish momentum.
+         Fader RED confirming bullish momentum.
          Quality score: 40/100
 
-SIGNAL #80 - TWIN - Quality Score: 39/100
+SIGNAL #138 - PSMT - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $148.77
+  Consolidation:       1 days
+  Range:               $147.49 - $150.68 (2.2%)
+  Position in Range:   40% (lower third = buy zone)
+  Normalized Price:    7.07 (DIVERGENCE)
+  Force Index:         -1.25 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: PSMT consolidating for 1 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #139 - REG - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $76.58
+  Consolidation:       1 days
+  Range:               $76.30 - $77.37 (1.4%)
+  Position in Range:   27% (lower third = buy zone)
+  Normalized Price:    2.48 (DIVERGENCE)
+  Force Index:         -2.45 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: REG consolidating for 1 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #140 - GD - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $351.52
+  Consolidation:       3 days
+  Range:               $352.43 - $358.49 (1.7%)
+  Position in Range:   -15% (lower third = buy zone)
+  Normalized Price:    0.55 (DIVERGENCE)
+  Force Index:         -10.42 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: GD consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #141 - GME - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $23.53
+  Consolidation:       1 days
+  Range:               $23.60 - $24.26 (2.8%)
+  Position in Range:   -11% (lower third = buy zone)
+  Normalized Price:    0.17 (DIVERGENCE)
+  Force Index:         -1.28 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.2x average
+
+  SETUP: GME consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #142 - DBRG - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $15.37
+  Consolidation:       14 days
+  Range:               $15.24 - $15.46 (1.4%)
+  Position in Range:   60% (lower third = buy zone)
+  Normalized Price:    0.72 (DIVERGENCE)
+  Force Index:         -0.05 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: DBRG consolidating for 14 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #143 - LRN - Quality Score: 40/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $84.36
+  Consolidation:       2 days
+  Range:               $82.34 - $85.13 (3.4%)
+  Position in Range:   73% (lower third = buy zone)
+  Normalized Price:    0.95 (DIVERGENCE)
+  Force Index:         -1.18 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: LRN consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 40/100
+
+SIGNAL #144 - TWIN - Quality Score: 39/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $16.60
@@ -1539,41 +2693,24 @@ SIGNAL #80 - TWIN - Quality Score: 39/100
          Fader RED confirming bullish momentum.
          Quality score: 39/100
 
-SIGNAL #81 - INCY - Quality Score: 39/100
+SIGNAL #145 - UE - Quality Score: 39/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $101.10
-  Consolidation:       4 days
-  Range:               $101.24 - $103.89 (2.6%)
-  Position in Range:   -5% (lower third = buy zone)
-  Normalized Price:    0.88 (DIVERGENCE)
-  Force Index:         -2.75 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $20.54
+  Consolidation:       5 days
+  Range:               $20.38 - $20.73 (1.7%)
+  Position in Range:   46% (lower third = buy zone)
+  Normalized Price:    0.47 (DIVERGENCE)
+  Force Index:         -0.26 (MAROON)
   Fader Signal:        RED
-  Volume:              0.7x average
+  Volume:              0.8x average
 
-  SETUP: INCY consolidating for 4 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 39/100
-
-SIGNAL #82 - AGNC - Quality Score: 39/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $11.36
-  Consolidation:       7 days
-  Range:               $11.31 - $11.47 (1.4%)
-  Position in Range:   30% (lower third = buy zone)
-  Normalized Price:    0.42 (DIVERGENCE)
-  Force Index:         -0.17 (MAROON)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: AGNC consolidating for 7 days,
+  SETUP: UE consolidating for 5 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 39/100
 
-SIGNAL #83 - NVFY - Quality Score: 39/100
+SIGNAL #146 - NVFY - Quality Score: 39/100
 --------------------------------------------------------------------------------
   Date:                01/07/2026
   Current Price:       $5.89
@@ -1590,7 +2727,75 @@ SIGNAL #83 - NVFY - Quality Score: 39/100
          Fader RED confirming bullish momentum.
          Quality score: 39/100
 
-SIGNAL #84 - FTK - Quality Score: 37/100
+SIGNAL #147 - CINF - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $163.82
+  Consolidation:       5 days
+  Range:               $163.24 - $165.86 (1.6%)
+  Position in Range:   22% (lower third = buy zone)
+  Normalized Price:    0.43 (DIVERGENCE)
+  Force Index:         -2.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: CINF consolidating for 5 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #148 - PFE - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $26.58
+  Consolidation:       8 days
+  Range:               $26.60 - $27.06 (1.7%)
+  Position in Range:   -4% (lower third = buy zone)
+  Normalized Price:    0.37 (DIVERGENCE)
+  Force Index:         -0.77 (MAROON)
+  Fader Signal:        RED
+  Volume:              1.0x average
+
+  SETUP: PFE consolidating for 8 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #149 - ADTN - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $9.94
+  Consolidation:       7 days
+  Range:               $9.76 - $10.11 (3.6%)
+  Position in Range:   51% (lower third = buy zone)
+  Normalized Price:    0.39 (DIVERGENCE)
+  Force Index:         -0.15 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: ADTN consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #150 - TROX - Quality Score: 38/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $6.98
+  Consolidation:       6 days
+  Range:               $6.76 - $7.12 (5.4%)
+  Position in Range:   61% (lower third = buy zone)
+  Normalized Price:    0.80 (DIVERGENCE)
+  Force Index:         -0.01 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: TROX consolidating for 6 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 38/100
+
+SIGNAL #151 - FTK - Quality Score: 37/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $17.33
@@ -1607,24 +2812,7 @@ SIGNAL #84 - FTK - Quality Score: 37/100
          Fader RED confirming bullish momentum.
          Quality score: 37/100
 
-SIGNAL #85 - COLL - Quality Score: 37/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $45.79
-  Consolidation:       10 days
-  Range:               $45.85 - $47.08 (2.7%)
-  Position in Range:   -5% (lower third = buy zone)
-  Normalized Price:    0.67 (DIVERGENCE)
-  Force Index:         -1.04 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.5x average
-
-  SETUP: COLL consolidating for 10 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 37/100
-
-SIGNAL #86 - SCS - Quality Score: 37/100
+SIGNAL #152 - SCS - Quality Score: 37/100
 --------------------------------------------------------------------------------
   Date:                12/09/2025
   Current Price:       $16.14
@@ -1641,7 +2829,7 @@ SIGNAL #86 - SCS - Quality Score: 37/100
          Fader GREEN confirming bullish momentum.
          Quality score: 37/100
 
-SIGNAL #87 - VNDA - Quality Score: 37/100
+SIGNAL #153 - VNDA - Quality Score: 37/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $7.57
@@ -1658,24 +2846,41 @@ SIGNAL #87 - VNDA - Quality Score: 37/100
          Fader RED confirming bullish momentum.
          Quality score: 37/100
 
-SIGNAL #88 - CINF - Quality Score: 36/100
+SIGNAL #154 - FAST - Quality Score: 36/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $162.77
-  Consolidation:       1 days
-  Range:               $162.57 - $165.07 (1.5%)
-  Position in Range:   8% (lower third = buy zone)
-  Normalized Price:    0.36 (DIVERGENCE)
-  Force Index:         -3.77 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $45.46
+  Consolidation:       2 days
+  Range:               $45.35 - $46.21 (1.9%)
+  Position in Range:   13% (lower third = buy zone)
+  Normalized Price:    0.81 (DIVERGENCE)
+  Force Index:         -1.30 (ORANGE)
   Fader Signal:        RED
-  Volume:              1.0x average
+  Volume:              0.7x average
 
-  SETUP: CINF consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+  SETUP: FAST consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 36/100
 
-SIGNAL #89 - PDEX - Quality Score: 36/100
+SIGNAL #155 - ARMK - Quality Score: 36/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $40.00
+  Consolidation:       4 days
+  Range:               $39.78 - $40.56 (2.0%)
+  Position in Range:   28% (lower third = buy zone)
+  Normalized Price:    0.58 (DIVERGENCE)
+  Force Index:         -0.74 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.1x average
+
+  SETUP: ARMK consolidating for 4 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 36/100
+
+SIGNAL #156 - PDEX - Quality Score: 36/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $39.45
@@ -1692,7 +2897,7 @@ SIGNAL #89 - PDEX - Quality Score: 36/100
          Fader RED confirming bullish momentum.
          Quality score: 36/100
 
-SIGNAL #90 - UBCP - Quality Score: 36/100
+SIGNAL #157 - UBCP - Quality Score: 36/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $14.00
@@ -1709,177 +2914,92 @@ SIGNAL #90 - UBCP - Quality Score: 36/100
          Fader GREEN confirming bullish momentum.
          Quality score: 36/100
 
-SIGNAL #91 - FWRD - Quality Score: 36/100
+SIGNAL #158 - HUN - Quality Score: 35/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $26.81
-  Consolidation:       1 days
-  Range:               $27.46 - $28.50 (3.8%)
-  Position in Range:   -63% (lower third = buy zone)
-  Normalized Price:    0.41 (DIVERGENCE)
-  Force Index:         -3.63 (MAROON)
-  Fader Signal:        RED
-  Volume:              0.8x average
-
-  SETUP: FWRD consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 36/100
-
-SIGNAL #92 - MAC - Quality Score: 35/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $18.52
+  Date:                03/13/2026
+  Current Price:       $12.03
   Consolidation:       2 days
-  Range:               $18.42 - $18.84 (2.3%)
-  Position in Range:   24% (lower third = buy zone)
-  Normalized Price:    0.31 (DIVERGENCE)
-  Force Index:         -0.46 (ORANGE)
-  Fader Signal:        RED
-  Volume:              1.2x average
-
-  SETUP: MAC consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 35/100
-
-SIGNAL #93 - RRR - Quality Score: 35/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $61.60
-  Consolidation:       1 days
-  Range:               $62.17 - $63.62 (2.3%)
-  Position in Range:   -39% (lower third = buy zone)
-  Normalized Price:    0.36 (DIVERGENCE)
-  Force Index:         -3.94 (MAROON)
-  Fader Signal:        RED
+  Range:               $12.04 - $12.59 (4.6%)
+  Position in Range:   -1% (lower third = buy zone)
+  Normalized Price:    0.37 (DIVERGENCE)
+  Force Index:         -0.57 (MAROON)
+  Fader Signal:        GREEN
   Volume:              1.0x average
 
-  SETUP: RRR consolidating for 1 days,
+  SETUP: HUN consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 35/100
+
+SIGNAL #159 - LBTYK - Quality Score: 35/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $11.91
+  Consolidation:       1 days
+  Range:               $11.78 - $12.08 (2.6%)
+  Position in Range:   43% (lower third = buy zone)
+  Normalized Price:    0.38 (DIVERGENCE)
+  Force Index:         -0.45 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.4x average
+
+  SETUP: LBTYK consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 35/100
 
-SIGNAL #94 - PDLB - Quality Score: 35/100
+SIGNAL #160 - CLDT - Quality Score: 35/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $16.54
-  Consolidation:       2 days
-  Range:               $16.45 - $16.82 (2.2%)
-  Position in Range:   24% (lower third = buy zone)
-  Normalized Price:    0.34 (DIVERGENCE)
-  Force Index:         -0.40 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $7.50
+  Consolidation:       1 days
+  Range:               $7.54 - $7.72 (2.3%)
+  Position in Range:   -24% (lower third = buy zone)
+  Normalized Price:    0.18 (DIVERGENCE)
+  Force Index:         -0.54 (MAROON)
   Fader Signal:        RED
-  Volume:              0.4x average
+  Volume:              1.1x average
 
-  SETUP: PDLB consolidating for 2 days,
+  SETUP: CLDT consolidating for 1 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 35/100
 
-SIGNAL #95 - VREX - Quality Score: 34/100
+SIGNAL #161 - INVA - Quality Score: 34/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $13.52
-  Consolidation:       2 days
-  Range:               $13.36 - $13.79 (3.2%)
-  Position in Range:   37% (lower third = buy zone)
-  Normalized Price:    0.71 (DIVERGENCE)
-  Force Index:         -0.53 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: VREX consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 34/100
-
-SIGNAL #96 - DNLI - Quality Score: 34/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $18.77
-  Consolidation:       2 days
-  Range:               $19.28 - $20.13 (4.4%)
-  Position in Range:   -59% (lower third = buy zone)
-  Normalized Price:    0.31 (DIVERGENCE)
-  Force Index:         -2.76 (MAROON)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: DNLI consolidating for 2 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 34/100
-
-SIGNAL #97 - AMLX - Quality Score: 34/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $14.12
-  Consolidation:       8 days
-  Range:               $13.78 - $14.45 (4.9%)
-  Position in Range:   51% (lower third = buy zone)
-  Normalized Price:    0.58 (DIVERGENCE)
-  Force Index:         -0.32 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.4x average
-
-  SETUP: AMLX consolidating for 8 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 34/100
-
-SIGNAL #98 - WAFD - Quality Score: 33/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $32.88
-  Consolidation:       2 days
-  Range:               $32.55 - $33.13 (1.8%)
-  Position in Range:   57% (lower third = buy zone)
-  Normalized Price:    0.69 (DIVERGENCE)
-  Force Index:         -0.21 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $22.03
+  Consolidation:       6 days
+  Range:               $22.01 - $22.51 (2.3%)
+  Position in Range:   4% (lower third = buy zone)
+  Normalized Price:    0.64 (DIVERGENCE)
+  Force Index:         -0.83 (ORANGE)
   Fader Signal:        RED
   Volume:              0.8x average
 
-  SETUP: WAFD consolidating for 2 days,
+  SETUP: INVA consolidating for 6 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 33/100
+         Quality score: 34/100
 
-SIGNAL #99 - FHN - Quality Score: 33/100
+SIGNAL #162 - GNL - Quality Score: 33/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $24.56
-  Consolidation:       1 days
-  Range:               $24.55 - $25.01 (1.9%)
-  Position in Range:   2% (lower third = buy zone)
-  Normalized Price:    0.71 (DIVERGENCE)
-  Force Index:         -1.08 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $9.39
+  Consolidation:       3 days
+  Range:               $9.39 - $9.54 (1.6%)
+  Position in Range:   3% (lower third = buy zone)
+  Normalized Price:    0.27 (DIVERGENCE)
+  Force Index:         -0.14 (MAROON)
   Fader Signal:        RED
-  Volume:              0.5x average
+  Volume:              0.9x average
 
-  SETUP: FHN consolidating for 1 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 33/100
-
-SIGNAL #100 - ARDX - Quality Score: 33/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $6.87
-  Consolidation:       4 days
-  Range:               $7.04 - $7.32 (4.0%)
-  Position in Range:   -60% (lower third = buy zone)
-  Normalized Price:    0.25 (DIVERGENCE)
-  Force Index:         -0.88 (MAROON)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: ARDX consolidating for 4 days,
+  SETUP: GNL consolidating for 3 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 33/100
 
-SIGNAL #101 - DBI - Quality Score: 33/100
+SIGNAL #163 - DBI - Quality Score: 33/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $6.95
@@ -1896,7 +3016,7 @@ SIGNAL #101 - DBI - Quality Score: 33/100
          Fader RED confirming bullish momentum.
          Quality score: 33/100
 
-SIGNAL #102 - TRDA - Quality Score: 33/100
+SIGNAL #164 - TRDA - Quality Score: 33/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $10.60
@@ -1913,7 +3033,7 @@ SIGNAL #102 - TRDA - Quality Score: 33/100
          Fader RED confirming bullish momentum.
          Quality score: 33/100
 
-SIGNAL #103 - SNV - Quality Score: 33/100
+SIGNAL #165 - SNV - Quality Score: 33/100
 --------------------------------------------------------------------------------
   Date:                01/02/2026
   Current Price:       $50.05
@@ -1930,24 +3050,41 @@ SIGNAL #103 - SNV - Quality Score: 33/100
          Fader RED confirming bullish momentum.
          Quality score: 33/100
 
-SIGNAL #104 - JACK - Quality Score: 33/100
+SIGNAL #166 - TITN - Quality Score: 32/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $20.73
-  Consolidation:       4 days
-  Range:               $20.63 - $21.54 (4.4%)
-  Position in Range:   11% (lower third = buy zone)
-  Normalized Price:    0.47 (DIVERGENCE)
-  Force Index:         -0.90 (ORANGE)
+  Date:                03/06/2026
+  Current Price:       $18.05
+  Consolidation:       1 days
+  Range:               $18.42 - $19.05 (3.4%)
+  Position in Range:   -59% (lower third = buy zone)
+  Normalized Price:    0.28 (DIVERGENCE)
+  Force Index:         -2.42 (MAROON)
   Fader Signal:        RED
-  Volume:              1.1x average
+  Volume:              1.0x average
 
-  SETUP: JACK consolidating for 4 days,
+  SETUP: TITN consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 32/100
+
+SIGNAL #167 - TNDM - Quality Score: 32/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $21.59
+  Consolidation:       6 days
+  Range:               $21.56 - $22.62 (4.9%)
+  Position in Range:   2% (lower third = buy zone)
+  Normalized Price:    0.57 (DIVERGENCE)
+  Force Index:         -1.41 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: TNDM consolidating for 6 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 33/100
+         Quality score: 32/100
 
-SIGNAL #105 - ANNX - Quality Score: 32/100
+SIGNAL #168 - ANNX - Quality Score: 32/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $5.73
@@ -1964,24 +3101,7 @@ SIGNAL #105 - ANNX - Quality Score: 32/100
          Fader RED confirming bullish momentum.
          Quality score: 32/100
 
-SIGNAL #106 - OXM - Quality Score: 32/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $38.22
-  Consolidation:       1 days
-  Range:               $37.32 - $38.97 (4.4%)
-  Position in Range:   55% (lower third = buy zone)
-  Normalized Price:    0.26 (DIVERGENCE)
-  Force Index:         -0.88 (MAROON)
-  Fader Signal:        GREEN
-  Volume:              0.6x average
-
-  SETUP: OXM consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader GREEN confirming bullish momentum.
-         Quality score: 32/100
-
-SIGNAL #107 - SLS - Quality Score: 32/100
+SIGNAL #169 - SLS - Quality Score: 32/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $3.73
@@ -1998,24 +3118,7 @@ SIGNAL #107 - SLS - Quality Score: 32/100
          Fader RED confirming bullish momentum.
          Quality score: 32/100
 
-SIGNAL #108 - BXMT - Quality Score: 31/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $19.54
-  Consolidation:       1 days
-  Range:               $19.37 - $19.68 (1.6%)
-  Position in Range:   55% (lower third = buy zone)
-  Normalized Price:    0.22 (DIVERGENCE)
-  Force Index:         -0.15 (MAROON)
-  Fader Signal:        GREEN
-  Volume:              0.7x average
-
-  SETUP: BXMT consolidating for 1 days,
-         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
-         Fader GREEN confirming bullish momentum.
-         Quality score: 31/100
-
-SIGNAL #109 - APYX - Quality Score: 31/100
+SIGNAL #170 - APYX - Quality Score: 31/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $3.88
@@ -2032,7 +3135,7 @@ SIGNAL #109 - APYX - Quality Score: 31/100
          Fader RED confirming bullish momentum.
          Quality score: 31/100
 
-SIGNAL #110 - PTN - Quality Score: 31/100
+SIGNAL #171 - PTN - Quality Score: 31/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $15.72
@@ -2049,24 +3152,58 @@ SIGNAL #110 - PTN - Quality Score: 31/100
          Fader RED confirming bullish momentum.
          Quality score: 31/100
 
-SIGNAL #111 - TTEK - Quality Score: 31/100
+SIGNAL #172 - NTLA - Quality Score: 30/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $36.69
-  Consolidation:       1 days
-  Range:               $37.51 - $38.44 (2.5%)
-  Position in Range:   -88% (lower third = buy zone)
-  Normalized Price:    0.35 (DIVERGENCE)
-  Force Index:         -4.58 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $12.76
+  Consolidation:       3 days
+  Range:               $12.69 - $13.51 (6.5%)
+  Position in Range:   8% (lower third = buy zone)
+  Normalized Price:    0.16 (DIVERGENCE)
+  Force Index:         -1.12 (MAROON)
   Fader Signal:        RED
-  Volume:              1.1x average
+  Volume:              0.7x average
 
-  SETUP: TTEK consolidating for 1 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+  SETUP: NTLA consolidating for 3 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 31/100
+         Quality score: 30/100
 
-SIGNAL #112 - IVR - Quality Score: 30/100
+SIGNAL #173 - GTX - Quality Score: 30/100
+--------------------------------------------------------------------------------
+  Date:                03/06/2026
+  Current Price:       $18.46
+  Consolidation:       2 days
+  Range:               $19.10 - $19.58 (2.5%)
+  Position in Range:   -131% (lower third = buy zone)
+  Normalized Price:    0.17 (DIVERGENCE)
+  Force Index:         -2.18 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: GTX consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 30/100
+
+SIGNAL #174 - AMLX - Quality Score: 30/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $13.99
+  Consolidation:       7 days
+  Range:               $14.03 - $14.75 (5.1%)
+  Position in Range:   -6% (lower third = buy zone)
+  Normalized Price:    0.05 (DIVERGENCE)
+  Force Index:         -1.02 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: AMLX consolidating for 7 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 30/100
+
+SIGNAL #175 - IVR - Quality Score: 30/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $8.82
@@ -2083,7 +3220,7 @@ SIGNAL #112 - IVR - Quality Score: 30/100
          Fader RED confirming bullish momentum.
          Quality score: 30/100
 
-SIGNAL #113 - PCH - Quality Score: 30/100
+SIGNAL #176 - PCH - Quality Score: 30/100
 --------------------------------------------------------------------------------
   Date:                02/04/2026
   Current Price:       $41.73
@@ -2100,41 +3237,160 @@ SIGNAL #113 - PCH - Quality Score: 30/100
          Fader RED confirming bullish momentum.
          Quality score: 30/100
 
-SIGNAL #114 - BOOT - Quality Score: 29/100
+SIGNAL #177 - GERN - Quality Score: 30/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $187.99
-  Consolidation:       2 days
-  Range:               $185.47 - $191.86 (3.4%)
-  Position in Range:   39% (lower third = buy zone)
-  Normalized Price:    0.51 (DIVERGENCE)
-  Force Index:         -2.33 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $1.58
+  Consolidation:       5 days
+  Range:               $1.55 - $1.64 (5.4%)
+  Position in Range:   33% (lower third = buy zone)
+  Normalized Price:    0.08 (DIVERGENCE)
+  Force Index:         -0.05 (MAROON)
   Fader Signal:        RED
-  Volume:              0.5x average
+  Volume:              0.7x average
 
-  SETUP: BOOT consolidating for 2 days,
+  SETUP: GERN consolidating for 5 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 30/100
+
+SIGNAL #178 - FPI - Quality Score: 29/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $11.59
+  Consolidation:       1 days
+  Range:               $12.04 - $12.27 (1.9%)
+  Position in Range:   -197% (lower third = buy zone)
+  Normalized Price:    0.16 (DIVERGENCE)
+  Force Index:         -1.63 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: FPI consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 29/100
+
+SIGNAL #179 - UNIT - Quality Score: 29/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $7.72
+  Consolidation:       2 days
+  Range:               $7.79 - $8.09 (3.9%)
+  Position in Range:   -24% (lower third = buy zone)
+  Normalized Price:    0.12 (DIVERGENCE)
+  Force Index:         -0.60 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: UNIT consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 29/100
+
+SIGNAL #180 - NSSC - Quality Score: 29/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $42.57
+  Consolidation:       7 days
+  Range:               $42.59 - $43.84 (2.9%)
+  Position in Range:   -2% (lower third = buy zone)
+  Normalized Price:    0.30 (DIVERGENCE)
+  Force Index:         -1.42 (ORANGE)
+  Fader Signal:        RED
+  Volume:              1.1x average
+
+  SETUP: NSSC consolidating for 7 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 29/100
 
-SIGNAL #115 - CBSH - Quality Score: 28/100
+SIGNAL #181 - XPRO - Quality Score: 29/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $53.60
-  Consolidation:       1 days
-  Range:               $53.35 - $54.25 (1.7%)
-  Position in Range:   27% (lower third = buy zone)
-  Normalized Price:    0.12 (DIVERGENCE)
-  Force Index:         -1.04 (MAROON)
+  Date:                03/13/2026
+  Current Price:       $16.14
+  Consolidation:       7 days
+  Range:               $16.37 - $16.96 (3.6%)
+  Position in Range:   -39% (lower third = buy zone)
+  Normalized Price:    0.41 (DIVERGENCE)
+  Force Index:         -1.32 (ORANGE)
   Fader Signal:        RED
-  Volume:              1.0x average
+  Volume:              0.7x average
 
-  SETUP: CBSH consolidating for 1 days,
+  SETUP: XPRO consolidating for 7 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 29/100
+
+SIGNAL #182 - AVO - Quality Score: 29/100
+--------------------------------------------------------------------------------
+  Date:                03/06/2026
+  Current Price:       $13.79
+  Consolidation:       1 days
+  Range:               $13.76 - $14.09 (2.4%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    0.53 (DIVERGENCE)
+  Force Index:         -0.69 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.8x average
+
+  SETUP: AVO consolidating for 1 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 29/100
+
+SIGNAL #183 - WU - Quality Score: 28/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $9.53
+  Consolidation:       2 days
+  Range:               $9.51 - $9.73 (2.4%)
+  Position in Range:   10% (lower third = buy zone)
+  Normalized Price:    0.09 (DIVERGENCE)
+  Force Index:         -0.26 (MAROON)
+  Fader Signal:        GREEN
+  Volume:              0.8x average
+
+  SETUP: WU consolidating for 2 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
+         Fader GREEN confirming bullish momentum.
+         Quality score: 28/100
+
+SIGNAL #184 - ORIC - Quality Score: 28/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $11.90
+  Consolidation:       2 days
+  Range:               $11.80 - $12.46 (5.6%)
+  Position in Range:   16% (lower third = buy zone)
+  Normalized Price:    0.48 (DIVERGENCE)
+  Force Index:         -1.24 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.9x average
+
+  SETUP: ORIC consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 28/100
+
+SIGNAL #185 - RWT - Quality Score: 28/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $5.83
+  Consolidation:       6 days
+  Range:               $5.90 - $6.05 (2.6%)
+  Position in Range:   -42% (lower third = buy zone)
+  Normalized Price:    0.00 (DIVERGENCE)
+  Force Index:         -0.36 (MAROON)
+  Fader Signal:        RED
+  Volume:              0.4x average
+
+  SETUP: RWT consolidating for 6 days,
          DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 28/100
 
-SIGNAL #116 - MNOV - Quality Score: 28/100
+SIGNAL #186 - MNOV - Quality Score: 28/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $1.60
@@ -2151,41 +3407,7 @@ SIGNAL #116 - MNOV - Quality Score: 28/100
          Fader RED confirming bullish momentum.
          Quality score: 28/100
 
-SIGNAL #117 - MBUU - Quality Score: 28/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $31.52
-  Consolidation:       1 days
-  Range:               $31.22 - $32.26 (3.4%)
-  Position in Range:   29% (lower third = buy zone)
-  Normalized Price:    0.48 (DIVERGENCE)
-  Force Index:         -0.55 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.8x average
-
-  SETUP: MBUU consolidating for 1 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 28/100
-
-SIGNAL #118 - EB - Quality Score: 28/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $4.41
-  Consolidation:       5 days
-  Range:               $4.36 - $4.42 (1.3%)
-  Position in Range:   86% (lower third = buy zone)
-  Normalized Price:    0.40 (DIVERGENCE)
-  Force Index:         -0.02 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.4x average
-
-  SETUP: EB consolidating for 5 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 28/100
-
-SIGNAL #119 - VCNX - Quality Score: 27/100
+SIGNAL #187 - VCNX - Quality Score: 27/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $1.03
@@ -2202,7 +3424,7 @@ SIGNAL #119 - VCNX - Quality Score: 27/100
          Fader RED confirming bullish momentum.
          Quality score: 27/100
 
-SIGNAL #120 - DX - Quality Score: 26/100
+SIGNAL #188 - DX - Quality Score: 26/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $14.07
@@ -2219,7 +3441,7 @@ SIGNAL #120 - DX - Quality Score: 26/100
          Fader RED confirming bullish momentum.
          Quality score: 26/100
 
-SIGNAL #121 - KALV - Quality Score: 26/100
+SIGNAL #189 - KALV - Quality Score: 26/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $14.90
@@ -2236,92 +3458,58 @@ SIGNAL #121 - KALV - Quality Score: 26/100
          Fader RED confirming bullish momentum.
          Quality score: 26/100
 
-SIGNAL #122 - GT - Quality Score: 26/100
+SIGNAL #190 - MFA - Quality Score: 26/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $9.44
-  Consolidation:       2 days
-  Range:               $9.36 - $9.63 (2.9%)
-  Position in Range:   29% (lower third = buy zone)
-  Normalized Price:    0.40 (DIVERGENCE)
-  Force Index:         -0.44 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $9.82
+  Consolidation:       1 days
+  Range:               $9.91 - $10.08 (1.7%)
+  Position in Range:   -55% (lower third = buy zone)
+  Normalized Price:    0.02 (DIVERGENCE)
+  Force Index:         -0.50 (MAROON)
   Fader Signal:        RED
-  Volume:              0.9x average
+  Volume:              1.0x average
 
-  SETUP: GT consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+  SETUP: MFA consolidating for 1 days,
+         DIVERGENCE: EFI oversold (MAROON) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 26/100
 
-SIGNAL #123 - RUN - Quality Score: 26/100
+SIGNAL #191 - ALL - Quality Score: 25/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $19.09
-  Consolidation:       3 days
-  Range:               $18.65 - $19.77 (6.0%)
-  Position in Range:   39% (lower third = buy zone)
-  Normalized Price:    0.37 (DIVERGENCE)
-  Force Index:         -0.56 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $206.17
+  Consolidation:       4 days
+  Range:               $205.91 - $209.56 (1.8%)
+  Position in Range:   7% (lower third = buy zone)
+  Normalized Price:    0.34 (DIVERGENCE)
+  Force Index:         -4.73 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.8x average
-
-  SETUP: RUN consolidating for 3 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 26/100
-
-SIGNAL #124 - XPOF - Quality Score: 26/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $8.30
-  Consolidation:       2 days
-  Range:               $8.02 - $8.36 (4.3%)
-  Position in Range:   82% (lower third = buy zone)
-  Normalized Price:    0.39 (DIVERGENCE)
-  Force Index:         -0.01 (ORANGE)
-  Fader Signal:        GREEN
   Volume:              0.5x average
 
-  SETUP: XPOF consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader GREEN confirming bullish momentum.
-         Quality score: 26/100
-
-SIGNAL #125 - ZNTL - Quality Score: 25/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $2.39
-  Consolidation:       7 days
-  Range:               $2.38 - $2.54 (6.6%)
-  Position in Range:   4% (lower third = buy zone)
-  Normalized Price:    0.25 (DIVERGENCE)
-  Force Index:         -0.19 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.3x average
-
-  SETUP: ZNTL consolidating for 7 days,
+  SETUP: ALL consolidating for 4 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 25/100
 
-SIGNAL #126 - VEL - Quality Score: 25/100
+SIGNAL #192 - SPY - Quality Score: 25/100
 --------------------------------------------------------------------------------
   Date:                02/13/2026
-  Current Price:       $19.76
-  Consolidation:       3 days
-  Range:               $19.66 - $20.08 (2.1%)
-  Position in Range:   24% (lower third = buy zone)
-  Normalized Price:    0.33 (DIVERGENCE)
-  Force Index:         -0.56 (ORANGE)
+  Current Price:       $681.75
+  Consolidation:       8 days
+  Range:               $685.28 - $691.09 (0.8%)
+  Position in Range:   -61% (lower third = buy zone)
+  Normalized Price:    0.02 (DIVERGENCE)
+  Force Index:         -13.64 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.9x average
+  Volume:              1.1x average
 
-  SETUP: VEL consolidating for 3 days,
+  SETUP: SPY consolidating for 8 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 25/100
 
-SIGNAL #127 - LTRX - Quality Score: 24/100
+SIGNAL #193 - LTRX - Quality Score: 24/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $6.18
@@ -2338,7 +3526,7 @@ SIGNAL #127 - LTRX - Quality Score: 24/100
          Fader RED confirming bullish momentum.
          Quality score: 24/100
 
-SIGNAL #128 - JAKK - Quality Score: 24/100
+SIGNAL #194 - JAKK - Quality Score: 24/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $18.10
@@ -2355,7 +3543,7 @@ SIGNAL #128 - JAKK - Quality Score: 24/100
          Fader RED confirming bullish momentum.
          Quality score: 24/100
 
-SIGNAL #129 - TALK - Quality Score: 23/100
+SIGNAL #195 - TALK - Quality Score: 23/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $3.88
@@ -2372,24 +3560,24 @@ SIGNAL #129 - TALK - Quality Score: 23/100
          Fader RED confirming bullish momentum.
          Quality score: 23/100
 
-SIGNAL #130 - MATW - Quality Score: 23/100
+SIGNAL #196 - TGNA - Quality Score: 23/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $26.09
-  Consolidation:       10 days
-  Range:               $26.13 - $26.85 (2.8%)
-  Position in Range:   -6% (lower third = buy zone)
-  Normalized Price:    0.13 (DIVERGENCE)
-  Force Index:         -0.64 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $20.30
+  Consolidation:       2 days
+  Range:               $20.37 - $20.58 (1.1%)
+  Position in Range:   -30% (lower third = buy zone)
+  Normalized Price:    0.27 (DIVERGENCE)
+  Force Index:         -0.68 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.6x average
+  Volume:              0.7x average
 
-  SETUP: MATW consolidating for 10 days,
+  SETUP: TGNA consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 23/100
 
-SIGNAL #131 - NAUT - Quality Score: 23/100
+SIGNAL #197 - NAUT - Quality Score: 23/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $2.03
@@ -2406,24 +3594,7 @@ SIGNAL #131 - NAUT - Quality Score: 23/100
          Fader RED confirming bullish momentum.
          Quality score: 23/100
 
-SIGNAL #132 - LAZ - Quality Score: 22/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $52.31
-  Consolidation:       1 days
-  Range:               $52.58 - $54.11 (2.9%)
-  Position in Range:   -17% (lower third = buy zone)
-  Normalized Price:    0.26 (DIVERGENCE)
-  Force Index:         -3.67 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.4x average
-
-  SETUP: LAZ consolidating for 1 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 22/100
-
-SIGNAL #133 - DMAC - Quality Score: 22/100
+SIGNAL #198 - DMAC - Quality Score: 22/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $8.14
@@ -2440,24 +3611,7 @@ SIGNAL #133 - DMAC - Quality Score: 22/100
          Fader RED confirming bullish momentum.
          Quality score: 22/100
 
-SIGNAL #134 - FHB - Quality Score: 22/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $26.30
-  Consolidation:       3 days
-  Range:               $26.43 - $26.95 (2.0%)
-  Position in Range:   -25% (lower third = buy zone)
-  Normalized Price:    0.21 (DIVERGENCE)
-  Force Index:         -0.96 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: FHB consolidating for 3 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 22/100
-
-SIGNAL #135 - MRKR - Quality Score: 21/100
+SIGNAL #199 - MRKR - Quality Score: 21/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $1.65
@@ -2474,7 +3628,7 @@ SIGNAL #135 - MRKR - Quality Score: 21/100
          Fader RED confirming bullish momentum.
          Quality score: 21/100
 
-SIGNAL #136 - PGEN - Quality Score: 21/100
+SIGNAL #200 - PGEN - Quality Score: 21/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $4.29
@@ -2491,7 +3645,7 @@ SIGNAL #136 - PGEN - Quality Score: 21/100
          Fader RED confirming bullish momentum.
          Quality score: 21/100
 
-SIGNAL #137 - KLXE - Quality Score: 21/100
+SIGNAL #201 - KLXE - Quality Score: 21/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $2.29
@@ -2508,7 +3662,7 @@ SIGNAL #137 - KLXE - Quality Score: 21/100
          Fader RED confirming bullish momentum.
          Quality score: 21/100
 
-SIGNAL #138 - CERS - Quality Score: 21/100
+SIGNAL #202 - CERS - Quality Score: 21/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $2.20
@@ -2525,41 +3679,7 @@ SIGNAL #138 - CERS - Quality Score: 21/100
          Fader RED confirming bullish momentum.
          Quality score: 21/100
 
-SIGNAL #139 - AHCO - Quality Score: 20/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $10.20
-  Consolidation:       2 days
-  Range:               $10.11 - $10.42 (3.0%)
-  Position in Range:   28% (lower third = buy zone)
-  Normalized Price:    0.17 (DIVERGENCE)
-  Force Index:         -0.25 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.7x average
-
-  SETUP: AHCO consolidating for 2 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 20/100
-
-SIGNAL #140 - MNKD - Quality Score: 20/100
---------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $5.66
-  Consolidation:       7 days
-  Range:               $5.63 - $5.83 (3.6%)
-  Position in Range:   14% (lower third = buy zone)
-  Normalized Price:    0.05 (DIVERGENCE)
-  Force Index:         -0.18 (ORANGE)
-  Fader Signal:        RED
-  Volume:              0.5x average
-
-  SETUP: MNKD consolidating for 7 days,
-         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
-         Fader RED confirming bullish momentum.
-         Quality score: 20/100
-
-SIGNAL #141 - RAVE - Quality Score: 20/100
+SIGNAL #203 - RAVE - Quality Score: 20/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $3.25
@@ -2576,7 +3696,41 @@ SIGNAL #141 - RAVE - Quality Score: 20/100
          Fader RED confirming bullish momentum.
          Quality score: 20/100
 
-SIGNAL #142 - BNED - Quality Score: 19/100
+SIGNAL #204 - IAC - Quality Score: 19/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $37.26
+  Consolidation:       4 days
+  Range:               $36.86 - $37.79 (2.5%)
+  Position in Range:   43% (lower third = buy zone)
+  Normalized Price:    0.09 (DIVERGENCE)
+  Force Index:         -0.38 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: IAC consolidating for 4 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 19/100
+
+SIGNAL #205 - CMCSA - Quality Score: 19/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $30.16
+  Consolidation:       3 days
+  Range:               $30.49 - $31.12 (2.0%)
+  Position in Range:   -54% (lower third = buy zone)
+  Normalized Price:    0.09 (DIVERGENCE)
+  Force Index:         -1.63 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.7x average
+
+  SETUP: CMCSA consolidating for 3 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 19/100
+
+SIGNAL #206 - BNED - Quality Score: 19/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $8.96
@@ -2593,7 +3747,7 @@ SIGNAL #142 - BNED - Quality Score: 19/100
          Fader RED confirming bullish momentum.
          Quality score: 19/100
 
-SIGNAL #143 - CABA - Quality Score: 19/100
+SIGNAL #207 - CABA - Quality Score: 19/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $2.51
@@ -2610,7 +3764,24 @@ SIGNAL #143 - CABA - Quality Score: 19/100
          Fader RED confirming bullish momentum.
          Quality score: 19/100
 
-SIGNAL #144 - HYLN - Quality Score: 18/100
+SIGNAL #208 - CWT - Quality Score: 18/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $45.20
+  Consolidation:       1 days
+  Range:               $44.82 - $45.67 (1.9%)
+  Position in Range:   45% (lower third = buy zone)
+  Normalized Price:    0.11 (DIVERGENCE)
+  Force Index:         -0.00 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.5x average
+
+  SETUP: CWT consolidating for 1 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 18/100
+
+SIGNAL #209 - HYLN - Quality Score: 18/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $2.01
@@ -2627,7 +3798,7 @@ SIGNAL #144 - HYLN - Quality Score: 18/100
          Fader RED confirming bullish momentum.
          Quality score: 18/100
 
-SIGNAL #145 - OLPX - Quality Score: 18/100
+SIGNAL #210 - OLPX - Quality Score: 18/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $1.50
@@ -2644,7 +3815,7 @@ SIGNAL #145 - OLPX - Quality Score: 18/100
          Fader RED confirming bullish momentum.
          Quality score: 18/100
 
-SIGNAL #146 - QRHC - Quality Score: 18/100
+SIGNAL #211 - QRHC - Quality Score: 18/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $2.03
@@ -2661,24 +3832,24 @@ SIGNAL #146 - QRHC - Quality Score: 18/100
          Fader RED confirming bullish momentum.
          Quality score: 18/100
 
-SIGNAL #147 - AHH - Quality Score: 17/100
+SIGNAL #212 - LFST - Quality Score: 18/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $6.89
-  Consolidation:       1 days
-  Range:               $6.86 - $6.99 (1.9%)
-  Position in Range:   22% (lower third = buy zone)
-  Normalized Price:    0.07 (DIVERGENCE)
-  Force Index:         -0.19 (ORANGE)
+  Date:                03/06/2026
+  Current Price:       $6.93
+  Consolidation:       2 days
+  Range:               $6.99 - $7.20 (3.0%)
+  Position in Range:   -27% (lower third = buy zone)
+  Normalized Price:    0.06 (DIVERGENCE)
+  Force Index:         -0.38 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.6x average
+  Volume:              1.0x average
 
-  SETUP: AHH consolidating for 1 days,
+  SETUP: LFST consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
-         Quality score: 17/100
+         Quality score: 18/100
 
-SIGNAL #148 - VYNE - Quality Score: 17/100
+SIGNAL #213 - VYNE - Quality Score: 17/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $0.56
@@ -2695,24 +3866,24 @@ SIGNAL #148 - VYNE - Quality Score: 17/100
          Fader RED confirming bullish momentum.
          Quality score: 17/100
 
-SIGNAL #149 - AIV - Quality Score: 17/100
+SIGNAL #214 - IDYA - Quality Score: 17/100
 --------------------------------------------------------------------------------
-  Date:                02/13/2026
-  Current Price:       $5.82
-  Consolidation:       3 days
-  Range:               $5.83 - $5.91 (1.4%)
-  Position in Range:   -10% (lower third = buy zone)
-  Normalized Price:    0.02 (DIVERGENCE)
-  Force Index:         -0.12 (ORANGE)
+  Date:                03/13/2026
+  Current Price:       $33.09
+  Consolidation:       2 days
+  Range:               $32.66 - $33.86 (3.7%)
+  Position in Range:   36% (lower third = buy zone)
+  Normalized Price:    0.03 (DIVERGENCE)
+  Force Index:         -0.62 (ORANGE)
   Fader Signal:        RED
-  Volume:              0.6x average
+  Volume:              0.9x average
 
-  SETUP: AIV consolidating for 3 days,
+  SETUP: IDYA consolidating for 2 days,
          DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
          Fader RED confirming bullish momentum.
          Quality score: 17/100
 
-SIGNAL #150 - FATE - Quality Score: 17/100
+SIGNAL #215 - FATE - Quality Score: 17/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $1.14
@@ -2729,7 +3900,7 @@ SIGNAL #150 - FATE - Quality Score: 17/100
          Fader RED confirming bullish momentum.
          Quality score: 17/100
 
-SIGNAL #151 - OPTT - Quality Score: 17/100
+SIGNAL #216 - OPTT - Quality Score: 17/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $0.46
@@ -2746,7 +3917,7 @@ SIGNAL #151 - OPTT - Quality Score: 17/100
          Fader RED confirming bullish momentum.
          Quality score: 17/100
 
-SIGNAL #152 - RMTI - Quality Score: 17/100
+SIGNAL #217 - RMTI - Quality Score: 17/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $1.06
@@ -2763,7 +3934,24 @@ SIGNAL #152 - RMTI - Quality Score: 17/100
          Fader RED confirming bullish momentum.
          Quality score: 17/100
 
-SIGNAL #153 - XPL - Quality Score: 17/100
+SIGNAL #218 - CNK - Quality Score: 17/100
+--------------------------------------------------------------------------------
+  Date:                03/13/2026
+  Current Price:       $25.78
+  Consolidation:       2 days
+  Range:               $25.92 - $26.73 (3.1%)
+  Position in Range:   -17% (lower third = buy zone)
+  Normalized Price:    0.03 (DIVERGENCE)
+  Force Index:         -1.88 (ORANGE)
+  Fader Signal:        RED
+  Volume:              0.6x average
+
+  SETUP: CNK consolidating for 2 days,
+         DIVERGENCE: EFI oversold (ORANGE) but norm price > 0,
+         Fader RED confirming bullish momentum.
+         Quality score: 17/100
+
+SIGNAL #219 - XPL - Quality Score: 17/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $0.74
@@ -2780,7 +3968,7 @@ SIGNAL #153 - XPL - Quality Score: 17/100
          Fader RED confirming bullish momentum.
          Quality score: 17/100
 
-SIGNAL #154 - BBIG - Quality Score: 16/100
+SIGNAL #220 - BBIG - Quality Score: 16/100
 --------------------------------------------------------------------------------
   Date:                02/06/2026
   Current Price:       $0.00
