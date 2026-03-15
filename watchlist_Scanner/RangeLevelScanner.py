@@ -19,7 +19,15 @@ import numpy as np
 import os
 from datetime import datetime
 import sys
-import talib
+
+
+def _wma(arr, period):
+    """Weighted Moving Average — pure numpy, no talib required."""
+    weights = np.arange(1, period + 1, dtype=float)
+    result = np.full(len(arr), np.nan)
+    for i in range(period - 1, len(arr)):
+        result[i] = np.dot(arr[i - period + 1:i + 1], weights) / weights.sum()
+    return result
 
 # Add the watchlist_Scanner directory to the path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -151,11 +159,11 @@ def calculate_fader(df, current_idx):
     half_period = period // 2
     sqrt_period = int(np.sqrt(period))
 
-    wma1 = talib.WMA(close, timeperiod=half_period)
-    wma2 = talib.WMA(close, timeperiod=period)
+    wma1 = _wma(close, half_period)
+    wma2 = _wma(close, period)
 
     diff = 2 * wma1 - wma2
-    hma = talib.WMA(diff, timeperiod=sqrt_period)
+    hma = _wma(diff, sqrt_period)
 
     if current_idx >= 2:
         if hma[current_idx] > hma[current_idx - 1]:
