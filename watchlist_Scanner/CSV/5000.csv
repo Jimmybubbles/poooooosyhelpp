@@ -3635,3 +3635,20 @@ HG=F,Copper Futures,Commodities
 CL=F,Crude Oil Futures,Commodities
 DX-Y.NYB,US Dollar Index (DXY),Macro
 ^TNX,US 10-Year Treasury Yield,Macro
+XLE,Energy Select Sector SPDR,ETF Sector
+XLV,Health Care Select Sector SPDR,ETF Sector
+XLI,Industrial Select Sector SPDR,ETF Sector
+XLY,Consumer Discretionary Select Sector SPDR,ETF Sector
+XLC,Communication Services Select Sector SPDR,ETF Sector
+XLP,Consumer Staples Select Sector SPDR,ETF Sector
+XLRE,Real Estate Select Sector SPDR,ETF Sector
+XLU,Utilities Select Sector SPDR,ETF Sector
+XLB,Materials Select Sector SPDR,ETF Sector
+DIA,SPDR Dow Jones Industrial Average ETF,ETF Index
+IWM,iShares Russell 2000 ETF,ETF Index
+SMH,VanEck Semiconductor ETF,ETF Index
+XBI,SPDR S&P Biotech ETF,ETF Index
+GDX,VanEck Gold Miners ETF,ETF Index
+SI=F,Silver Futures,Commodities
+HG=F,Copper Futures,Commodities
+CL=F,Crude Oil Futures,Commodities
