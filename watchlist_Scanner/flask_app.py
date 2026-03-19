@@ -1381,7 +1381,7 @@ def _run_refresh_job():
 
         # ── US open positions ─────────────────────────────────────────────────
         with conn.cursor() as cur:
-            cur.execute("SELECT DISTINCT ticker FROM picks WHERE status='open'")
+            cur.execute("SELECT DISTINCT ticker FROM jimmy_picks WHERE status='open'")
             us_tickers = [r[0] for r in cur.fetchall()]
 
         log(f"US open positions: {', '.join(us_tickers) if us_tickers else 'none'}\n")
