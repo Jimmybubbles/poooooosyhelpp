@@ -3104,7 +3104,8 @@ def dividend_page():
         target   = f"${s['target_price']:,.2f}" if s['target_price'] else '—'
         sector   = s['sector'] or ''
         edit_btn = f'<a href="/dividend/edit/{s["id"]}" style="color:#60a5fa;font-size:.75rem;margin-left:8px">edit</a>' if admin else ''
-        del_btn  = f'<a href="/dividend/delete/{s["id"]}" onclick="return confirm(\'Remove {s[\'ticker\']}?\')" style="color:#ef4444;font-size:.75rem;margin-left:6px">×</a>' if admin else ''
+        sticker  = s['ticker']
+        del_btn  = f'<a href="/dividend/delete/{s["id"]}" onclick="return confirm(\'Remove {sticker}?\')" style="color:#ef4444;font-size:.75rem;margin-left:6px">×</a>' if admin else ''
 
         list_rows += f"""
         <tr class="div-row" data-id="{s['id']}" onclick="showThesis({s['id']})">
