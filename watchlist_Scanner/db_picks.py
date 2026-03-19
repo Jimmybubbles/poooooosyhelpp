@@ -86,6 +86,37 @@ def get_current_price(conn, ticker):
     return float(row[0]) if row else None
 
 
+def get_daily_changes(tickers):
+    """Return {ticker: (today_close, prev_close)} using last 2 trading days.
+    Batch query — one round trip for all tickers."""
+    if not tickers:
+        return {}
+    conn = get_connection()
+    result = {}
+    try:
+        fmt = ','.join(['%s'] * len(tickers))
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT ticker, close FROM prices
+                WHERE ticker IN ({fmt})
+                AND date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                ORDER BY ticker, date DESC
+            """, list(tickers))
+            rows = cur.fetchall()
+        # Group by ticker, take first 2 (most recent first)
+        grouped = {}
+        for ticker, close in rows:
+            grouped.setdefault(ticker, []).append(float(close))
+        for ticker, closes in grouped.items():
+            if len(closes) >= 2:
+                result[ticker] = (closes[0], closes[1])  # (today, yesterday)
+            elif closes:
+                result[ticker] = (closes[0], closes[0])
+    finally:
+        conn.close()
+    return result
+
+
 def get_positions():
     conn = get_connection()
     with conn.cursor() as cur:
