@@ -37,6 +37,8 @@ from db_picks import (init_tables, get_account, get_positions, get_portfolio_val
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
                     submit_question, answer_question, get_questions, get_username,
                     get_user_stats)
+from db_dividend import (init_tables as init_dividend_tables, get_all_dividend_stocks,
+                         get_dividend_stock, upsert_dividend_stock, delete_dividend_stock)
 from db_asx import (init_tables as init_asx_tables, ASX_200,
                     get_asx_sparklines_batch, get_asx_latest_prices,
                     get_asx_chart_data, get_tickers_with_data,
@@ -61,6 +63,7 @@ try:
     init_tables()
     init_ask_tables()
     init_asx_tables()
+    init_dividend_tables()
 except Exception:
     pass
 
@@ -644,6 +647,7 @@ def nav_html(active=''):
         {lnk('/asx/picks','ASX Picks','asxpicks')}
         {lnk('/fader','Fader Scan','fader')}
         {lnk('/indexes','Indexes & ETFs','indexes')}
+        {lnk('/dividend','Dividend Picks','dividend')}
         {lnk('/log-view','Log','log')}
         {lnk('/admin/analytics','Analytics','analytics') if is_admin() else ''}
       </nav>
@@ -3059,6 +3063,338 @@ def indexes_page():
     </script>
     """
     return page_wrap('Indexes & ETFs', 'indexes', content)
+
+
+# ─── Dividend Picks ───────────────────────────────────────────────────────────
+
+@app.route('/dividend')
+def dividend_page():
+    stocks = get_all_dividend_stocks()
+    admin  = is_admin()
+
+    # Get latest prices from DB for all tickers
+    tickers = [s['ticker'] for s in stocks]
+    prices  = {}
+    if tickers:
+        try:
+            conn = get_connection()
+            fmt  = ','.join(['%s'] * len(tickers))
+            with conn.cursor() as cur:
+                cur.execute(f"""
+                    SELECT p.ticker, p.close
+                    FROM prices p
+                    INNER JOIN (
+                        SELECT ticker, MAX(date) AS md FROM prices
+                        WHERE ticker IN ({fmt}) GROUP BY ticker
+                    ) latest ON p.ticker=latest.ticker AND p.date=latest.md
+                """, tickers)
+                for t, c in cur.fetchall():
+                    prices[t] = float(c)
+            conn.close()
+        except Exception:
+            pass
+
+    # ── Stock list rows ────────────────────────────────────────────────────────
+    list_rows = ''
+    for s in stocks:
+        price    = prices.get(s['ticker'])
+        price_td = f'${price:,.2f}' if price else '—'
+        yld      = f"{s['dividend_yield']:.2f}%" if s['dividend_yield'] else '—'
+        yrs      = str(s['years_div_growth']) if s['years_div_growth'] else '—'
+        target   = f"${s['target_price']:,.2f}" if s['target_price'] else '—'
+        sector   = s['sector'] or ''
+        edit_btn = f'<a href="/dividend/edit/{s["id"]}" style="color:#60a5fa;font-size:.75rem;margin-left:8px">edit</a>' if admin else ''
+        del_btn  = f'<a href="/dividend/delete/{s["id"]}" onclick="return confirm(\'Remove {s[\'ticker\']}?\')" style="color:#ef4444;font-size:.75rem;margin-left:6px">×</a>' if admin else ''
+
+        list_rows += f"""
+        <tr class="div-row" data-id="{s['id']}" onclick="showThesis({s['id']})">
+          <td style="padding:12px 14px;font-weight:700;color:#e0e0e0;white-space:nowrap">
+            {s['ticker']}{edit_btn}{del_btn}
+          </td>
+          <td style="padding:12px 8px;color:#aaa;font-size:.82rem">{s['company']}</td>
+          <td style="padding:12px 8px;color:#888;font-size:.78rem">{sector}</td>
+          <td style="padding:12px 8px;color:#22c55e;font-weight:600;text-align:right">{yld}</td>
+          <td style="padding:12px 8px;color:#60a5fa;text-align:right">{price_td}</td>
+          <td style="padding:12px 8px;color:#f59e0b;text-align:right">{target}</td>
+          <td style="padding:12px 8px;color:#888;text-align:center;font-size:.8rem">{yrs} yrs</td>
+        </tr>"""
+
+    if not list_rows:
+        list_rows = '<tr><td colspan="7" style="padding:24px;text-align:center;color:#555">No stocks added yet.</td></tr>'
+
+    # ── Thesis panels (hidden, shown on click) ─────────────────────────────────
+    thesis_panels = ''
+    for s in stocks:
+        points = [
+            ('Business Moat',        s['thesis_moat'],     '#818cf8'),
+            ('Dividend Track Record', s['thesis_dividend'], '#22c55e'),
+            ('Payout Sustainability', s['thesis_sustain'],  '#f59e0b'),
+            ('Price Trend',           s['thesis_trend'],    '#60a5fa'),
+            ('Why Now',               s['thesis_why_now'],  '#f472b6'),
+        ]
+        pts_html = ''
+        for title, body, color in points:
+            txt = body if body else '<span style="color:#555;font-style:italic">Not yet written.</span>'
+            pts_html += f"""
+            <div style="margin-bottom:18px">
+              <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;color:{color};text-transform:uppercase;margin-bottom:4px">{title}</div>
+              <div style="color:#ccc;font-size:.88rem;line-height:1.6">{txt}</div>
+            </div>"""
+
+        price    = prices.get(s['ticker'])
+        yld      = f"{s['dividend_yield']:.2f}%" if s['dividend_yield'] else '—'
+        pr       = f"{s['payout_ratio']:.0f}%" if s['payout_ratio'] else '—'
+        yrs      = f"{s['years_div_growth']} years" if s['years_div_growth'] else '—'
+        price_td = f'${price:,.2f}' if price else '—'
+        target   = f"${s['target_price']:,.2f}" if s['target_price'] else '—'
+        edit_lnk = f'<a href="/dividend/edit/{s["id"]}" class="btn btn-blue" style="font-size:.78rem;padding:5px 14px">Edit Thesis</a>' if admin else ''
+
+        thesis_panels += f"""
+        <div id="thesis-{s['id']}" class="thesis-panel" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+            <div>
+              <div style="font-size:1.4rem;font-weight:800;color:#e0e0e0">{s['ticker']}</div>
+              <div style="color:#888;font-size:.85rem">{s['company']}</div>
+              <div style="color:#555;font-size:.75rem;margin-top:2px">{s['sector']}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:1.1rem;font-weight:700;color:#60a5fa">{price_td}</div>
+              <div style="color:#22c55e;font-size:.85rem;font-weight:600">Yield {yld}</div>
+              <div style="color:#aaa;font-size:.75rem">Target {target}</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+            <div class="card" style="padding:10px 14px;text-align:center">
+              <div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em">Div Yield</div>
+              <div style="font-size:1.1rem;font-weight:700;color:#22c55e">{yld}</div>
+            </div>
+            <div class="card" style="padding:10px 14px;text-align:center">
+              <div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em">Payout Ratio</div>
+              <div style="font-size:1.1rem;font-weight:700;color:#f59e0b">{pr}</div>
+            </div>
+            <div class="card" style="padding:10px 14px;text-align:center">
+              <div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em">Div Growth</div>
+              <div style="font-size:1.1rem;font-weight:700;color:#818cf8">{yrs}</div>
+            </div>
+          </div>
+          <h3 style="font-size:.9rem;color:#555;margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em">Jimmy's Thesis</h3>
+          {pts_html}
+          <div style="margin-top:16px">{edit_lnk}</div>
+        </div>"""
+
+    add_btn = '<a href="/dividend/add" class="btn btn-green" style="margin-bottom:16px">+ Add Stock</a>' if admin else ''
+
+    content = f"""
+    <style>
+      .div-row {{ cursor:pointer; border-bottom:1px solid #151820; transition:background .15s; }}
+      .div-row:hover td {{ background:#1a1d2e; }}
+      .div-row.active td {{ background:#1f2235; }}
+      .thesis-panel {{ background:#13151f; border:1px solid #2a2d3e; border-radius:10px; padding:22px; }}
+    </style>
+
+    <div style="display:flex;gap:20px;align-items:flex-start">
+
+      <!-- Left: stock list -->
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h2 style="margin:0">Long-Term Dividend Picks</h2>
+          {add_btn}
+        </div>
+        <p style="color:#666;font-size:.83rem;margin-bottom:16px">
+          Stocks selected for long-term holding (10–20 years). Click any row to read the thesis.
+        </p>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:.84rem">
+            <thead>
+              <tr style="border-bottom:2px solid #2a2d3e">
+                <th style="text-align:left;padding:10px 14px;color:#555;font-weight:500">Ticker</th>
+                <th style="text-align:left;padding:10px 8px;color:#555;font-weight:500">Company</th>
+                <th style="text-align:left;padding:10px 8px;color:#555;font-weight:500">Sector</th>
+                <th style="text-align:right;padding:10px 8px;color:#555;font-weight:500">Yield</th>
+                <th style="text-align:right;padding:10px 8px;color:#555;font-weight:500">Price</th>
+                <th style="text-align:right;padding:10px 8px;color:#555;font-weight:500">Target</th>
+                <th style="text-align:center;padding:10px 8px;color:#555;font-weight:500">Div Growth</th>
+              </tr>
+            </thead>
+            <tbody>{list_rows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right: thesis panel -->
+      <div style="width:380px;flex-shrink:0;position:sticky;top:80px">
+        <div id="thesis-placeholder" style="background:#13151f;border:1px solid #1e2130;border-radius:10px;padding:40px 24px;text-align:center;color:#444">
+          <div style="font-size:2rem;margin-bottom:10px">📋</div>
+          <div>Click a stock to read the thesis</div>
+        </div>
+        {thesis_panels}
+      </div>
+
+    </div>
+
+    <script>
+      function showThesis(id) {{
+        document.querySelectorAll('.thesis-panel').forEach(p => p.style.display = 'none');
+        document.querySelectorAll('.div-row').forEach(r => r.classList.remove('active'));
+        document.getElementById('thesis-placeholder').style.display = 'none';
+        document.getElementById('thesis-' + id).style.display = 'block';
+        document.querySelector('.div-row[data-id="' + id + '"]').classList.add('active');
+      }}
+    </script>
+    """
+
+    return page_wrap('Dividend Picks', 'dividend', content)
+
+
+@app.route('/dividend/add', methods=['GET', 'POST'])
+def dividend_add():
+    if not is_admin():
+        return redirect('/dividend')
+    error = ''
+    if request.method == 'POST':
+        ok, err = upsert_dividend_stock(
+            ticker=request.form.get('ticker','').strip(),
+            company=request.form.get('company','').strip(),
+            sector=request.form.get('sector','').strip(),
+            dividend_yield=request.form.get('dividend_yield') or None,
+            payout_ratio=request.form.get('payout_ratio') or None,
+            years_div_growth=request.form.get('years_div_growth') or None,
+            target_price=request.form.get('target_price') or None,
+            thesis_moat=request.form.get('thesis_moat','').strip(),
+            thesis_dividend=request.form.get('thesis_dividend','').strip(),
+            thesis_sustain=request.form.get('thesis_sustain','').strip(),
+            thesis_trend=request.form.get('thesis_trend','').strip(),
+            thesis_why_now=request.form.get('thesis_why_now','').strip(),
+            display_order=int(request.form.get('display_order') or 0),
+        )
+        if ok:
+            return redirect('/dividend')
+        error = err
+    return page_wrap('Add Dividend Stock', 'dividend', _dividend_form(error=error))
+
+
+@app.route('/dividend/edit/<int:stock_id>', methods=['GET', 'POST'])
+def dividend_edit(stock_id):
+    if not is_admin():
+        return redirect('/dividend')
+    stock = get_dividend_stock(stock_id)
+    if not stock:
+        return redirect('/dividend')
+    error = ''
+    if request.method == 'POST':
+        ok, err = upsert_dividend_stock(
+            ticker=request.form.get('ticker','').strip(),
+            company=request.form.get('company','').strip(),
+            sector=request.form.get('sector','').strip(),
+            dividend_yield=request.form.get('dividend_yield') or None,
+            payout_ratio=request.form.get('payout_ratio') or None,
+            years_div_growth=request.form.get('years_div_growth') or None,
+            target_price=request.form.get('target_price') or None,
+            thesis_moat=request.form.get('thesis_moat','').strip(),
+            thesis_dividend=request.form.get('thesis_dividend','').strip(),
+            thesis_sustain=request.form.get('thesis_sustain','').strip(),
+            thesis_trend=request.form.get('thesis_trend','').strip(),
+            thesis_why_now=request.form.get('thesis_why_now','').strip(),
+            display_order=int(request.form.get('display_order') or 0),
+            stock_id=stock_id,
+        )
+        if ok:
+            return redirect('/dividend')
+        error = err
+    return page_wrap('Edit Dividend Stock', 'dividend', _dividend_form(stock=stock, error=error))
+
+
+@app.route('/dividend/delete/<int:stock_id>')
+def dividend_delete(stock_id):
+    if not is_admin():
+        return redirect('/dividend')
+    delete_dividend_stock(stock_id)
+    return redirect('/dividend')
+
+
+def _dividend_form(stock=None, error=''):
+    s = stock or {}
+    def v(k, default=''): return s.get(k, default) or default
+    def textarea(name, label, color, placeholder):
+        return f"""
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:.75rem;font-weight:700;color:{color};
+                        text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">{label}</label>
+          <textarea name="{name}" rows="4" placeholder="{placeholder}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:10px 12px;font-size:.85rem;resize:vertical;box-sizing:border-box"
+          >{v(name)}</textarea>
+        </div>"""
+
+    err_html = f'<div style="color:#ef4444;margin-bottom:12px">{error}</div>' if error else ''
+    title    = 'Edit Stock' if stock else 'Add Stock'
+
+    return f"""
+    <h2>{title}</h2>
+    {err_html}
+    <form method="POST" style="max-width:700px">
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:16px">
+        <div>
+          <label style="color:#888;font-size:.78rem">Ticker</label>
+          <input name="ticker" value="{v('ticker')}" required
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.9rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Company Name</label>
+          <input name="company" value="{v('company')}" required
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.9rem;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+        <div>
+          <label style="color:#888;font-size:.78rem">Sector</label>
+          <input name="sector" value="{v('sector')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Div Yield %</label>
+          <input name="dividend_yield" type="number" step="0.01" value="{v('dividend_yield')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Payout Ratio %</label>
+          <input name="payout_ratio" type="number" step="0.1" value="{v('payout_ratio')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Years Div Growth</label>
+          <input name="years_div_growth" type="number" value="{v('years_div_growth')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Target Price</label>
+          <input name="target_price" type="number" step="0.01" value="{v('target_price')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+      </div>
+
+      <h3 style="color:#555;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">
+        Jimmy's 5-Point Thesis
+      </h3>
+      {textarea('thesis_moat',     'Business Moat',         '#818cf8', 'Does it have pricing power? Will it still exist in 20 years?')}
+      {textarea('thesis_dividend', 'Dividend Track Record',  '#22c55e', 'How many years of consecutive dividend growth?')}
+      {textarea('thesis_sustain',  'Payout Sustainability',  '#f59e0b', 'Payout ratio healthy? Free cash flow covers it?')}
+      {textarea('thesis_trend',    'Price Trend',            '#60a5fa', 'Is the stock price trending up over 10 years?')}
+      {textarea('thesis_why_now',  'Why Now',                '#f472b6', 'Is it at a good entry point? Why buy at this price?')}
+
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button type="submit" class="btn btn-green">Save Stock</button>
+        <a href="/dividend" class="btn" style="background:#2a2d3e;color:#aaa">Cancel</a>
+      </div>
+    </form>
+    """
 
 
 # ─── Admin Analytics ──────────────────────────────────────────────────────────
