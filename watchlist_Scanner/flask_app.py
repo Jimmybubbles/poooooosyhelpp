@@ -151,7 +151,8 @@ def get_perf_data(tickers):
 
         grouped = defaultdict(list)
         for ticker, _, close in rows:
-            grouped[ticker.upper()].append(float(close))
+            if close is not None:
+                grouped[ticker.upper()].append(float(close))
 
         def pct(closes, n):
             if len(closes) > n:
