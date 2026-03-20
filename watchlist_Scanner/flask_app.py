@@ -723,7 +723,7 @@ def index():
         initial_btn = '<span class="btn btn-off">Run Initial Download</span>'
         refresh_btn = '<span class="btn btn-off">⏳ Updating prices…</span>'
     elif refreshed_today:
-        refresh_btn = f'<span class="btn btn-off" style="background:#14532d;color:#86efac;cursor:default">✓ Prices updated today</span>'
+        refresh_btn = '<a href="/run-refresh" class="btn btn-green" style="font-size:.95rem;padding:10px 22px">⟳ Update US &amp; ASX Prices</a>'
         daily_btn   = '<a href="/run-daily" class="btn btn-blue">Run Daily Update</a>'
         initial_btn = '<a href="/run-initial" class="btn btn-amber" onclick="return confirm(\'This takes 1–2 hours. Continue?\')">Run Initial Download</a>'
     else:
