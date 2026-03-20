@@ -32,6 +32,7 @@ import pymysql
 from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT, ADMIN_PASSWORD, SECRET_KEY
 from db_channel_scanner import run_scan, load_last_results, get_connection, get_ticker_data
 from db_fader_scanner import run_fader_scan, load_last_fader_results
+from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes, UPLOADS_DIR)
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
@@ -652,6 +653,7 @@ def nav_html(active=''):
         {lnk('/asx','ASX 200','asx')}
         {lnk('/asx/picks','ASX Picks','asxpicks')}
         {lnk('/fader','Fader Scan','fader')}
+        {lnk('/efi','EFI Scan','efi')}
         {lnk('/indexes','Indexes & ETFs','indexes')}
         {lnk('/dividend','Dividend Picks','dividend')}
         {lnk('/log-view','Log','log')}
@@ -2864,6 +2866,114 @@ def run_fader_route():
         return redirect('/fader')
     start_fader_scan()
     return redirect('/fader')
+
+
+# ─── EFI Scanner ──────────────────────────────────────────────────────────────
+
+def _run_efi_scan_job():
+    global _job_running, _job_name
+    def log(msg):
+        with open(LOG_FILE, 'a') as f:
+            f.write(msg)
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== EFI Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_efi_scan(log_callback=log)
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nFATAL ERROR: {e}\n")
+    finally:
+        _job_running = False
+        _job_name    = None
+
+
+def start_efi_scan():
+    global _job_running, _job_name
+    if _job_running:
+        return
+    _job_running = True
+    _job_name    = 'EFI Scan'
+    import threading
+    threading.Thread(target=_run_efi_scan_job, daemon=True).start()
+
+
+@app.route('/efi')
+def efi_page():
+    running = _job_running and _job_name == 'EFI Scan'
+    data    = load_last_efi_results()
+
+    fi_color_map = {
+        'maroon': ('#7f1d1d', '#fca5a5'),
+        'orange': ('#78350f', '#fcd34d'),
+        'lime':   ('#14532d', '#86efac'),
+        'teal':   ('#134e4a', '#5eead4'),
+    }
+
+    table = ''
+    if data and data.get('results'):
+        rows = ''
+        for r in data['results']:
+            color, tc = fi_color_map.get(r['fi_color'], ('#1e2130', '#888'))
+            rows += f"""<tr style="border-bottom:1px solid #151820">
+              <td style="padding:9px 14px;font-weight:700">{r['ticker']}</td>
+              <td style="padding:9px 10px;color:#aaa">${r['price']:,.2f}</td>
+              <td style="padding:9px 10px;color:#22c55e">{r['norm_price']:+.4f}</td>
+              <td style="padding:9px 10px;color:#f87171">{r['histogram']:+.4f}</td>
+              <td style="padding:9px 10px;background:{color};color:{tc};text-align:center;font-size:.78rem;font-weight:700">{r['fi_color']}</td>
+            </tr>"""
+        scan_date = data.get('scan_date', '')
+        table = f"""
+        <p style="color:#555;font-size:.8rem;margin-bottom:10px">Last scan: {scan_date} — {data['total']} setups</p>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:.84rem">
+            <thead>
+              <tr style="border-bottom:2px solid #2a2d3e">
+                <th style="text-align:left;padding:9px 14px;color:#555;font-weight:500">Ticker</th>
+                <th style="text-align:left;padding:9px 10px;color:#555;font-weight:500">Price</th>
+                <th style="text-align:left;padding:9px 10px;color:#555;font-weight:500">Norm Price</th>
+                <th style="text-align:left;padding:9px 10px;color:#555;font-weight:500">Histogram</th>
+                <th style="text-align:center;padding:9px 10px;color:#555;font-weight:500">FI Color</th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </table>
+        </div>"""
+
+    if running:
+        log_content = ''
+        try:
+            with open(LOG_FILE) as f:
+                log_content = f.read()
+        except Exception:
+            pass
+        run_btn = '<span class="btn" style="background:#1e2130;color:#555;cursor:not-allowed">⏳ Scanning...</span>'
+        matrix_log = f'<pre style="background:#0a0c12;color:#00ff41;padding:16px;border-radius:8px;font-size:.72rem;max-height:300px;overflow-y:auto;margin-top:16px;font-family:monospace">{log_content}</pre>'
+    else:
+        run_btn    = '<a href="/run-efi" class="btn btn-blue">▶ Run EFI Scan</a>' if is_admin() else ''
+        matrix_log = ''
+
+    content = f"""
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div>
+        <h2 style="margin:0">EFI Scanner</h2>
+        <p style="color:#666;font-size:.83rem;margin:4px 0 0">
+          Channel printing + Normalized price &gt; 0 + Histogram &lt; 0 — pullback in trend setup
+        </p>
+      </div>
+      {run_btn}
+    </div>
+    {matrix_log}
+    {table if table else '<p class="note">No scan run yet. Click Run EFI Scan above.</p>'}
+    """
+    return page_wrap('EFI Scan', 'efi', content, auto_refresh=running)
+
+
+@app.route('/run-efi')
+def run_efi_route():
+    if not is_admin():
+        return redirect('/efi')
+    start_efi_scan()
+    return redirect('/efi')
 
 
 # ─── Indexes & ETFs ───────────────────────────────────────────────────────────
