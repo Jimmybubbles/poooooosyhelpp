@@ -2905,28 +2905,11 @@ def indexes_page():
 
     content = f"""
     <style>
-      .tf-btn {{
-        padding: 7px 20px; border-radius: 6px; font-size: .85rem; font-weight: 600;
-        cursor: pointer; border: none; background: #252839; color: #aaa;
-        transition: background .15s, color .15s;
-      }}
-      .tf-btn.active {{ background: #3b82f6; color: #fff; }}
-      .tf-btn:hover:not(.active) {{ background: #2e3250; color: #ddd; }}
       .ix-section {{ margin-bottom: 32px; }}
       .ix-section h2 {{ font-size: .78rem; font-weight: 600; color: #777;
                        text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }}
-      .ix-grid {{
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-        gap: 12px;
-      }}
-      .ix-cell {{
-        background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 8px;
-        overflow: hidden; height: 240px;
-      }}
     </style>
 
-    <!-- ── Performance Heatmap ─────────────────────────────────────────── -->
     <div class="ix-section">
       <h2>Dollar, Commodities &amp; Rates</h2>
       <div style="background:#1a1d2e;border:1px solid #2a2d3e;border-radius:8px;overflow:hidden">
@@ -2947,120 +2930,6 @@ def indexes_page():
         {heatmap_table(index_rows)}
       </div>
     </div>
-
-    <!-- ── TradingView Charts ──────────────────────────────────────────── -->
-    <div style="margin-bottom:24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.78rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-right:4px">Chart Timeframe</span>
-      <button onclick="switchTF('1D')" id="btn-1D" class="tf-btn active">1 Day</button>
-      <button onclick="switchTF('1W')" id="btn-1W" class="tf-btn">1 Week</button>
-      <button onclick="switchTF('1M')" id="btn-1M" class="tf-btn">1 Month</button>
-      <button onclick="switchTF('3M')" id="btn-3M" class="tf-btn">3 Month</button>
-    </div>
-
-    <div class="ix-section">
-      <h2>Major Indexes</h2>
-      <div class="ix-grid" id="grid-indexes"></div>
-    </div>
-
-    <div class="ix-section">
-      <h2>Dollar &amp; Commodities</h2>
-      <div class="ix-grid" id="grid-macro"></div>
-    </div>
-
-    <div class="ix-section">
-      <h2>US Sector ETFs</h2>
-      <div class="ix-grid" id="grid-sectors"></div>
-    </div>
-
-    <script>
-      const GROUPS = {{
-        'indexes': [
-          {{ symbol: 'AMEX:SPY',      name: 'S&P 500 (SPY)'       }},
-          {{ symbol: 'NASDAQ:QQQ',    name: 'Nasdaq 100 (QQQ)'    }},
-          {{ symbol: 'AMEX:DIA',      name: 'Dow Jones (DIA)'     }},
-          {{ symbol: 'AMEX:IWM',      name: 'Russell 2000 (IWM)'  }},
-          {{ symbol: 'CBOE:VIX',      name: 'VIX'                 }},
-        ],
-        'macro': [
-          {{ symbol: 'TVC:DXY',    name: 'US Dollar (DXY)'  }},
-          {{ symbol: 'TVC:GOLD',   name: 'Gold'             }},
-          {{ symbol: 'TVC:SILVER', name: 'Silver'           }},
-          {{ symbol: 'TVC:COPPER', name: 'Copper'           }},
-          {{ symbol: 'TVC:USOIL',  name: 'Crude Oil'        }},
-          {{ symbol: 'TVC:US10Y',  name: 'US 10Y Yield'     }},
-        ],
-        'sectors': [
-          {{ symbol: 'AMEX:XLK',      name: 'Technology (XLK)'          }},
-          {{ symbol: 'AMEX:XLF',      name: 'Financials (XLF)'          }},
-          {{ symbol: 'AMEX:XLE',      name: 'Energy (XLE)'              }},
-          {{ symbol: 'AMEX:XLV',      name: 'Healthcare (XLV)'          }},
-          {{ symbol: 'AMEX:XLI',      name: 'Industrials (XLI)'         }},
-          {{ symbol: 'AMEX:XLY',      name: 'Cons. Discretionary (XLY)' }},
-          {{ symbol: 'AMEX:XLC',      name: 'Communications (XLC)'      }},
-          {{ symbol: 'AMEX:XLP',      name: 'Cons. Staples (XLP)'       }},
-          {{ symbol: 'AMEX:XLRE',     name: 'Real Estate (XLRE)'        }},
-          {{ symbol: 'AMEX:XLU',      name: 'Utilities (XLU)'           }},
-          {{ symbol: 'AMEX:XLB',      name: 'Materials (XLB)'           }},
-          {{ symbol: 'AMEX:XBI',      name: 'Biotech (XBI)'             }},
-          {{ symbol: 'AMEX:SMH',      name: 'Semiconductors (SMH)'      }},
-          {{ symbol: 'AMEX:GDX',      name: 'Gold Miners (GDX)'         }},
-        ]
-      }};
-
-      function loadWidget(cell, symbol, dateRange) {{
-        cell.innerHTML = '';
-        const wrapper = document.createElement('div');
-        wrapper.className = 'tradingview-widget-container';
-        wrapper.style.height = '100%';
-        const inner = document.createElement('div');
-        inner.className = 'tradingview-widget-container__widget';
-        inner.style.height = '100%';
-        wrapper.appendChild(inner);
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-        script.async = true;
-        script.textContent = JSON.stringify({{
-          symbol:                symbol,
-          width:                 '100%',
-          height:                '100%',
-          locale:                'en',
-          dateRange:             dateRange,
-          colorTheme:            'dark',
-          trendLineColor:        'rgba(41,98,255,1)',
-          underLineColor:        'rgba(41,98,255,0.15)',
-          underLineBottomColor:  'rgba(41,98,255,0)',
-          isTransparent:         true,
-          autosize:              true,
-          largeChartUrl:         ''
-        }});
-        wrapper.appendChild(script);
-        cell.appendChild(wrapper);
-      }}
-
-      function switchTF(tf) {{
-        document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + tf).classList.add('active');
-        for (const [groupId, instruments] of Object.entries(GROUPS)) {{
-          const grid = document.getElementById('grid-' + groupId);
-          const cells = grid.querySelectorAll('.ix-cell');
-          instruments.forEach((inst, i) => {{
-            if (cells[i]) loadWidget(cells[i], inst.symbol, tf);
-          }});
-        }}
-      }}
-
-      // Build cells once on load, then fill widgets
-      for (const [groupId, instruments] of Object.entries(GROUPS)) {{
-        const grid = document.getElementById('grid-' + groupId);
-        instruments.forEach(inst => {{
-          const cell = document.createElement('div');
-          cell.className = 'ix-cell';
-          grid.appendChild(cell);
-        }});
-      }}
-      switchTF('1D');
-    </script>
     """
     return page_wrap('Indexes & ETFs', 'indexes', content)
 
