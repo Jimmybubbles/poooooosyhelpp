@@ -126,9 +126,13 @@ MACRO_INSTRUMENTS = [
 def get_perf_data(tickers):
     """
     Returns {ticker: {d1, w1, m1, m3}} % change for each ticker.
-    Pulls last 65 trading days of closes in one query.
+    Pulls last 95 days of closes in one query.
+    Also returns _error key if something went wrong, and _rows_found count.
     """
+    from collections import defaultdict
     result = {t: {'d1': None, 'w1': None, 'm1': None, 'm3': None} for t in tickers}
+    result['_error'] = None
+    result['_rows_found'] = 0
     try:
         conn = get_connection()
         fmt = ','.join(['%s'] * len(tickers))
@@ -143,7 +147,8 @@ def get_perf_data(tickers):
             rows = cur.fetchall()
         conn.close()
 
-        from collections import defaultdict
+        result['_rows_found'] = len(rows)
+
         grouped = defaultdict(list)
         for ticker, _, close in rows:
             grouped[ticker.upper()].append(float(close))
@@ -163,8 +168,8 @@ def get_perf_data(tickers):
                 result[ticker]['m1'] = pct(closes, 21)
             if len(closes) >= 64:
                 result[ticker]['m3'] = pct(closes, 63)
-    except Exception:
-        pass
+    except Exception as e:
+        result['_error'] = str(e)
     return result
 
 
@@ -2888,6 +2893,12 @@ def indexes_page():
     index_rows  = ''.join(heatmap_row(t, n, perf[t]) for t, n in INDEX_ETFS)
     macro_rows  = ''.join(heatmap_row(t, n, perf[t]) for t, n in MACRO_INSTRUMENTS)
 
+    debug_bar = ''
+    if perf.get('_error'):
+        debug_bar = f'<div style="background:#7f1d1d;color:#fca5a5;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:.83rem">DB Error: {perf["_error"]}</div>'
+    elif perf['_rows_found'] == 0:
+        debug_bar = '<div style="background:#78350f;color:#fcd34d;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:.83rem">No data found in DB for these tickers — run db_daily_update.py to populate.</div>'
+
     heatmap_table = lambda rows: f"""
         <table style="width:100%;border-collapse:collapse;font-size:.83rem">
           <thead>
@@ -2909,6 +2920,8 @@ def indexes_page():
       .ix-section h2 {{ font-size: .78rem; font-weight: 600; color: #777;
                        text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }}
     </style>
+
+    {debug_bar}
 
     <div class="ix-section">
       <h2>Dollar, Commodities &amp; Rates</h2>
