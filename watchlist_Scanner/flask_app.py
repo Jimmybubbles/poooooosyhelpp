@@ -3072,7 +3072,7 @@ def dividend_page():
     stocks = get_all_dividend_stocks()
     admin  = is_admin()
 
-    # Get latest prices from DB for all tickers
+    # Get latest prices from DB — check both US (prices) and ASX (asx_prices) tables
     tickers = [s['ticker'] for s in stocks]
     prices  = {}
     if tickers:
@@ -3080,6 +3080,7 @@ def dividend_page():
             conn = get_connection()
             fmt  = ','.join(['%s'] * len(tickers))
             with conn.cursor() as cur:
+                # US prices table
                 cur.execute(f"""
                     SELECT p.ticker, p.close
                     FROM prices p
@@ -3090,6 +3091,18 @@ def dividend_page():
                 """, tickers)
                 for t, c in cur.fetchall():
                     prices[t] = float(c)
+                # ASX prices table (fills in any not found above)
+                cur.execute(f"""
+                    SELECT p.ticker, p.close
+                    FROM asx_prices p
+                    INNER JOIN (
+                        SELECT ticker, MAX(date) AS md FROM asx_prices
+                        WHERE ticker IN ({fmt}) GROUP BY ticker
+                    ) latest ON p.ticker=latest.ticker AND p.date=latest.md
+                """, tickers)
+                for t, c in cur.fetchall():
+                    if t not in prices:
+                        prices[t] = float(c)
             conn.close()
         except Exception:
             pass
@@ -3148,7 +3161,8 @@ def dividend_page():
         yrs      = f"{s['years_div_growth']} years" if s['years_div_growth'] else '—'
         price_td = f'${price:,.2f}' if price else '—'
         target   = f"${s['target_price']:,.2f}" if s['target_price'] else '—'
-        edit_lnk = f'<a href="/dividend/edit/{s["id"]}" class="btn btn-blue" style="font-size:.78rem;padding:5px 14px">Edit Thesis</a>' if admin else ''
+        edit_lnk  = f'<a href="/dividend/edit/{s["id"]}" class="btn btn-blue" style="font-size:.78rem;padding:5px 14px">Edit Thesis</a>' if admin else ''
+        chart_img = f'<img src="/dividend/image/{s["image_path"]}" style="width:100%;border-radius:8px;margin-bottom:18px;border:1px solid #2a2d3e">' if s.get('image_path') else ''
 
         thesis_panels += f"""
         <div id="thesis-{s['id']}" class="thesis-panel" style="display:none">
@@ -3164,6 +3178,7 @@ def dividend_page():
               <div style="color:#aaa;font-size:.75rem">Target {target}</div>
             </div>
           </div>
+          {chart_img}
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
             <div class="card" style="padding:10px 14px;text-align:center">
               <div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em">Div Yield</div>
@@ -3247,12 +3262,25 @@ def dividend_page():
     return page_wrap('Dividend Picks', 'dividend', content)
 
 
+def _handle_dividend_image():
+    """Save uploaded chart image, return filename or None."""
+    file = request.files.get('chart_image')
+    if file and file.filename:
+        ext      = os.path.splitext(file.filename)[1].lower()
+        filename = f"div_{uuid.uuid4().hex}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, filename))
+        return filename
+    return None
+
+
 @app.route('/dividend/add', methods=['GET', 'POST'])
 def dividend_add():
     if not is_admin():
         return redirect('/dividend')
     error = ''
     if request.method == 'POST':
+        image_path = _handle_dividend_image()
         ok, err = upsert_dividend_stock(
             ticker=request.form.get('ticker','').strip(),
             company=request.form.get('company','').strip(),
@@ -3266,6 +3294,7 @@ def dividend_add():
             thesis_sustain=request.form.get('thesis_sustain','').strip(),
             thesis_trend=request.form.get('thesis_trend','').strip(),
             thesis_why_now=request.form.get('thesis_why_now','').strip(),
+            image_path=image_path,
             display_order=int(request.form.get('display_order') or 0),
         )
         if ok:
@@ -3283,6 +3312,7 @@ def dividend_edit(stock_id):
         return redirect('/dividend')
     error = ''
     if request.method == 'POST':
+        image_path = _handle_dividend_image()
         ok, err = upsert_dividend_stock(
             ticker=request.form.get('ticker','').strip(),
             company=request.form.get('company','').strip(),
@@ -3296,6 +3326,7 @@ def dividend_edit(stock_id):
             thesis_sustain=request.form.get('thesis_sustain','').strip(),
             thesis_trend=request.form.get('thesis_trend','').strip(),
             thesis_why_now=request.form.get('thesis_why_now','').strip(),
+            image_path=image_path,
             display_order=int(request.form.get('display_order') or 0),
             stock_id=stock_id,
         )
@@ -3311,6 +3342,11 @@ def dividend_delete(stock_id):
         return redirect('/dividend')
     delete_dividend_stock(stock_id)
     return redirect('/dividend')
+
+
+@app.route('/dividend/image/<filename>')
+def dividend_image(filename):
+    return send_from_directory(UPLOADS_DIR, filename)
 
 
 def _dividend_form(stock=None, error=''):
@@ -3333,7 +3369,7 @@ def _dividend_form(stock=None, error=''):
     return f"""
     <h2>{title}</h2>
     {err_html}
-    <form method="POST" style="max-width:700px">
+    <form method="POST" enctype="multipart/form-data" style="max-width:700px">
       <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:16px">
         <div>
           <label style="color:#888;font-size:.78rem">Ticker</label>
@@ -3389,6 +3425,15 @@ def _dividend_form(stock=None, error=''):
       {textarea('thesis_sustain',  'Payout Sustainability',  '#f59e0b', 'Payout ratio healthy? Free cash flow covers it?')}
       {textarea('thesis_trend',    'Price Trend',            '#60a5fa', 'Is the stock price trending up over 10 years?')}
       {textarea('thesis_why_now',  'Why Now',                '#f472b6', 'Is it at a good entry point? Why buy at this price?')}
+
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:.75rem;font-weight:700;color:#aaa;
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Chart Image</label>
+        {'<img src="/dividend/image/' + v('image_path') + '" style="width:100%;border-radius:6px;margin-bottom:8px;border:1px solid #2a2d3e">' if v('image_path') else ''}
+        <input type="file" name="chart_image" accept="image/*"
+          style="color:#aaa;font-size:.83rem">
+        <div style="color:#555;font-size:.75rem;margin-top:4px">Upload a screenshot of your chart (PNG, JPG). Leave blank to keep existing image.</div>
+      </div>
 
       <div style="display:flex;gap:10px;margin-top:8px">
         <button type="submit" class="btn btn-green">Save Stock</button>

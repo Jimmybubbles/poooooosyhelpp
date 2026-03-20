@@ -41,10 +41,15 @@ def init_tables():
                 thesis_sustain      TEXT,
                 thesis_trend        TEXT,
                 thesis_why_now      TEXT,
+                image_path          VARCHAR(500),
                 display_order       INT DEFAULT 0,
                 added_date          DATETIME NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
+        try:
+            cur.execute("ALTER TABLE dividend_stocks ADD COLUMN image_path VARCHAR(500)")
+        except Exception:
+            pass  # Column already exists
     conn.commit()
     conn.close()
 
@@ -57,7 +62,7 @@ def get_all_dividend_stocks():
                 SELECT id, ticker, company, sector, dividend_yield, payout_ratio,
                        years_div_growth, target_price,
                        thesis_moat, thesis_dividend, thesis_sustain,
-                       thesis_trend, thesis_why_now, display_order, added_date
+                       thesis_trend, thesis_why_now, image_path, display_order, added_date
                 FROM dividend_stocks
                 ORDER BY display_order ASC, added_date ASC
             """)
@@ -79,8 +84,9 @@ def get_all_dividend_stocks():
         'thesis_sustain':   r[10] or '',
         'thesis_trend':     r[11] or '',
         'thesis_why_now':   r[12] or '',
-        'display_order':    r[13],
-        'added_date':       str(r[14])[:10],
+        'image_path':       r[13] or '',
+        'display_order':    r[14],
+        'added_date':       str(r[15])[:10],
     } for r in rows]
 
 
@@ -92,7 +98,7 @@ def get_dividend_stock(stock_id):
                 SELECT id, ticker, company, sector, dividend_yield, payout_ratio,
                        years_div_growth, target_price,
                        thesis_moat, thesis_dividend, thesis_sustain,
-                       thesis_trend, thesis_why_now, display_order
+                       thesis_trend, thesis_why_now, image_path, display_order
                 FROM dividend_stocks WHERE id = %s
             """, (stock_id,))
             r = cur.fetchone()
@@ -114,42 +120,60 @@ def get_dividend_stock(stock_id):
         'thesis_sustain':   r[10] or '',
         'thesis_trend':     r[11] or '',
         'thesis_why_now':   r[12] or '',
-        'display_order':    r[13],
+        'image_path':       r[13] or '',
+        'display_order':    r[14],
     }
 
 
 def upsert_dividend_stock(ticker, company, sector, dividend_yield, payout_ratio,
                           years_div_growth, target_price,
                           thesis_moat, thesis_dividend, thesis_sustain,
-                          thesis_trend, thesis_why_now, display_order=0, stock_id=None):
+                          thesis_trend, thesis_why_now, image_path=None,
+                          display_order=0, stock_id=None):
     conn = get_connection()
     try:
         with conn.cursor() as cur:
             if stock_id:
-                cur.execute("""
-                    UPDATE dividend_stocks SET
-                        ticker=%s, company=%s, sector=%s,
-                        dividend_yield=%s, payout_ratio=%s, years_div_growth=%s,
-                        target_price=%s, thesis_moat=%s, thesis_dividend=%s,
-                        thesis_sustain=%s, thesis_trend=%s, thesis_why_now=%s,
-                        display_order=%s
-                    WHERE id=%s
-                """, (ticker.upper(), company, sector,
-                      dividend_yield or None, payout_ratio or None, years_div_growth or None,
-                      target_price or None, thesis_moat, thesis_dividend,
-                      thesis_sustain, thesis_trend, thesis_why_now,
-                      display_order, stock_id))
+                if image_path:
+                    cur.execute("""
+                        UPDATE dividend_stocks SET
+                            ticker=%s, company=%s, sector=%s,
+                            dividend_yield=%s, payout_ratio=%s, years_div_growth=%s,
+                            target_price=%s, thesis_moat=%s, thesis_dividend=%s,
+                            thesis_sustain=%s, thesis_trend=%s, thesis_why_now=%s,
+                            image_path=%s, display_order=%s
+                        WHERE id=%s
+                    """, (ticker.upper(), company, sector,
+                          dividend_yield or None, payout_ratio or None, years_div_growth or None,
+                          target_price or None, thesis_moat, thesis_dividend,
+                          thesis_sustain, thesis_trend, thesis_why_now,
+                          image_path, display_order, stock_id))
+                else:
+                    cur.execute("""
+                        UPDATE dividend_stocks SET
+                            ticker=%s, company=%s, sector=%s,
+                            dividend_yield=%s, payout_ratio=%s, years_div_growth=%s,
+                            target_price=%s, thesis_moat=%s, thesis_dividend=%s,
+                            thesis_sustain=%s, thesis_trend=%s, thesis_why_now=%s,
+                            display_order=%s
+                        WHERE id=%s
+                    """, (ticker.upper(), company, sector,
+                          dividend_yield or None, payout_ratio or None, years_div_growth or None,
+                          target_price or None, thesis_moat, thesis_dividend,
+                          thesis_sustain, thesis_trend, thesis_why_now,
+                          display_order, stock_id))
             else:
                 cur.execute("""
                     INSERT INTO dividend_stocks
                         (ticker, company, sector, dividend_yield, payout_ratio,
                          years_div_growth, target_price, thesis_moat, thesis_dividend,
-                         thesis_sustain, thesis_trend, thesis_why_now, display_order, added_date)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                         thesis_sustain, thesis_trend, thesis_why_now, image_path,
+                         display_order, added_date)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """, (ticker.upper(), company, sector,
                       dividend_yield or None, payout_ratio or None, years_div_growth or None,
                       target_price or None, thesis_moat, thesis_dividend,
-                      thesis_sustain, thesis_trend, thesis_why_now,
+                      thesis_sustain, thesis_trend, thesis_why_now, image_path,
                       display_order, datetime.now()))
         conn.commit()
         return True, None
