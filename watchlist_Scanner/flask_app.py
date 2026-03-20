@@ -3162,7 +3162,7 @@ def dividend_page():
         price_td = f'${price:,.2f}' if price else '—'
         target   = f"${s['target_price']:,.2f}" if s['target_price'] else '—'
         edit_lnk  = f'<a href="/dividend/edit/{s["id"]}" class="btn btn-blue" style="font-size:.78rem;padding:5px 14px">Edit Thesis</a>' if admin else ''
-        chart_img = f'<img src="/dividend/image/{s["image_path"]}" style="width:100%;border-radius:8px;margin-bottom:18px;border:1px solid #2a2d3e">' if s.get('image_path') else ''
+        chart_img = f'<img src="/dividend/image/{s["image_path"]}" onclick="openLightbox(this.src)" style="width:100%;border-radius:8px;margin-bottom:18px;border:1px solid #2a2d3e;cursor:zoom-in">' if s.get('image_path') else ''
 
         thesis_panels += f"""
         <div id="thesis-{s['id']}" class="thesis-panel" style="display:none">
@@ -3237,6 +3237,11 @@ def dividend_page():
         </div>
       </div>
 
+      <!-- Lightbox overlay -->
+      <div id="div-lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;cursor:zoom-out;align-items:center;justify-content:center">
+        <img id="div-lightbox-img" src="" style="max-width:92vw;max-height:92vh;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.8)">
+      </div>
+
       <!-- Right: thesis panel -->
       <div style="width:380px;flex-shrink:0;position:sticky;top:80px">
         <div id="thesis-placeholder" style="background:#13151f;border:1px solid #1e2130;border-radius:10px;padding:40px 24px;text-align:center;color:#444">
@@ -3256,6 +3261,17 @@ def dividend_page():
         document.getElementById('thesis-' + id).style.display = 'block';
         document.querySelector('.div-row[data-id="' + id + '"]').classList.add('active');
       }}
+      function openLightbox(src) {{
+        var lb = document.getElementById('div-lightbox');
+        document.getElementById('div-lightbox-img').src = src;
+        lb.style.display = 'flex';
+      }}
+      function closeLightbox() {{
+        document.getElementById('div-lightbox').style.display = 'none';
+      }}
+      document.addEventListener('keydown', function(e) {{
+        if (e.key === 'Escape') closeLightbox();
+      }});
     </script>
     """
 
