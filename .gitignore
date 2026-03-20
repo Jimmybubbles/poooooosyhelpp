@@ -8,6 +8,7 @@ watchlist_Scanner/buylist/
 watchlist_Scanner/ultimate_scanner/
 watchlist_Scanner/last_scan_results.json
 watchlist_Scanner/fader_scan_results.json
+watchlist_Scanner/efi_scan_results.json
 watchlist_Scanner/last_run.log
 watchlist_Scanner/last_refresh_date.txt
 
