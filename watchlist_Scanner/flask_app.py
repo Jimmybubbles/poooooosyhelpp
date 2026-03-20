@@ -1497,8 +1497,7 @@ def start_refresh_job():
 def run_refresh():
     if not is_admin():
         return redirect('/')
-    if not already_refreshed_today():
-        start_refresh_job()
+    start_refresh_job()
     return redirect('/')
 
 
