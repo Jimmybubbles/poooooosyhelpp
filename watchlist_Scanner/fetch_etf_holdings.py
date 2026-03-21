@@ -163,14 +163,14 @@ def save_sector(etf_ticker, sector_name, holdings):
     tickers = [h['ticker'] for h in holdings]
     tv_list = ','.join(tickers)
 
-    with open(out_file, 'w') as f:
+    with open(out_file, 'w', encoding='utf-8') as f:
         f.write(f"# {sector_name} ({etf_ticker})\n")
         f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
         f.write(f"# {len(tickers)} holdings\n")
         f.write("#\n")
-        f.write("# ── TradingView watchlist (copy line below) ──\n")
+        f.write("# --- TradingView watchlist (copy line below) ---\n")
         f.write(tv_list + "\n\n")
-        f.write("# ── Individual tickers ──\n")
+        f.write("# --- Individual tickers ---\n")
         for h in holdings:
             weight = f"  ({h['weight']:.2f}%)" if h.get('weight') else ''
             name   = f"  {h['name']}"           if h.get('name')   else ''
@@ -205,16 +205,16 @@ def main():
             source = 'yfinance'
 
         if not holdings:
-            print("❌ No data found")
+            print("FAILED - No data found")
             continue
 
         out_file, tickers = save_sector(etf_ticker, sector_name, holdings)
-        print(f"✓ {len(tickers)} holdings [{source}]")
+        print(f"OK {len(tickers)} holdings [{source}]")
         all_summary.append((etf_ticker, sector_name, tickers))
 
     # Write a combined summary file
     summary_file = os.path.join(OUTPUT_DIR, '_ALL_SECTORS_SUMMARY.txt')
-    with open(summary_file, 'w') as f:
+    with open(summary_file, 'w', encoding='utf-8') as f:
         f.write(f"ALL SECTOR ETF HOLDINGS\n")
         f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n")
         f.write("=" * 70 + "\n\n")
