@@ -645,6 +645,7 @@ def nav_html(active=''):
       <h1>Stock Manager</h1>
       <nav>
         {lnk('/','Dashboard','home')}
+        {lnk('/how-it-works','How It Works','howitworks')}
         {lnk('/scan','Channel Scanner','scan')}
         {lnk('/results','Results','results')}
         {lnk('/picks',"Jimmy's Picks",'picks')}
@@ -3055,6 +3056,126 @@ def indexes_page():
     </div>
     """
     return page_wrap('Indexes & ETFs', 'indexes', content)
+
+
+# ─── How It Works ─────────────────────────────────────────────────────────────
+
+VIDEO_URL_FILE = os.path.join(BASE_DIR, 'how_it_works_video.txt')
+
+def get_video_url():
+    if os.path.exists(VIDEO_URL_FILE):
+        with open(VIDEO_URL_FILE) as f:
+            return f.read().strip()
+    return ''
+
+def save_video_url(url):
+    with open(VIDEO_URL_FILE, 'w') as f:
+        f.write(url.strip())
+
+
+@app.route('/how-it-works', methods=['GET', 'POST'])
+def how_it_works():
+    admin = is_admin()
+    if request.method == 'POST' and admin:
+        save_video_url(request.form.get('video_url', ''))
+        return redirect('/how-it-works')
+
+    video_url = get_video_url()
+
+    # Convert Loom share URL to embed URL if needed
+    if 'loom.com/share/' in video_url:
+        video_url = video_url.replace('loom.com/share/', 'loom.com/embed/')
+
+    if video_url:
+        video_html = f"""
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin-bottom:40px;border:1px solid #2a2d3e">
+          <iframe src="{video_url}" frameborder="0" allowfullscreen
+            style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe>
+        </div>"""
+    else:
+        video_html = f"""
+        <div style="background:#13151f;border:2px dashed #2a2d3e;border-radius:12px;padding:60px 24px;text-align:center;margin-bottom:40px">
+          <div style="font-size:2.5rem;margin-bottom:12px">🎬</div>
+          <div style="color:#555;font-size:.9rem">Video coming soon</div>
+          {'<p style="color:#444;font-size:.8rem;margin-top:8px">Paste your Loom URL in the form below to add it.</p>' if admin else ''}
+        </div>"""
+
+    steps = [
+        ('🔍', 'Scanner Finds the Setup',
+         'Our scanner watches thousands of stocks every day looking for one specific pattern — price compressing into a tight channel. Most stocks are ignored. We only want the ones coiling up.',
+         '#818cf8'),
+        ('📊', 'Channel Printing',
+         'When a stock\'s price squeezes into a narrow range and the moving averages compress together, that\'s called a channel printing. It\'s the market holding its breath before a move.',
+         '#60a5fa'),
+        ('⚡', 'Signal Triggers',
+         'Once the channel is confirmed, we wait for the momentum indicators to align — the Fader line turning green and the Force Index pulling back. When all conditions line up together, that\'s our entry signal.',
+         '#22c55e'),
+        ('🎯', 'Entry at the 25% Level',
+         'We enter at the 25% level of the stock\'s price range — a proven support zone. Stop below the range low, target at the 75% level. Clean risk/reward every time.',
+         '#f59e0b'),
+    ]
+
+    step_cards = ''
+    for icon, title, desc, color in steps:
+        step_cards += f"""
+        <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px 24px">
+          <div style="font-size:2rem;margin-bottom:12px">{icon}</div>
+          <div style="font-size:1rem;font-weight:700;color:{color};margin-bottom:10px">{title}</div>
+          <div style="color:#999;font-size:.87rem;line-height:1.7">{desc}</div>
+        </div>"""
+
+    admin_form = ''
+    if admin:
+        admin_form = f"""
+        <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:10px;padding:20px 24px;margin-top:40px">
+          <div style="font-size:.75rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Admin — Update Video</div>
+          <form method="POST" style="display:flex;gap:10px;align-items:center">
+            <input name="video_url" value="{get_video_url()}" placeholder="Paste Loom share URL here..."
+              style="flex:1;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                     color:#e0e0e0;padding:9px 12px;font-size:.85rem">
+            <button type="submit" class="btn btn-blue" style="white-space:nowrap">Save Video</button>
+          </form>
+        </div>"""
+
+    content = f"""
+    <style>
+      .step-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:40px; }}
+    </style>
+
+    <!-- Hero -->
+    <div style="text-align:center;margin-bottom:40px;padding:20px 0">
+      <h1 style="font-size:2rem;font-weight:800;margin-bottom:12px">How Jimmy Trades</h1>
+      <p style="color:#888;font-size:1rem;max-width:560px;margin:0 auto;line-height:1.7">
+        A simple, repeatable system for finding stocks before they move.
+        No guessing. No noise. Just one pattern, executed consistently.
+      </p>
+    </div>
+
+    <!-- Video -->
+    {video_html}
+
+    <!-- Steps -->
+    <h2 style="font-size:.8rem;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">The System — 4 Steps</h2>
+    <div class="step-grid">
+      {step_cards}
+    </div>
+
+    <!-- CTA -->
+    <div style="background:linear-gradient(135deg,#1a1d2e,#13151f);border:1px solid #2a2d3e;border-radius:14px;padding:40px 32px;text-align:center;margin-bottom:24px">
+      <div style="font-size:1.4rem;font-weight:800;margin-bottom:10px">See It In Action</div>
+      <p style="color:#888;font-size:.9rem;max-width:480px;margin:0 auto 24px">
+        Follow the live $100,000 paper trading account. Every buy and sell is posted in real time so you can see exactly how the system performs.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="/picks" class="btn btn-green" style="font-size:.95rem;padding:11px 28px">View US Picks →</a>
+        <a href="/asx/picks" class="btn btn-blue" style="font-size:.95rem;padding:11px 28px">View ASX Picks →</a>
+      </div>
+    </div>
+
+    {admin_form}
+    """
+
+    return page_wrap('How It Works', 'howitworks', content)
 
 
 # ─── Dividend Picks ───────────────────────────────────────────────────────────
