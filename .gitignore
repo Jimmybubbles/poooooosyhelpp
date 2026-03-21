@@ -12,6 +12,7 @@ watchlist_Scanner/efi_scan_results.json
 watchlist_Scanner/last_run.log
 watchlist_Scanner/last_refresh_date.txt
 watchlist_Scanner/how_it_works_video.txt
+watchlist_Scanner/etf_holdings/
 
 # Python
 __pycache__/
