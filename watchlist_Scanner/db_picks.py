@@ -300,6 +300,22 @@ def get_closed_trades():
     return trades
 
 
+def delete_closed_trade(pick_id):
+    """Delete a closed trade and its sell record from the journal."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM jimmy_trades WHERE pick_id = %s", (pick_id,))
+            cur.execute("DELETE FROM jimmy_picks WHERE id = %s AND status = 'closed'", (pick_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+
 def add_manual_closed_trade(ticker, shares, buy_price, buy_date, buy_reason, buy_image,
                              sell_price, sell_date, sell_reason, sell_image):
     """Manually insert a closed trade into the journal (backfill)."""
