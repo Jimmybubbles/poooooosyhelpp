@@ -412,3 +412,36 @@ def get_closed_asx_trades():
             'market':      'ASX',
         })
     return trades
+
+
+def add_manual_closed_asx_trade(ticker, shares, buy_price, buy_date, buy_reason, buy_image,
+                                 sell_price, sell_date, sell_reason, sell_image):
+    """Manually insert a closed ASX trade into the journal (backfill)."""
+    ticker = ticker.upper()
+    shares = float(shares)
+    buy_price  = float(buy_price)
+    sell_price = float(sell_price)
+    total_value = shares * sell_price
+    pnl = total_value - (shares * buy_price)
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO asx_picks (ticker, shares, buy_price, reason, image_path, bought_date, status)
+                VALUES (%s, %s, %s, %s, %s, %s, 'closed')
+            """, (ticker, shares, buy_price, buy_reason or None, buy_image or None, buy_date))
+            pick_id = conn.insert_id()
+            cur.execute("""
+                INSERT INTO asx_trades (ticker, action, shares, price, total, pnl, trade_date,
+                                        sell_reason, sell_image, pick_id)
+                VALUES (%s, 'SELL', %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (ticker, shares, sell_price, total_value, pnl, sell_date,
+                  sell_reason or None, sell_image or None, pick_id))
+        conn.commit()
+        return True, pnl
+    except Exception as e:
+        conn.rollback()
+        return False, str(e)
+    finally:
+        conn.close()
