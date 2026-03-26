@@ -35,7 +35,7 @@ from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes,
-                      get_closed_trades, UPLOADS_DIR)
+                      get_closed_trades, add_manual_closed_trade, UPLOADS_DIR)
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
                     submit_question, answer_question, get_questions, get_username,
                     get_user_stats)
@@ -46,7 +46,8 @@ from db_asx import (init_tables as init_asx_tables, ASX_200,
                     get_asx_chart_data, get_tickers_with_data,
                     get_asx_account, get_asx_picks, get_asx_history,
                     get_asx_portfolio_value, buy_asx_stock, sell_asx_stock,
-                    get_asx_daily_changes, get_closed_asx_trades)
+                    get_asx_daily_changes, get_closed_asx_trades,
+                    add_manual_closed_asx_trade)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -2788,6 +2789,11 @@ def asx_picks_sell(pick_id):
 
 @app.route('/journal')
 def journal_page():
+    msg = request.args.get('msg', '')
+    err = request.args.get('err', '')
+    msg_html = f'<div style="background:#1a2e1a;border:1px solid #22c55e;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#86efac">{msg}</div>' if msg else ''
+    err_html = f'<div class="err-box">{err}</div>' if err else ''
+
     us_trades  = get_closed_trades()
     asx_trades = get_closed_asx_trades()
     all_trades = us_trades + asx_trades
@@ -2884,9 +2890,74 @@ def journal_page():
     document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
     </script>"""
 
-    content = f"""
+    add_form = '' if not is_admin() else """
     <section>
-      <h2>Trade Journal</h2>
+      <h2>Add Closed Trade</h2>
+      <form method="POST" action="/journal/add" enctype="multipart/form-data">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Market *</label>
+            <select name="market" style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+              <option value="US">US</option>
+              <option value="ASX">ASX</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Ticker *</label>
+            <input name="ticker" placeholder="e.g. AAPL" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Shares *</label>
+            <input name="shares" type="number" step="0.0001" placeholder="e.g. 100" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Buy Price *</label>
+            <input name="buy_price" type="number" step="0.0001" placeholder="e.g. 150.00" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Buy Date *</label>
+            <input name="buy_date" type="date" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Price *</label>
+            <input name="sell_price" type="number" step="0.0001" placeholder="e.g. 180.00" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Date *</label>
+            <input name="sell_date" type="date" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I bought</label>
+            <textarea name="buy_reason" rows="3" placeholder="Channel forming, EMA squeeze..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I sold</label>
+            <textarea name="sell_reason" rows="3" placeholder="Stop loss hit, took profit..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Buy Chart</label>
+            <input name="buy_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Chart</label>
+            <input name="sell_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-green">+ Add to Journal</button>
+      </form>
+    </section>"""
+
+    content = f"""
+    {err_html}{msg_html}
+    {add_form}
+    <section>
+      <h2>Closed Trades</h2>
       <p style="color:#555;font-size:.88rem;margin-bottom:24px">Every closed trade — the good and the bad. Honesty builds trust.</p>
       {stats}
       {cards}
@@ -2894,6 +2965,52 @@ def journal_page():
     {lightbox}"""
 
     return page_wrap('Trade Journal', 'journal', content)
+
+
+@app.route('/journal/add', methods=['POST'])
+def journal_add():
+    if not is_admin():
+        return redirect('/journal')
+
+    market     = request.form.get('market', 'US')
+    ticker     = request.form.get('ticker', '').strip().upper()
+    shares     = request.form.get('shares', '0')
+    buy_price  = request.form.get('buy_price', '0')
+    buy_date   = request.form.get('buy_date', '')
+    buy_reason = request.form.get('buy_reason', '').strip()
+    sell_price = request.form.get('sell_price', '0')
+    sell_date  = request.form.get('sell_date', '')
+    sell_reason = request.form.get('sell_reason', '').strip()
+
+    buy_image = ''
+    file = request.files.get('buy_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        buy_image = f"buy_{ticker}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, buy_image))
+
+    sell_image = ''
+    file = request.files.get('sell_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        sell_image = f"sell_{ticker}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, sell_image))
+
+    if market == 'ASX':
+        ok, result = add_manual_closed_asx_trade(
+            ticker, shares, buy_price, buy_date, buy_reason, buy_image,
+            sell_price, sell_date, sell_reason, sell_image)
+    else:
+        ok, result = add_manual_closed_trade(
+            ticker, shares, buy_price, buy_date, buy_reason, buy_image,
+            sell_price, sell_date, sell_reason, sell_image)
+
+    if ok:
+        sign = '+' if result >= 0 else ''
+        return redirect(f'/journal?msg={ticker}+added+to+journal.+P%26L:+{sign}${result:.2f}')
+    return redirect(f'/journal?err={result}')
 
 
 # ─── Fader Scanner ────────────────────────────────────────────────────────────
