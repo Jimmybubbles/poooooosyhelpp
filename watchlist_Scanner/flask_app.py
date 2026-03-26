@@ -35,7 +35,7 @@ from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes,
-                      get_closed_trades, add_manual_closed_trade, UPLOADS_DIR)
+                      get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR)
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
                     submit_question, answer_question, get_questions, get_username,
                     get_user_stats)
@@ -47,7 +47,7 @@ from db_asx import (init_tables as init_asx_tables, ASX_200,
                     get_asx_account, get_asx_picks, get_asx_history,
                     get_asx_portfolio_value, buy_asx_stock, sell_asx_stock,
                     get_asx_daily_changes, get_closed_asx_trades,
-                    add_manual_closed_asx_trade)
+                    add_manual_closed_asx_trade, delete_closed_asx_trade)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -2844,6 +2844,9 @@ def journal_page():
 
         buy_reason_html  = f'<p style="color:#aaa;font-size:.83rem;line-height:1.5;margin:0">{t["buy_reason"]}</p>'  if t['buy_reason']  else ''
         sell_reason_html = f'<p style="color:#aaa;font-size:.83rem;line-height:1.5;margin:0">{t["sell_reason"]}</p>' if t['sell_reason'] else ''
+        tid = t['id']
+        tmkt = t['market']
+        delete_btn = f'<form method="POST" action="/journal/delete/{tid}/{tmkt}" onsubmit="return confirm(\'Delete this trade?\')"><button type="submit" style="font-size:.75rem;padding:4px 12px;background:transparent;border:1px solid #3a2020;border-radius:5px;color:#666;cursor:pointer">Delete</button></form>' if is_admin() else ''
 
         cards += f"""
         <div class="card" style="margin-bottom:20px">
@@ -2863,7 +2866,7 @@ def journal_page():
             <div><span style="color:#555">Shares</span><br><strong>{t['shares']:,.2f}</strong></div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
             <div>
               <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Buy Setup</div>
               {buy_img_html}
@@ -2875,6 +2878,7 @@ def journal_page():
               {sell_reason_html}
             </div>
           </div>
+          {delete_btn}
         </div>"""
 
     if not all_trades:
@@ -3011,6 +3015,17 @@ def journal_add():
         sign = '+' if result >= 0 else ''
         return redirect(f'/journal?msg={ticker}+added+to+journal.+P%26L:+{sign}${result:.2f}')
     return redirect(f'/journal?err={result}')
+
+
+@app.route('/journal/delete/<int:pick_id>/<market>', methods=['POST'])
+def journal_delete(pick_id, market):
+    if not is_admin():
+        return redirect('/journal')
+    if market == 'ASX':
+        delete_closed_asx_trade(pick_id)
+    else:
+        delete_closed_trade(pick_id)
+    return redirect('/journal?msg=Trade+deleted')
 
 
 # ─── Fader Scanner ────────────────────────────────────────────────────────────
