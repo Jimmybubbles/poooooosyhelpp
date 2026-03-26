@@ -63,6 +63,15 @@ def init_tables():
                 notes        TEXT
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
+        for col_sql in [
+            "ALTER TABLE jimmy_trades ADD COLUMN sell_reason TEXT",
+            "ALTER TABLE jimmy_trades ADD COLUMN sell_image VARCHAR(500)",
+            "ALTER TABLE jimmy_trades ADD COLUMN pick_id INT",
+        ]:
+            try:
+                cur.execute(col_sql)
+            except Exception:
+                pass
     conn.commit()
     conn.close()
 
@@ -216,7 +225,7 @@ def buy_stock(ticker, shares, buy_price, target_price, reason, image_filename):
         conn.close()
 
 
-def sell_stock(pick_id, sell_price):
+def sell_stock(pick_id, sell_price, sell_reason='', sell_image=''):
     sell_price = float(sell_price)
     conn = get_connection()
     try:
@@ -236,9 +245,10 @@ def sell_stock(pick_id, sell_price):
             cur.execute("UPDATE jimmy_picks SET status = 'closed' WHERE id = %s", (pick_id,))
             cur.execute("UPDATE jimmy_account SET cash = cash + %s WHERE id = 1", (total_value,))
             cur.execute("""
-                INSERT INTO jimmy_trades (ticker, action, shares, price, total, pnl, trade_date)
-                VALUES (%s, 'SELL', %s, %s, %s, %s, %s)
-            """, (ticker, shares, sell_price, total_value, pnl, datetime.now()))
+                INSERT INTO jimmy_trades (ticker, action, shares, price, total, pnl, trade_date, sell_reason, sell_image, pick_id)
+                VALUES (%s, 'SELL', %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (ticker, shares, sell_price, total_value, pnl, datetime.now(),
+                  sell_reason or None, sell_image or None, pick_id))
         conn.commit()
         return True, pnl
     except Exception as e:
@@ -246,3 +256,45 @@ def sell_stock(pick_id, sell_price):
         return False, str(e)
     finally:
         conn.close()
+
+
+def get_closed_trades():
+    """Returns closed US trades with both buy and sell data."""
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT
+                p.id, p.ticker, p.shares, p.buy_price, p.reason,
+                p.image_path, p.bought_date,
+                t.price, t.pnl, t.trade_date, t.sell_reason, t.sell_image
+            FROM jimmy_picks p
+            LEFT JOIN jimmy_trades t ON t.pick_id = p.id AND t.action = 'SELL'
+            WHERE p.status = 'closed'
+            ORDER BY t.trade_date DESC
+        """)
+        rows = cur.fetchall()
+    conn.close()
+    trades = []
+    for r in rows:
+        buy_price  = float(r[3]) if r[3] else 0
+        sell_price = float(r[7]) if r[7] else 0
+        pnl        = float(r[8]) if r[8] is not None else 0
+        cost       = float(r[2]) * buy_price if r[2] else 0
+        pnl_pct    = (pnl / cost * 100) if cost else 0
+        trades.append({
+            'id':          r[0],
+            'ticker':      r[1],
+            'shares':      float(r[2]) if r[2] else 0,
+            'buy_price':   buy_price,
+            'buy_reason':  r[4] or '',
+            'buy_image':   r[5] or '',
+            'bought_date': str(r[6])[:10] if r[6] else '',
+            'sell_price':  sell_price,
+            'pnl':         pnl,
+            'pnl_pct':     pnl_pct,
+            'sell_date':   str(r[9])[:10] if r[9] else '',
+            'sell_reason': r[10] or '',
+            'sell_image':  r[11] or '',
+            'market':      'US',
+        })
+    return trades

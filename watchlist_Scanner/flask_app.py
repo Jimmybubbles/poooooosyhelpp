@@ -34,7 +34,8 @@ from db_channel_scanner import run_scan, load_last_results, get_connection, get_
 from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
-                      get_history, buy_stock, sell_stock, get_daily_changes, UPLOADS_DIR)
+                      get_history, buy_stock, sell_stock, get_daily_changes,
+                      get_closed_trades, UPLOADS_DIR)
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
                     submit_question, answer_question, get_questions, get_username,
                     get_user_stats)
@@ -45,7 +46,7 @@ from db_asx import (init_tables as init_asx_tables, ASX_200,
                     get_asx_chart_data, get_tickers_with_data,
                     get_asx_account, get_asx_picks, get_asx_history,
                     get_asx_portfolio_value, buy_asx_stock, sell_asx_stock,
-                    get_asx_daily_changes)
+                    get_asx_daily_changes, get_closed_asx_trades)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -649,6 +650,7 @@ def nav_html(active=''):
         {lnk('/scan','Channel Scanner','scan')}
         {lnk('/results','Results','results')}
         {lnk('/picks',"Jimmy's Picks",'picks')}
+        {lnk('/journal','Trade Journal','journal')}
         {lnk('/ask','Ask Jimmy','ask')}
         {lnk('/range','Range Levels','range')}
         {lnk('/asx','ASX 200','asx')}
@@ -1645,14 +1647,13 @@ def picks_page():
             reason_html = f'<p style="color:#aaa;font-size:.83rem;margin-bottom:12px;line-height:1.5">{p["reason"]}</p>' if p['reason'] else ''
 
             if is_admin():
+                pticker = p['ticker']
                 action_html = f"""
-                <form method="POST" action="/picks/sell/{p['id']}" style="display:flex;gap:8px;align-items:center">
-                  <input name="sell_price" type="number" step="0.0001" value="{p['current_price']:.4f}"
-                    style="width:150px;padding:7px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem">
-                  <button type="submit" class="btn btn-amber" style="padding:7px 16px"
-                    onclick="return confirm('Sell {p['shares']} shares of {p['ticker']}?')">Sell</button>
-                  <a href="/chart/{p['ticker']}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">Chart</a>
-                </form>"""
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn btn-amber" style="padding:7px 16px"
+                    onclick="openSellModal({p['id']},'{pticker}',{p['shares']},{p['current_price']:.4f},'/picks/sell/{p['id']}')">Sell</button>
+                  <a href="/chart/{pticker}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">Chart</a>
+                </div>"""
             else:
                 action_html = f'<a href="/chart/{p["ticker"]}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">View Chart</a>'
 
@@ -1726,7 +1727,48 @@ def picks_page():
     err = request.args.get('err', '')
     err_html = f'<div class="err-box">{err}</div>' if err else ''
 
-    content = err_html + msg_html + summary + add_form + pos_html + hist_html
+    sell_modal = """
+    <div id="sell-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center">
+      <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px;width:100%;max-width:500px;margin:20px">
+        <h3 id="sell-modal-title" style="margin:0 0 20px">Sell Position</h3>
+        <form id="sell-form" method="POST" enctype="multipart/form-data">
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Price *</label>
+            <input id="sell-price-input" name="sell_price" type="number" step="0.0001" required
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I sold</label>
+            <textarea name="sell_reason" rows="4" placeholder="Stop loss hit, thesis broke, took profit at target..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div style="margin-bottom:20px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Chart Screenshot (sell setup)</label>
+            <input name="sell_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-amber" style="flex:1">Confirm Sell</button>
+            <button type="button" class="btn" style="flex:1;background:#252839" onclick="closeSellModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+    function openSellModal(pickId, ticker, shares, currentPrice, action) {
+      document.getElementById('sell-modal-title').textContent = 'Sell ' + shares + ' shares of ' + ticker;
+      document.getElementById('sell-price-input').value = currentPrice;
+      document.getElementById('sell-form').action = action;
+      document.getElementById('sell-modal').style.display = 'flex';
+    }
+    function closeSellModal() {
+      document.getElementById('sell-modal').style.display = 'none';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSellModal();
+    });
+    </script>"""
+
+    content = err_html + msg_html + summary + add_form + pos_html + hist_html + sell_modal
     return page_wrap("Jimmy's Picks", 'picks', content)
 
 
@@ -1759,8 +1801,18 @@ def picks_buy():
 def picks_sell(pick_id):
     if not is_admin():
         return redirect('/picks')
-    sell_price = float(request.form.get('sell_price', 0))
-    ok, result = sell_stock(pick_id, sell_price)
+    sell_price  = float(request.form.get('sell_price', 0))
+    sell_reason = request.form.get('sell_reason', '').strip()
+
+    sell_image = ''
+    file = request.files.get('sell_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        sell_image = f"sell_{pick_id}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, sell_image))
+
+    ok, result = sell_stock(pick_id, sell_price, sell_reason, sell_image)
     if ok:
         sign = '+' if result >= 0 else ''
         return redirect(f'/picks?msg=Position+closed.+P%26L:+{sign}${result:.2f}')
@@ -2556,13 +2608,12 @@ def asx_picks_page():
             reason_html = f'<p style="color:#aaa;font-size:.83rem;margin-bottom:12px;line-height:1.5">{p["reason"]}</p>' if p['reason'] else ''
 
             if is_admin():
+                pticker = p['ticker']
                 action_html = f"""
-                <form method="POST" action="/asx/picks/sell/{p['id']}" style="display:flex;gap:8px;align-items:center">
-                  <input name="sell_price" type="number" step="0.0001" value="{p['current_price']:.4f}"
-                    style="width:150px;padding:7px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem">
-                  <button type="submit" class="btn btn-amber" style="padding:7px 16px"
-                    onclick="return confirm('Sell {p['shares']} shares of {p['ticker']}?')">Sell</button>
-                </form>"""
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn btn-amber" style="padding:7px 16px"
+                    onclick="openSellModal({p['id']},'{pticker}',{p['shares']},{p['current_price']:.4f},'/asx/picks/sell/{p['id']}')">Sell</button>
+                </div>"""
             else:
                 action_html = ''
 
@@ -2631,12 +2682,53 @@ def asx_picks_page():
           </table>
         </section>"""
 
+    sell_modal = """
+    <div id="sell-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center">
+      <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px;width:100%;max-width:500px;margin:20px">
+        <h3 id="sell-modal-title" style="margin:0 0 20px">Sell Position</h3>
+        <form id="sell-form" method="POST" enctype="multipart/form-data">
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Price *</label>
+            <input id="sell-price-input" name="sell_price" type="number" step="0.0001" required
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I sold</label>
+            <textarea name="sell_reason" rows="4" placeholder="Stop loss hit, thesis broke, took profit at target..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div style="margin-bottom:20px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Chart Screenshot (sell setup)</label>
+            <input name="sell_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-amber" style="flex:1">Confirm Sell</button>
+            <button type="button" class="btn" style="flex:1;background:#252839" onclick="closeSellModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+    function openSellModal(pickId, ticker, shares, currentPrice, action) {
+      document.getElementById('sell-modal-title').textContent = 'Sell ' + shares + ' shares of ' + ticker;
+      document.getElementById('sell-price-input').value = currentPrice;
+      document.getElementById('sell-form').action = action;
+      document.getElementById('sell-modal').style.display = 'flex';
+    }
+    function closeSellModal() {
+      document.getElementById('sell-modal').style.display = 'none';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSellModal();
+    });
+    </script>"""
+
     msg = request.args.get('msg', '')
     msg_html = f'<div style="background:#1a2e1a;border:1px solid #22c55e;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#86efac">{msg}</div>' if msg else ''
     err = request.args.get('err', '')
     err_html = f'<div class="err-box">{err}</div>' if err else ''
 
-    content = err_html + msg_html + summary + add_form + pos_html + hist_html
+    content = err_html + msg_html + summary + add_form + pos_html + hist_html + sell_modal
     return page_wrap("Jimmy's ASX Picks", 'asxpicks', content)
 
 
@@ -2674,12 +2766,134 @@ def asx_picks_image(filename):
 def asx_picks_sell(pick_id):
     if not is_admin():
         return redirect('/asx/picks')
-    sell_price = float(request.form.get('sell_price', 0))
-    ok, result = sell_asx_stock(pick_id, sell_price)
+    sell_price  = float(request.form.get('sell_price', 0))
+    sell_reason = request.form.get('sell_reason', '').strip()
+
+    sell_image = ''
+    file = request.files.get('sell_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        sell_image = f"sell_{pick_id}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, sell_image))
+
+    ok, result = sell_asx_stock(pick_id, sell_price, sell_reason, sell_image)
     if ok:
         sign = '+' if result >= 0 else ''
         return redirect(f'/asx/picks?msg=Sold+position+P%26L+{sign}A${result:.2f}')
     return redirect(f'/asx/picks?err={result}')
+
+
+# ─── Trade Journal ────────────────────────────────────────────────────────────
+
+@app.route('/journal')
+def journal_page():
+    us_trades  = get_closed_trades()
+    asx_trades = get_closed_asx_trades()
+    all_trades = us_trades + asx_trades
+    all_trades.sort(key=lambda t: t['sell_date'], reverse=True)
+
+    total   = len(all_trades)
+    wins    = sum(1 for t in all_trades if t['pnl'] >= 0)
+    losses  = total - wins
+    total_pnl = sum(t['pnl'] for t in all_trades)
+    win_rate  = (wins / total * 100) if total else 0
+    pnl_color = '#22c55e' if total_pnl >= 0 else '#ef4444'
+    pnl_sign  = '+' if total_pnl >= 0 else ''
+
+    stats = f"""
+    <div class="grid4" style="margin-bottom:28px">
+      <div class="card">
+        <div class="stat-label">Closed Trades</div>
+        <div class="stat-value">{total}</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Win Rate</div>
+        <div class="stat-value" style="color:{'#22c55e' if win_rate>=50 else '#ef4444'}">{win_rate:.0f}%</div>
+        <div class="stat-sub">{wins}W / {losses}L</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Total Realised P&amp;L</div>
+        <div class="stat-value" style="color:{pnl_color}">{pnl_sign}${total_pnl:,.2f}</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Avg P&amp;L per Trade</div>
+        <div class="stat-value" style="color:{pnl_color}">{pnl_sign}${(total_pnl/total):,.2f}</div>
+      </div>
+    </div>""" if total else ''
+
+    cards = ''
+    for t in all_trades:
+        pnl_c = '#22c55e' if t['pnl'] >= 0 else '#ef4444'
+        sign  = '+' if t['pnl'] >= 0 else ''
+        market_badge = f'<span style="font-size:.72rem;padding:2px 8px;border-radius:4px;background:#1e3a5f;color:#60a5fa;font-weight:600">{t["market"]}</span>'
+
+        buy_img_html = ''
+        if t['buy_image']:
+            buy_img_html = f'<img src="/picks/image/{t["buy_image"]}" onclick="openLightbox(this.src)" style="width:100%;border-radius:6px;margin-bottom:8px;border:1px solid #2a2d3e;cursor:pointer">'
+
+        sell_img_html = ''
+        if t['sell_image']:
+            sell_img_html = f'<img src="/picks/image/{t["sell_image"]}" onclick="openLightbox(this.src)" style="width:100%;border-radius:6px;margin-bottom:8px;border:1px solid #2a2d3e;cursor:pointer">'
+
+        buy_reason_html  = f'<p style="color:#aaa;font-size:.83rem;line-height:1.5;margin:0">{t["buy_reason"]}</p>'  if t['buy_reason']  else ''
+        sell_reason_html = f'<p style="color:#aaa;font-size:.83rem;line-height:1.5;margin:0">{t["sell_reason"]}</p>' if t['sell_reason'] else ''
+
+        cards += f"""
+        <div class="card" style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:1.3rem;font-weight:700;color:#60a5fa">{t['ticker']}</span>
+              {market_badge}
+            </div>
+            <span style="font-size:1.1rem;font-weight:700;color:{pnl_c}">{sign}${t['pnl']:,.2f} ({sign}{t['pnl_pct']:.1f}%)</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:16px;font-size:.83rem">
+            <div><span style="color:#555">Bought</span><br><strong>{t['bought_date']}</strong></div>
+            <div><span style="color:#555">Sold</span><br><strong>{t['sell_date']}</strong></div>
+            <div><span style="color:#555">Buy Price</span><br><strong>${t['buy_price']:.4f}</strong></div>
+            <div><span style="color:#555">Sell Price</span><br><strong>${t['sell_price']:.4f}</strong></div>
+            <div><span style="color:#555">Shares</span><br><strong>{t['shares']:,.2f}</strong></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Buy Setup</div>
+              {buy_img_html}
+              {buy_reason_html}
+            </div>
+            <div>
+              <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Sell Setup</div>
+              {sell_img_html}
+              {sell_reason_html}
+            </div>
+          </div>
+        </div>"""
+
+    if not all_trades:
+        cards = '<p class="note">No closed trades yet. Sell a position from Jimmy\'s Picks or ASX Picks to start your journal.</p>'
+
+    lightbox = """
+    <div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out">
+      <img id="lightbox-img" style="max-width:92vw;max-height:92vh;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.8)">
+    </div>
+    <script>
+    function openLightbox(src){document.getElementById('lightbox-img').src=src;document.getElementById('lightbox').style.display='flex';}
+    function closeLightbox(){document.getElementById('lightbox').style.display='none';}
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
+    </script>"""
+
+    content = f"""
+    <section>
+      <h2>Trade Journal</h2>
+      <p style="color:#555;font-size:.88rem;margin-bottom:24px">Every closed trade — the good and the bad. Honesty builds trust.</p>
+      {stats}
+      {cards}
+    </section>
+    {lightbox}"""
+
+    return page_wrap('Trade Journal', 'journal', content)
 
 
 # ─── Fader Scanner ────────────────────────────────────────────────────────────
