@@ -3722,7 +3722,15 @@ def wick_page():
         .wick-table .wick-row:hover td {{ background:#1f2235; cursor:pointer; }}
         .wick-table .wick-row.active td {{ background:#1a2235; }}
         .wick-drop td {{ padding:0 !important; }}
+        .wick-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                            padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
+        .wick-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
       </style>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="wick-filter-btn active" id="wf-week" onclick="setWickFilter('week')">Last Week</button>
+        <button class="wick-filter-btn"         id="wf-all"  onclick="setWickFilter('all')">All Signals</button>
+        <span id="wick-count" style="color:#555;font-size:.78rem;margin-left:4px"></span>
+      </div>
       <table class="wick-table">
         <thead><tr>
           <th onclick="sortWick(this)">Ticker</th>
@@ -3756,6 +3764,37 @@ def wick_page():
       }});
       rows.forEach(r => tbody.appendChild(r));
     }}
+
+    // Find the most recent wick date across all rows
+    function getMostRecentWickDate() {{
+      let latest = '';
+      document.querySelectorAll('.wick-row').forEach(r => {{
+        const d = r.dataset.wickDate || '';
+        if (d > latest) latest = d;
+      }});
+      return latest;
+    }}
+
+    function setWickFilter(mode) {{
+      document.getElementById('wf-week').classList.toggle('active', mode === 'week');
+      document.getElementById('wf-all').classList.toggle('active',  mode === 'all');
+      const latestDate = getMostRecentWickDate();
+      let visible = 0;
+      document.querySelectorAll('.wick-row').forEach(r => {{
+        const show = (mode === 'all') || (r.dataset.wickDate === latestDate);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        // close any open drop if its row is hidden
+        if (!show) {{
+          const drop = document.getElementById('wdrop-' + r.dataset.ticker);
+          if (drop) {{ drop.remove(); r.classList.remove('active'); }}
+        }}
+      }});
+      document.getElementById('wick-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+    }}
+
+    // Default to last-week view on load
+    setWickFilter('week');
     </script>
     {chart_js}"""
 

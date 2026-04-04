@@ -166,7 +166,8 @@ def run_wick_scan(log_callback=None):
             current_price = closes[-1]
 
             # Scan each week within the lookback window
-            for idx in range(len(dates) - 1):
+            # Include the most recent candle (weeks_held will just be 0 — fresh signal)
+            for idx in range(len(dates)):
                 if dates[idx] < cutoff:
                     continue
 
