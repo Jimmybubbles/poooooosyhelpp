@@ -2493,21 +2493,164 @@ def asx_page():
     });
     </script>"""
 
+    # ── ASX breadth from sparklines ───────────────────────────────────────────
+    def asx_breadth(n):
+        up = down = flat = 0
+        for t in sorted(ASX_200):
+            c = sparklines.get(t, [])
+            if len(c) > n:
+                if   c[-1] > c[-1-n]: up   += 1
+                elif c[-1] < c[-1-n]: down += 1
+                else:                 flat += 1
+        total = up + down + flat
+        up_pct   = round(up   / total * 100, 1) if total else 0
+        down_pct = round(down / total * 100, 1) if total else 0
+        flat_pct = round(100 - up_pct - down_pct, 1)
+        return up, down, flat, up_pct, down_pct, flat_pct
+
+    ad_up, ad_dn, ad_fl, ad_up_pct, ad_dn_pct, ad_fl_pct = asx_breadth(1)
+    aw_up, aw_dn, aw_fl, aw_up_pct, aw_dn_pct, aw_fl_pct = asx_breadth(5)
+    am_up, am_dn, am_fl, am_up_pct, am_dn_pct, am_fl_pct = asx_breadth(21)
+
+    asx_donut_html = ''
+    for period, up_pct, dn_pct, fl_pct, up, dn in [
+        ('Day',   ad_up_pct, ad_dn_pct, ad_fl_pct, ad_up, ad_dn),
+        ('Week',  aw_up_pct, aw_dn_pct, aw_fl_pct, aw_up, aw_dn),
+        ('Month', am_up_pct, am_dn_pct, am_fl_pct, am_up, am_dn),
+    ]:
+        pid = 'asx-' + period.lower()
+        cs = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff;white-space:nowrap'
+        asx_donut_html += (
+            f'<div style="text-align:center">'
+            f'<div style="font-size:.82rem;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{period}</div>'
+            f'<div style="position:relative;width:150px;height:150px">'
+            f'<canvas id="donut-{pid}" width="150" height="150"></canvas>'
+            f'<div style="{cs}">{up_pct}%</div>'
+            f'</div>'
+            f'<div style="font-size:.88rem;margin-top:10px;font-weight:600">'
+            f'<span style="color:#22c55e">&#9650; {up} up</span>'
+            f'<span style="color:#555;margin:0 8px">/</span>'
+            f'<span style="color:#ef4444">&#9660; {dn} down</span>'
+            f'</div></div>'
+        )
+
+    # Updated rows with bigger fonts + day %
+    rows_html2 = ''
+    for ticker in sorted(ASX_200):
+        closes  = sparklines.get(ticker, [])
+        price   = latest.get(ticker)
+        svg2    = sparkline_svg(closes)
+        price_s = f'A${price:.3f}' if price else '—'
+        has_row = ticker in with_data
+        day_chg = ''
+        if len(closes) >= 2:
+            pct = (closes[-1] - closes[-2]) / closes[-2] * 100
+            col = '#22c55e' if pct >= 0 else '#ef4444'
+            day_chg = f'<span style="color:{col};font-size:.95rem;font-weight:600">{"+" if pct>=0 else ""}{pct:.2f}%</span>'
+        rows_html2 += f"""
+        <tr class="asx-row" data-ticker="{ticker}" style="cursor:{'pointer' if has_row else 'default'}">
+          <td>
+            <div style="display:flex;align-items:center;gap:12px">
+              <strong style="color:#60a5fa;min-width:68px;font-size:1rem">{ticker}</strong>
+              {svg2 if has_row else ''}
+            </div>
+          </td>
+          <td style="font-weight:700;color:#fff;font-size:1rem">{price_s}</td>
+          <td style="font-size:.95rem;font-weight:600">{day_chg}</td>
+        </tr>"""
+
     content = f"""
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
+    <!-- Dashboard header -->
     <section style="margin-bottom:20px">
-      <h2>ASX 200 <span style="color:#555;font-weight:400;font-size:.8rem;text-transform:none;letter-spacing:0">({len(with_data)} tickers with data · click row to expand chart)</span></h2>
-      <div class="btn-row" style="margin-bottom:0">{dl_btn}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span></span>
+        <div class="btn-row">{dl_btn}</div>
+      </div>
+
+      <!-- STW area chart -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:.78rem;color:#888;font-weight:600;margin-bottom:8px">
+          STW &nbsp;<span style="color:#555;font-weight:400">— ASX 200 ETF · 60 Day</span>
+        </div>
+        <div id="asx-etf-area" style="height:220px;background:#0a0c14;border-radius:8px"></div>
+      </div>
+
+      <!-- Breadth donuts -->
+      <div>
+        <p style="font-size:.88rem;color:#888;margin-bottom:14px">
+          Percentage of <strong style="color:#fff">ASX 200</strong> stocks moving up or down over each time period
+        </p>
+        <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
+          {asx_donut_html}
+        </div>
+      </div>
+
+      <div style="margin-top:14px;font-size:.8rem;color:#444">
+        {len(with_data)} tickers with data &nbsp;·&nbsp; click any row to expand chart
+      </div>
     </section>
+
+    <script>
+    // ASX ETF chart
+    (function(){{
+      fetch('/api/asx-chart/STW')
+        .then(r=>r.json())
+        .then(data=>{{
+          if(data.error||!data.ohlcv) return;
+          const recent = data.ohlcv.slice(-60);
+          const chart = LightweightCharts.createChart(document.getElementById('asx-etf-area'),{{
+            layout:{{background:{{color:'#0a0c14'}},textColor:'#555'}},
+            grid:{{vertLines:{{color:'#12141e'}},horzLines:{{color:'#12141e'}}}},
+            rightPriceScale:{{borderColor:'#1a1d2e'}},
+            timeScale:{{borderColor:'#1a1d2e',timeVisible:false}},
+            crosshair:{{mode:LightweightCharts.CrosshairMode.Normal}},
+            handleScroll:false, handleScale:false,
+          }});
+          const area = chart.addAreaSeries({{
+            lineColor:'#22c55e', topColor:'#22c55e44',
+            bottomColor:'#22c55e00', lineWidth:2,
+          }});
+          area.setData(recent.map(b=>({{time:b.time,value:b.close}})));
+          chart.timeScale().fitContent();
+        }}).catch(()=>{{}});
+    }})();
+    // Breadth donuts
+    (function(){{
+      const donuts = [
+        {{ id:'donut-asx-day',   up:{ad_up_pct}, dn:{ad_dn_pct}, fl:{ad_fl_pct} }},
+        {{ id:'donut-asx-week',  up:{aw_up_pct}, dn:{aw_dn_pct}, fl:{aw_fl_pct} }},
+        {{ id:'donut-asx-month', up:{am_up_pct}, dn:{am_dn_pct}, fl:{am_fl_pct} }},
+      ];
+      donuts.forEach(d => {{
+        const ctx = document.getElementById(d.id).getContext('2d');
+        new Chart(ctx, {{
+          type: 'doughnut',
+          data: {{ datasets: [{{ data:[d.up,d.dn,d.fl],
+            backgroundColor:['#22c55e','#ef4444','#1f2235'], borderWidth:0, hoverOffset:4 }}] }},
+          options: {{
+            cutout:'70%',
+            animation:{{ animateRotate:true, duration:1200, easing:'easeInOutQuart' }},
+            plugins:{{ legend:{{display:false}},
+              tooltip:{{ callbacks:{{ label: ctx=>['Up','Down','Flat'][ctx.dataIndex]+': '+ctx.parsed+'%' }} }} }}
+          }}
+        }});
+      }});
+    }})();
+    </script>
+
     {log_section}
     <section>
       <style>
-        .asx-table {{ width:100%; border-collapse:collapse; font-size:.85rem; }}
-        .asx-table th {{ text-align:left; padding:8px 12px; color:#555;
-                        border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; }}
+        .asx-table {{ width:100%; border-collapse:collapse; font-size:.95rem; }}
+        .asx-table th {{ text-align:left; padding:10px 14px; color:#777;
+                        border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; font-size:.82rem; }}
         .asx-table th:hover {{ color:#aaa; }}
         .asx-table th.sort-asc::after  {{ content:' ▲'; font-size:.65rem; color:#60a5fa; }}
         .asx-table th.sort-desc::after {{ content:' ▼'; font-size:.65rem; color:#60a5fa; }}
-        .asx-table td {{ padding:8px 12px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .asx-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
         .asx-table .asx-row:hover td {{ background:#1f2235; }}
         .asx-table .asx-row.active td {{ background:#1a2235; }}
         .asx-drop td {{ padding:0 !important; }}
@@ -2516,9 +2659,9 @@ def asx_page():
         <thead><tr>
           <th onclick="sortAsx(this)">Ticker</th>
           <th onclick="sortAsx(this)">Price (AUD)</th>
-          <th>Market</th>
+          <th onclick="sortAsx(this)">Day %</th>
         </tr></thead>
-        <tbody id="asx-tbody">{rows_html}</tbody>
+        <tbody id="asx-tbody">{rows_html2}</tbody>
       </table>
     </section>
     <script>
@@ -2532,7 +2675,7 @@ def asx_page():
       rows.sort((a, b) => {{
         const av = a.cells[idx].textContent.trim();
         const bv = b.cells[idx].textContent.trim();
-        const an = parseFloat(av.replace('A$','')), bn = parseFloat(bv.replace('A$',''));
+        const an = parseFloat(av.replace('A$','').replace('%','')), bn = parseFloat(bv.replace('A$','').replace('%',''));
         const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
         return asc ? cmp : -cmp;
       }});
@@ -3575,13 +3718,13 @@ def us_index_page(title, active_key, tickers, etf_ticker=''):
         rows_html += f"""
         <tr class="ux-row" data-ticker="{ticker}" style="cursor:{'pointer' if ticker in with_data else 'default'}">
           <td>
-            <div style="display:flex;align-items:center;gap:10px">
-              <strong style="color:#60a5fa;min-width:58px">{ticker}</strong>
+            <div style="display:flex;align-items:center;gap:12px">
+              <strong style="color:#60a5fa;min-width:68px;font-size:1rem">{ticker}</strong>
               {svg}
             </div>
           </td>
-          <td style="font-weight:600">{price_s}</td>
-          <td>{day_chg}</td>
+          <td style="font-weight:700;color:#fff;font-size:1rem">{price_s}</td>
+          <td style="font-size:.95rem;font-weight:600">{day_chg}</td>
         </tr>"""
 
     chart_js = """
@@ -3653,29 +3796,29 @@ def us_index_page(title, active_key, tickers, etf_ticker=''):
         ('Month', m_up_pct, m_dn_pct, m_fl_pct, m_up, m_dn),
     ]:
         pid = period.lower()
-        center_style = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.3rem;font-weight:800;color:#fff'
+        center_style = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff;white-space:nowrap'
         donut_html += (
             f'<div style="text-align:center">'
-            f'<div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">{period}</div>'
-            f'<div style="position:relative;width:110px;height:110px">'
-            f'<canvas id="donut-{pid}" width="110" height="110"></canvas>'
+            f'<div style="font-size:.82rem;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{period}</div>'
+            f'<div style="position:relative;width:150px;height:150px">'
+            f'<canvas id="donut-{pid}" width="150" height="150"></canvas>'
             f'<div style="{center_style}">{up_pct}%</div>'
             f'</div>'
-            f'<div style="font-size:.72rem;margin-top:6px">'
-            f'<span style="color:#22c55e">&#9650; {up}</span>'
-            f'<span style="color:#555;margin:0 4px">/</span>'
-            f'<span style="color:#ef4444">&#9660; {dn}</span>'
+            f'<div style="font-size:.88rem;margin-top:10px;font-weight:600">'
+            f'<span style="color:#22c55e">&#9650; {up} up</span>'
+            f'<span style="color:#555;margin:0 8px">/</span>'
+            f'<span style="color:#ef4444">&#9660; {dn} down</span>'
             f'</div></div>'
         )
 
     etf_section = ''
     if etf_ticker:
         etf_section = f"""
-        <div id="etf-chart-wrap" style="flex:1;min-width:0">
-          <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
-            {etf_ticker} — 60 Day
+        <div id="etf-chart-wrap">
+          <div style="font-size:.78rem;color:#888;margin-bottom:8px;font-weight:600">
+            {etf_ticker} &nbsp;<span style="color:#555;font-weight:400">— 60 Day</span>
           </div>
-          <div id="etf-area" style="height:180px;background:#0a0c14;border-radius:6px"></div>
+          <div id="etf-area" style="height:220px;background:#0a0c14;border-radius:8px"></div>
         </div>
         <script>
         (function(){{
@@ -3709,19 +3852,21 @@ def us_index_page(title, active_key, tickers, etf_ticker=''):
 
     <!-- Dashboard header -->
     <section style="margin-bottom:20px">
-      <div style="display:flex;gap:20px;align-items:stretch;flex-wrap:wrap">
 
-        {etf_section}
+      {etf_section}
 
-        <!-- Breadth donuts -->
-        <div style="display:flex;gap:16px;align-items:center;flex-shrink:0">
+      <!-- Breadth donuts -->
+      <div style="margin-top:18px">
+        <p style="font-size:.88rem;color:#888;margin-bottom:14px">
+          Percentage of <strong style="color:#fff">{title}</strong> stocks moving up or down over each time period
+        </p>
+        <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
           {donut_html}
         </div>
-
       </div>
 
-      <div style="margin-top:10px;font-size:.75rem;color:#444">
-        {len(with_data)} of {len(tickers)} tickers with data · click any row to expand chart
+      <div style="margin-top:14px;font-size:.8rem;color:#444">
+        {len(with_data)} of {len(tickers)} tickers with data &nbsp;·&nbsp; click any row to expand chart
       </div>
     </section>
 
@@ -3745,8 +3890,8 @@ def us_index_page(title, active_key, tickers, etf_ticker=''):
             }}]
           }},
           options: {{
-            cutout: '72%',
-            animation: {{ animateRotate: true, duration: 1000, easing: 'easeInOutQuart' }},
+            cutout: '70%',
+            animation: {{ animateRotate: true, duration: 1200, easing: 'easeInOutQuart' }},
             plugins: {{
               legend: {{ display: false }},
               tooltip: {{
@@ -3762,13 +3907,13 @@ def us_index_page(title, active_key, tickers, etf_ticker=''):
     </script>
     <section>
       <style>
-        .ux-table {{ width:100%; border-collapse:collapse; font-size:.85rem; }}
-        .ux-table th {{ text-align:left; padding:8px 12px; color:#555;
-                       border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; }}
+        .ux-table {{ width:100%; border-collapse:collapse; font-size:.95rem; }}
+        .ux-table th {{ text-align:left; padding:10px 14px; color:#777;
+                       border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; font-size:.82rem; }}
         .ux-table th:hover {{ color:#aaa; }}
         .ux-table th.sort-asc::after  {{ content:' ▲'; font-size:.65rem; color:#60a5fa; }}
         .ux-table th.sort-desc::after {{ content:' ▼'; font-size:.65rem; color:#60a5fa; }}
-        .ux-table td {{ padding:8px 12px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .ux-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
         .ux-table .ux-row:hover td {{ background:#1f2235; }}
         .ux-table .ux-row.active td {{ background:#1a2235; }}
         .ux-drop td {{ padding:0 !important; }}
