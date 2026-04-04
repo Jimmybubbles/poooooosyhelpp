@@ -763,17 +763,7 @@ def nav_html(active=''):
         auth_btn = f'<span style="font-size:.78rem;color:#aaa;margin-left:8px">Hi, {current_username()}</span> <a href="/ask/logout" style="font-size:.78rem;color:#555;margin-left:6px">Logout</a>'
     else:
         auth_btn = '<a href="/ask/login" style="font-size:.78rem;padding:5px 12px;background:#252839;border-radius:6px;color:#aaa">Login</a>'
-    admin_nav = ''
-    if is_admin():
-        admin_nav = f"""
-        <span style="width:1px;background:#2a2d3e;align-self:stretch;margin:0 4px"></span>
-        {lnk('/scan','Channel Scan','scan')}
-        {lnk('/results','Results','results')}
-        {lnk('/range','Range Levels','range')}
-        {lnk('/fader','Fader Scan','fader')}
-        {lnk('/efi','EFI Scan','efi')}
-        {lnk('/log-view','Log','log')}
-        {lnk('/admin/analytics','Analytics','analytics')}"""
+    admin_lnk = f'<span style="width:1px;background:#2a2d3e;align-self:stretch;margin:0 4px"></span>{lnk("/admin","Admin","admin")}' if is_admin() else ''
 
     return f"""
     <header>
@@ -792,7 +782,7 @@ def nav_html(active=''):
         {lnk('/dividend','Dividend Picks','dividend')}
         {lnk('/journal','Trade Journal','journal')}
         {lnk('/ask','Ask Jimmy','ask')}
-        {admin_nav}
+        {admin_lnk}
       </nav>
       {badge}
       {auth_btn}
@@ -847,26 +837,6 @@ def index():
         running = _job_running
 
     err = f'<div class="err-box"><strong>DB Error:</strong> {stats["error"]}</div>' if stats['error'] else ''
-
-    last_refresh   = get_last_refresh_date()
-    refreshed_today = already_refreshed_today()
-
-    if not is_admin():
-        daily_btn = initial_btn = refresh_btn = ''
-    elif running:
-        daily_btn   = '<span class="btn btn-off">Run Daily Update</span>'
-        initial_btn = '<span class="btn btn-off">Run Initial Download</span>'
-        refresh_btn = '<span class="btn btn-off">⏳ Updating prices…</span>'
-    elif refreshed_today:
-        refresh_btn = '<a href="/run-refresh" class="btn btn-green" style="font-size:.95rem;padding:10px 22px">⟳ Update US &amp; ASX Prices</a>'
-        daily_btn   = '<a href="/run-daily" class="btn btn-blue">Run Daily Update</a>'
-        initial_btn = '<a href="/run-initial" class="btn btn-amber" onclick="return confirm(\'This takes 1–2 hours. Continue?\')">Run Initial Download</a>'
-    else:
-        refresh_btn = '<a href="/run-refresh" class="btn btn-green" style="font-size:.95rem;padding:10px 22px">⟳ Update US &amp; ASX Prices</a>'
-        daily_btn   = '<a href="/run-daily" class="btn btn-blue">Run Daily Update</a>'
-        initial_btn = '<a href="/run-initial" class="btn btn-amber" onclick="return confirm(\'This takes 1–2 hours. Continue?\')">Run Initial Download</a>'
-
-    refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Never updated today'
 
     def pnl_html(val):
         c = '#22c55e' if val >= 0 else '#ef4444'
@@ -1035,22 +1005,7 @@ def index():
       {'<table class="trade-table"><tr><th>Date</th><th>Ticker</th><th>Action</th><th>Price</th><th>Total</th><th>P&L</th></tr>' + hist_rows + '</table>' if hist_rows else '<p class="note">No trades yet. <a href="/picks">Add your first pick →</a></p>'}
     </section>
 
-    <!-- Admin data actions -->
-    {f'''<section>
-      <h2>Price Data</h2>
-      <div class="btn-row" style="margin-bottom:10px">
-        {refresh_btn}
-      </div>
-      <p class="note">{refresh_note} &nbsp;·&nbsp; Updates both US and ASX prices in one go.</p>
-      <details style="margin-top:12px">
-        <summary style="font-size:.75rem;color:#444;cursor:pointer">Advanced options</summary>
-        <div class="btn-row" style="margin-top:10px">
-          {daily_btn}
-          {initial_btn}
-        </div>
-        <p class="note">US only · Initial download takes 1–2 hours.</p>
-      </details>
-    </section>''' if is_admin() else ''}
+    {f'<div style="text-align:right;margin-top:4px"><a href="/admin" style="font-size:.78rem;color:#555">→ Admin Panel</a></div>' if is_admin() else ''}
     """
 
     return page_wrap('Dashboard', 'home', content, auto_refresh=running)
@@ -4319,6 +4274,185 @@ def admin_analytics():
     """
 
     return page_wrap('Analytics', 'analytics', content)
+
+
+# ─── Admin Hub ────────────────────────────────────────────────────────────────
+
+@app.route('/admin')
+def admin_hub():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    stats           = get_db_stats()
+    last_refresh    = get_last_refresh_date()
+    refreshed_today = already_refreshed_today()
+    s               = get_user_stats()
+
+    # ── Button states ─────────────────────────────────────────────────────────
+    def job_btn(label, href, style='btn-blue', confirm=None):
+        if running:
+            return f'<span class="btn btn-off">{label}</span>'
+        c = f' onclick="return confirm(\'{confirm}\')"' if confirm else ''
+        return f'<a href="{href}" class="btn {style}"{c}>{label}</a>'
+
+    refresh_btn  = job_btn('⟳ Update US & ASX Prices', '/run-refresh', 'btn-green')
+    daily_btn    = job_btn('Run Daily Update', '/run-daily')
+    initial_btn  = job_btn('Run Initial Download', '/run-initial', 'btn-amber',
+                           'This downloads 5 years for all tickers. Takes 1–2 hours. Continue?')
+    asx_dl_btn   = job_btn('Download / Update ASX Data', '/asx/download')
+    channel_btn  = job_btn('▶ Run Channel Scan', '/run-scan')
+    fader_btn    = job_btn('▶ Run Fader Scan', '/run-fader')
+    efi_btn      = job_btn('▶ Run EFI Scan', '/run-efi')
+    range_btn    = job_btn('▶ Run Range Scan', '/range/run')
+
+    refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
+
+    # ── Job status bar ────────────────────────────────────────────────────────
+    if running:
+        status_bar = f'<div style="background:#78350f;color:#fcd34d;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">⚙ {jname} is running… <a href="/log-view" style="color:#fcd34d;margin-left:12px">View log →</a></div>'
+    else:
+        status_bar = '<div style="background:#052e16;color:#86efac;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">● All jobs idle</div>'
+
+    # ── Last scan summaries ───────────────────────────────────────────────────
+    ch_last = load_last_results()
+    fd_last = load_last_fader_results()
+    ef_last = load_last_efi_results()
+
+    def scan_summary(last, results_url):
+        if not last:
+            return '<span style="color:#555;font-size:.8rem">No scan run yet</span>'
+        d = last.get('scan_date','?')
+        t = last.get('total', last.get('count', '?'))
+        return f'<span style="color:#aaa;font-size:.8rem">Last: {d} — {t} results &nbsp;<a href="{results_url}">View →</a></span>'
+
+    # ── User analytics rows ───────────────────────────────────────────────────
+    user_rows = ''
+    for u in s['users']:
+        q_color = '#60a5fa' if u['q_count'] > 0 else '#555'
+        user_rows += f"""<tr>
+          <td style="color:#aaa;font-size:.78rem">{u['id']}</td>
+          <td><strong>{u['username']}</strong></td>
+          <td style="color:#777;font-size:.83rem">{u['email']}</td>
+          <td style="color:#aaa;font-size:.83rem">{u['created_date']}</td>
+          <td style="color:{q_color};font-weight:700;text-align:center">{u['q_count']}</td>
+          <td style="color:#777;font-size:.83rem">{u['last_question']}</td>
+        </tr>"""
+
+    # ── Log preview ───────────────────────────────────────────────────────────
+    log_text = get_log()
+    log_tail  = '\n'.join(log_text.splitlines()[-30:])
+
+    content = f"""
+    <style>
+      .admin-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }}
+      .admin-grid3 {{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:20px; }}
+      .tool-card {{ background:#1a1d2e; border:1px solid #2a2d3e; border-radius:8px; padding:20px; }}
+      .tool-card h3 {{ font-size:.72rem; font-weight:600; color:#777; text-transform:uppercase;
+                       letter-spacing:.06em; margin-bottom:14px; }}
+      .a-table {{ width:100%; border-collapse:collapse; font-size:.85rem; }}
+      .a-table th {{ text-align:left; padding:9px 12px; color:#555; border-bottom:1px solid #2a2d3e; font-weight:500; }}
+      .a-table td {{ padding:9px 12px; border-bottom:1px solid #151820; }}
+      .a-table tr:hover td {{ background:#1f2235; }}
+    </style>
+
+    {status_bar}
+
+    <!-- DB stats -->
+    <div class="admin-grid3" style="margin-bottom:20px">
+      <div class="card">
+        <div class="stat-label">Tickers in DB</div>
+        <div class="stat-value">{stats['tickers']:,}</div>
+        <div class="stat-sub">{stats['rows']} total rows</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Latest Data</div>
+        <div class="stat-value" style="font-size:1.2rem">{stats['latest']}</div>
+        <div class="stat-sub">{refresh_note}</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Registered Users</div>
+        <div class="stat-value">{s['total_users']}</div>
+        <div class="stat-sub">{s['new_this_week']} new this week · {s['pending']} pending questions</div>
+      </div>
+    </div>
+
+    <!-- Price data + ASX -->
+    <div class="admin-grid">
+      <div class="tool-card">
+        <h3>Price Data — US &amp; ASX</h3>
+        <div class="btn-row" style="margin-bottom:10px">
+          {refresh_btn}
+        </div>
+        <div class="btn-row" style="margin-bottom:10px">
+          {daily_btn}
+          {asx_dl_btn}
+        </div>
+        <div class="btn-row">
+          {initial_btn}
+        </div>
+        <p class="note" style="margin-top:10px">Initial download takes 1–2 hours for all tickers.</p>
+      </div>
+
+      <!-- Scanners -->
+      <div class="tool-card">
+        <h3>Scanners</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{channel_btn}</div>
+            {scan_summary(ch_last, '/results')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{fader_btn}</div>
+            {scan_summary(fd_last, '/fader')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{efi_btn}</div>
+            {scan_summary(ef_last, '/efi')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{range_btn}</div>
+            {scan_summary(None, '/range')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanner result links -->
+    <section style="margin-bottom:20px">
+      <h2>Scanner Results &amp; Tools</h2>
+      <div class="btn-row">
+        <a href="/results" class="btn btn-blue" style="font-size:.82rem">Channel Results</a>
+        <a href="/fader"   class="btn btn-blue" style="font-size:.82rem">Fader Results</a>
+        <a href="/efi"     class="btn btn-blue" style="font-size:.82rem">EFI Results</a>
+        <a href="/range"   class="btn btn-blue" style="font-size:.82rem">Range Levels</a>
+        <a href="/scan"    class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
+        <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
+        <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
+      </div>
+    </section>
+
+    <!-- Log tail -->
+    <section style="margin-bottom:20px">
+      <h2>Log <span style="color:#555;font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem">(last 30 lines · <a href="/log-view">full log →</a>)</span></h2>
+      <pre style="max-height:220px">{log_tail.replace('<','&lt;')}</pre>
+    </section>
+
+    <!-- Users -->
+    <section>
+      <h2>Registered Users ({s['total_users']}) &nbsp;
+        <span style="color:{'#f59e0b' if s['pending']>0 else '#555'};font-weight:400;text-transform:none;letter-spacing:0;font-size:.78rem">
+          {f'{s["pending"]} pending questions — <a href="/ask">answer →</a>' if s['pending'] else 'No pending questions'}
+        </span>
+      </h2>
+      {'<table class="a-table"><thead><tr><th>#</th><th>Username</th><th>Email</th><th>Joined</th><th style="text-align:center">Questions</th><th>Last Question</th></tr></thead><tbody>' + user_rows + '</tbody></table>' if user_rows else '<p class="note">No users registered yet.</p>'}
+    </section>
+    """
+
+    return page_wrap('Admin', 'admin', content, auto_refresh=running)
 
 
 if __name__ == '__main__':
