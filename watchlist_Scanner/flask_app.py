@@ -126,6 +126,46 @@ MACRO_INSTRUMENTS = [
     ('^TNX',     'US 10Y Yield'),
 ]
 
+DOW_30 = [
+    'AAPL','AMGN','AMZN','AXP','BA','CAT','CRM','CSCO','CVX','DIS',
+    'DOW','GS','HD','HON','IBM','JNJ','JPM','KO','MCD','MMM',
+    'MRK','MSFT','NKE','NVDA','PG','TRV','UNH','V','VZ','WMT',
+]
+
+NASDAQ_100 = [
+    'AAPL','MSFT','NVDA','AMZN','META','GOOGL','GOOG','TSLA','AVGO','COST',
+    'NFLX','AMD','ADBE','QCOM','TMUS','TXN','AMGN','INTU','INTC','HON',
+    'AMAT','CMCSA','BKNG','ISRG','MU','LRCX','PANW','ADI','KLAC','REGN',
+    'CRWD','SNPS','CDNS','MELI','ORLY','ABNB','PYPL','CTAS','FTNT','NXPI',
+    'MNST','MDLZ','ADP','PAYX','ROST','PCAR','MAR','CPRT','CHTR','MCHP',
+    'WDAY','EXC','MRNA','KDP','DLTR','FAST','ODFL','EA','DXCM','CTSH',
+    'XEL','BIIB','IDXX','TEAM','ZS','VRTX','ANSS','TTWO','ILMN','GEHC',
+    'CEG','FANG','ON','CSGP','ENPH','WBD','LULU','MRVL','DASH','CSX',
+    'VRSK','SBUX','ASML','PDD','SIRI','ALGN','SWKS','NTES','SMCI','ARM',
+]
+
+SP500_TICKERS = [
+    'AAPL','MSFT','NVDA','AMZN','META','GOOGL','GOOG','TSLA','BRK-B','AVGO',
+    'LLY','JPM','UNH','XOM','V','JNJ','MA','PG','HD','COST',
+    'MRK','ABBV','CVX','WMT','BAC','KO','MCD','PEP','CSCO','ORCL',
+    'ACN','TMO','CRM','WFC','LIN','ABT','AMD','NFLX','DIS','QCOM',
+    'TXN','DHR','NKE','PM','INTC','HON','NEE','T','AMGN','UPS',
+    'IBM','CAT','SBUX','RTX','GE','SPGI','BMY','LOW','INTU','GS',
+    'DE','ELV','AMAT','MS','MMC','MDLZ','GILD','ADP','BKNG','SYK',
+    'BLK','CVS','CB','ADI','LRCX','AMT','ISRG','TJX','VRTX','C',
+    'REGN','SO','MO','ZTS','PLD','AXP','BSX','MMM','CL','SCHW',
+    'DUK','MU','CI','BDX','HCA','EOG','KLAC','PNC','USB','ITW',
+    'F','GM','ETN','CME','AON','PSA','FDX','TGT','SHW','NSC',
+    'MCO','ECL','MAR','PANW','SNPS','CDNS','CRWD','ORLY','MELI','BA',
+    'DELL','HPQ','HPE','PYPL','UBER','COIN','RIVN','SNAP','PINS','RBLX',
+    'PLTR','ANET','SMCI','ARM','AXON','DDOG','HUBS','ZM','DOCU','OKTA',
+    'SNOW','MDB','CFLT','GTLB','PATH','U','APPN','APPF','PCVX','TMDX',
+    'WRB','AFL','MET','PRU','TRV','ALL','AIG','PFG','UNM','CNO',
+    'DFS','COF','SYF','ADS','SLM','NAVI','CACC','OMF','ALLY','SOFI',
+    'WFC','KEY','RF','FITB','CFG','HBAN','ZION','MTB','CMA','SIVB',
+    'WAL','BOKF','WTFC','IBCP','FULT','SNV','GBCI','FBIZ','FFIN','TBBK',
+]
+
 def get_perf_data(tickers):
     """
     Returns {ticker: {d1, w1, m1, m3}} % change for each ticker.
@@ -175,6 +215,87 @@ def get_perf_data(tickers):
     except Exception as e:
         result['_error'] = str(e)
     return result
+
+
+def get_us_sparklines_batch(tickers, bars=60):
+    """Return {ticker: [last N closes]} from the prices table."""
+    from collections import defaultdict
+    result = defaultdict(list)
+    if not tickers:
+        return result
+    try:
+        conn = get_connection()
+        fmt = ','.join(['%s'] * len(tickers))
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT ticker, close FROM prices
+                WHERE ticker IN ({fmt})
+                  AND date >= DATE_SUB(CURDATE(), INTERVAL 95 DAY)
+                ORDER BY ticker, date ASC
+            """, [t.upper() for t in tickers])
+            for ticker, close in cur.fetchall():
+                if close is not None:
+                    result[ticker.upper()].append(float(close))
+        conn.close()
+        return {t: v[-bars:] for t, v in result.items()}
+    except Exception:
+        return result
+
+
+def get_us_latest_prices(tickers):
+    """Return {ticker: latest_close} from the prices table."""
+    result = {}
+    if not tickers:
+        return result
+    try:
+        conn = get_connection()
+        fmt = ','.join(['%s'] * len(tickers))
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT p.ticker, p.close
+                FROM prices p
+                INNER JOIN (
+                    SELECT ticker, MAX(date) AS max_date
+                    FROM prices WHERE ticker IN ({fmt})
+                    GROUP BY ticker
+                ) m ON p.ticker = m.ticker AND p.date = m.max_date
+            """, [t.upper() for t in tickers])
+            for ticker, close in cur.fetchall():
+                result[ticker.upper()] = float(close) if close else None
+        conn.close()
+    except Exception:
+        pass
+    return result
+
+
+def get_us_tickers_with_data(tickers):
+    """Return set of tickers from the given list that have data in prices table."""
+    if not tickers:
+        return set()
+    try:
+        conn = get_connection()
+        fmt = ','.join(['%s'] * len(tickers))
+        with conn.cursor() as cur:
+            cur.execute(f"SELECT DISTINCT ticker FROM prices WHERE ticker IN ({fmt})",
+                        [t.upper() for t in tickers])
+            result = {r[0].upper() for r in cur.fetchall()}
+        conn.close()
+        return result
+    except Exception:
+        return set()
+
+
+def get_us_all_tickers_with_data():
+    """Return all distinct tickers in the prices table."""
+    try:
+        conn = get_connection()
+        with conn.cursor() as cur:
+            cur.execute("SELECT DISTINCT ticker FROM prices ORDER BY ticker")
+            result = [r[0].upper() for r in cur.fetchall()]
+        conn.close()
+        return result
+    except Exception:
+        return []
 
 
 def perf_color(val):
@@ -642,26 +763,36 @@ def nav_html(active=''):
         auth_btn = f'<span style="font-size:.78rem;color:#aaa;margin-left:8px">Hi, {current_username()}</span> <a href="/ask/logout" style="font-size:.78rem;color:#555;margin-left:6px">Logout</a>'
     else:
         auth_btn = '<a href="/ask/login" style="font-size:.78rem;padding:5px 12px;background:#252839;border-radius:6px;color:#aaa">Login</a>'
+    admin_nav = ''
+    if is_admin():
+        admin_nav = f"""
+        <span style="width:1px;background:#2a2d3e;align-self:stretch;margin:0 4px"></span>
+        {lnk('/scan','Channel Scan','scan')}
+        {lnk('/results','Results','results')}
+        {lnk('/range','Range Levels','range')}
+        {lnk('/fader','Fader Scan','fader')}
+        {lnk('/efi','EFI Scan','efi')}
+        {lnk('/log-view','Log','log')}
+        {lnk('/admin/analytics','Analytics','analytics')}"""
+
     return f"""
     <header>
       <h1>Stock Manager</h1>
       <nav>
         {lnk('/','Dashboard','home')}
         {lnk('/how-it-works','How It Works','howitworks')}
-        {lnk('/scan','Channel Scanner','scan')}
-        {lnk('/results','Results','results')}
+        {lnk('/indexes','Indexes & ETFs','indexes')}
+        {lnk('/nasdaq','Nasdaq 100','nasdaq')}
+        {lnk('/dow','Dow 30','dow')}
+        {lnk('/sp500','S&amp;P 500','sp500')}
+        {lnk('/russell','Russell / Small Caps','russell')}
         {lnk('/picks',"Jimmy's Picks",'picks')}
-        {lnk('/journal','Trade Journal','journal')}
-        {lnk('/ask','Ask Jimmy','ask')}
-        {lnk('/range','Range Levels','range')}
         {lnk('/asx','ASX 200','asx')}
         {lnk('/asx/picks','ASX Picks','asxpicks')}
-        {lnk('/fader','Fader Scan','fader')}
-        {lnk('/efi','EFI Scan','efi')}
-        {lnk('/indexes','Indexes & ETFs','indexes')}
         {lnk('/dividend','Dividend Picks','dividend')}
-        {lnk('/log-view','Log','log')}
-        {lnk('/admin/analytics','Analytics','analytics') if is_admin() else ''}
+        {lnk('/journal','Trade Journal','journal')}
+        {lnk('/ask','Ask Jimmy','ask')}
+        {admin_nav}
       </nav>
       {badge}
       {auth_btn}
@@ -2499,6 +2630,50 @@ def asx_chart_api(ticker):
     })
 
 
+@app.route('/api/us-chart/<ticker>')
+def us_chart_api(ticker):
+    ticker = ticker.upper()
+    try:
+        conn = get_connection()
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT date, open, high, low, close, volume
+                FROM prices WHERE ticker = %s ORDER BY date ASC
+            """, (ticker,))
+            rows = cur.fetchall()
+        conn.close()
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+    if not rows:
+        return jsonify({'error': f'No data for {ticker}'})
+
+    dates  = [str(r[0]) for r in rows]
+    opens  = [float(r[1]) for r in rows]
+    highs  = [float(r[2]) for r in rows]
+    lows   = [float(r[3]) for r in rows]
+    closes = [float(r[4]) for r in rows]
+    vols   = [int(r[5]) if r[5] else 0 for r in rows]
+
+    close_s = pd.Series(closes)
+    ema5  = close_s.ewm(span=5,  adjust=False).mean().tolist()
+    ema26 = close_s.ewm(span=26, adjust=False).mean().tolist()
+
+    ohlcv  = [{'time': dates[i], 'open': opens[i], 'high': highs[i],
+               'low': lows[i], 'close': closes[i]} for i in range(len(dates))]
+    volume = [{'time': dates[i], 'value': vols[i],
+               'color': '#22c55e44' if closes[i] >= opens[i] else '#ef444444'}
+              for i in range(len(dates))]
+    e5  = [{'time': dates[i], 'value': ema5[i]}  for i in range(len(dates))]
+    e26 = [{'time': dates[i], 'value': ema26[i]} for i in range(len(dates))]
+
+    return jsonify({
+        'ohlcv': ohlcv, 'volume': volume, 'ema5': e5, 'ema26': e26,
+        'bars': len(ohlcv),
+        'date_range': f"{dates[0]} → {dates[-1]}" if dates else '',
+    })
+
+
 # ─── ASX Picks ────────────────────────────────────────────────────────────────
 
 @app.route('/asx/picks')
@@ -3402,6 +3577,169 @@ def indexes_page():
     </div>
     """
     return page_wrap('Indexes & ETFs', 'indexes', content)
+
+
+def us_index_page(title, active_key, tickers):
+    """Generic page builder for US index tabs (Dow/Nasdaq/S&P/Russell)."""
+    sparklines = get_us_sparklines_batch(tickers)
+    latest     = get_us_latest_prices(tickers)
+    with_data  = get_us_tickers_with_data(tickers)
+
+    rows_html = ''
+    for ticker in tickers:
+        closes  = sparklines.get(ticker, [])
+        price   = latest.get(ticker)
+        svg     = sparkline_svg(closes) if ticker in with_data else ''
+        price_s = f'${price:,.2f}' if price else '—'
+        day_chg = ''
+        if len(closes) >= 2:
+            pct = (closes[-1] - closes[-2]) / closes[-2] * 100
+            col = '#22c55e' if pct >= 0 else '#ef4444'
+            day_chg = f'<span style="color:{col};font-size:.78rem">{"+" if pct>=0 else ""}{pct:.2f}%</span>'
+        rows_html += f"""
+        <tr class="ux-row" data-ticker="{ticker}" style="cursor:{'pointer' if ticker in with_data else 'default'}">
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <strong style="color:#60a5fa;min-width:58px">{ticker}</strong>
+              {svg}
+            </div>
+          </td>
+          <td style="font-weight:600">{price_s}</td>
+          <td>{day_chg}</td>
+        </tr>"""
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    document.querySelectorAll('.ux-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker = row.dataset.ticker;
+        const existId = 'udrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.ux-drop').forEach(d => d.remove());
+        document.querySelectorAll('.ux-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'ux-drop';
+        drop.innerHTML = `<td colspan="3" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker} <span style="color:#555;font-size:.78rem">NYSE/NASDAQ</span></span>
+            <span style="color:#555;font-size:.75rem" id="us-${ticker}">Loading...</span>
+          </div>
+          <div id="um-${ticker}" style="height:340px;background:#0a0c14;border-radius:6px"></div>
+          <div id="uv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('us-' + ticker).textContent = data.error; return; }
+            document.getElementById('us-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('um-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            chart.timeScale().fitContent();
+            const vc = LightweightCharts.createChart(document.getElementById('uv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('us-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>{title} <span style="color:#555;font-weight:400;font-size:.8rem;text-transform:none;letter-spacing:0">({len(with_data)} of {len(tickers)} tickers with data · click row to expand chart)</span></h2>
+    </section>
+    <section>
+      <style>
+        .ux-table {{ width:100%; border-collapse:collapse; font-size:.85rem; }}
+        .ux-table th {{ text-align:left; padding:8px 12px; color:#555;
+                       border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; }}
+        .ux-table th:hover {{ color:#aaa; }}
+        .ux-table th.sort-asc::after  {{ content:' ▲'; font-size:.65rem; color:#60a5fa; }}
+        .ux-table th.sort-desc::after {{ content:' ▼'; font-size:.65rem; color:#60a5fa; }}
+        .ux-table td {{ padding:8px 12px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .ux-table .ux-row:hover td {{ background:#1f2235; }}
+        .ux-table .ux-row.active td {{ background:#1a2235; }}
+        .ux-drop td {{ padding:0 !important; }}
+      </style>
+      <table class="ux-table">
+        <thead><tr>
+          <th onclick="sortUx(this)">Ticker</th>
+          <th onclick="sortUx(this)">Price (USD)</th>
+          <th onclick="sortUx(this)">Day %</th>
+        </tr></thead>
+        <tbody id="ux-tbody">{rows_html}</tbody>
+      </table>
+    </section>
+    <script>
+    function sortUx(th) {{
+      const tbody = document.getElementById('ux-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.ux-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace('$','').replace(',','')), bn = parseFloat(bv.replace('$','').replace(',',''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+    </script>
+    {chart_js}"""
+
+    return page_wrap(title, active_key, content)
+
+
+@app.route('/dow')
+def dow_page():
+    return us_index_page('Dow Jones 30', 'dow', DOW_30)
+
+
+@app.route('/nasdaq')
+def nasdaq_page():
+    return us_index_page('Nasdaq 100', 'nasdaq', NASDAQ_100)
+
+
+@app.route('/sp500')
+def sp500_page():
+    return us_index_page('S&P 500', 'sp500', SP500_TICKERS)
+
+
+@app.route('/russell')
+def russell_page():
+    known = set(DOW_30) | set(NASDAQ_100) | set(SP500_TICKERS)
+    all_us = get_us_all_tickers_with_data()
+    russell_tickers = sorted(t for t in all_us if t not in known)
+    return us_index_page('Russell / Small Caps', 'russell', russell_tickers)
 
 
 # ─── How It Works ─────────────────────────────────────────────────────────────
