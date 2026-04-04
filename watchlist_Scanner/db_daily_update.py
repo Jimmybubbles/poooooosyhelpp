@@ -36,6 +36,19 @@ def add_to_skip_list(ticker):
         f.write(ticker.upper() + '\n')
 
 
+def remove_from_csv(ticker):
+    """Remove a ticker row from 5000.csv."""
+    try:
+        df = pd.read_csv(TICKER_FILE)
+        col = 'Ticker' if 'Ticker' in df.columns else df.columns[0]
+        before = len(df)
+        df = df[df[col].str.upper() != ticker.upper()]
+        if len(df) < before:
+            df.to_csv(TICKER_FILE, index=False)
+    except Exception:
+        pass
+
+
 def get_connection():
     return pymysql.connect(
         host=DB_HOST,
@@ -169,14 +182,16 @@ def main():
                 if last_date is None:
                     # Never in DB and no yfinance data — skip forever
                     add_to_skip_list(ticker)
-                    print(f"[{i}/{len(tickers)}] {ticker}: not found on yfinance — added to skip list")
+                    remove_from_csv(ticker)
+                    print(f"[{i}/{len(tickers)}] {ticker}: not found on yfinance — removed from 5000.csv")
                 elif (today - last_date).days > DELIST_THRESHOLD_DAYS:
                     # In DB but data is stale — delete and skip forever
                     with conn.cursor() as cursor:
                         cursor.execute("DELETE FROM prices WHERE ticker = %s", (ticker.upper(),))
                     conn.commit()
                     add_to_skip_list(ticker)
-                    print(f"[{i}/{len(tickers)}] {ticker}: DELETED (no data for {(today - last_date).days} days) — added to skip list")
+                    remove_from_csv(ticker)
+                    print(f"[{i}/{len(tickers)}] {ticker}: DELETED (no data for {(today - last_date).days} days) — removed from 5000.csv")
                     deleted += 1
                 else:
                     print(f"[{i}/{len(tickers)}] {ticker}: no new data")
