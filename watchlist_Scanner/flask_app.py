@@ -3557,7 +3557,7 @@ def wick_page():
             gs   = '+' if r['gain_pct'] >= 0 else ''
             held = r['weeks_held']
             rows_html += f"""
-            <tr class="wick-row" data-ticker="{r['ticker']}">
+            <tr class="wick-row" data-ticker="{r['ticker']}" data-wick-date="{r['wick_date']}">
               <td><strong style="color:#60a5fa;font-size:1rem">{r['ticker']}</strong></td>
               <td style="color:#aaa">{r['wick_date']}</td>
               <td style="text-align:center">
@@ -3579,10 +3579,38 @@ def wick_page():
     chart_js = """
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     <script>
+    class VerticalLine {
+      constructor(time, color = '#ef4444') {
+        this._time = time;
+        this._color = color;
+        this._chart = null;
+      }
+      attached({ chart }) { this._chart = chart; }
+      detached() {}
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = 2;
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+
     document.querySelectorAll('.wick-row').forEach(row => {
       row.addEventListener('click', () => {
-        const ticker = row.dataset.ticker;
-        const existId = 'wdrop-' + ticker;
+        const ticker   = row.dataset.ticker;
+        const wickDate = row.dataset.wickDate;
+        const existId  = 'wdrop-' + ticker;
         const exist = document.getElementById(existId);
         if (exist) { exist.remove(); row.classList.remove('active'); return; }
         document.querySelectorAll('.wick-drop').forEach(d => d.remove());
@@ -3617,6 +3645,7 @@ def wick_page():
               wickUpColor: '#22c55e', wickDownColor: '#ef4444',
             });
             candles.setData(data.ohlcv);
+            candles.attachPrimitive(new VerticalLine(wickDate));
             const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
             const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
             ema5.setData(data.ema5); ema26.setData(data.ema26);
