@@ -33,6 +33,7 @@ from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT, ADMIN_PAS
 from db_channel_scanner import run_scan, load_last_results, get_connection, get_ticker_data
 from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
+from db_wick_scanner import run_wick_scan, load_last_wick_results
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes,
                       get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR)
@@ -3489,6 +3490,223 @@ def run_fader_route():
     return redirect('/fader')
 
 
+# ─── Wick Scanner ─────────────────────────────────────────────────────────────
+
+def _run_wick_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Wick Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_wick_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_wick_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Wick Scan'
+    threading.Thread(target=_run_wick_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-wick')
+def run_wick():
+    if not is_admin():
+        return redirect('/admin')
+    start_wick_scan()
+    return redirect('/wick')
+
+
+@app.route('/wick')
+def wick_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_wick_results()
+
+    if running and jname == 'Wick Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-wick" class="btn btn-blue">▶ Run Wick Scan</a>'
+
+    def score_color(s):
+        if s >= 8:  return '#22c55e'
+        if s >= 5:  return '#f59e0b'
+        return '#555'
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc   = r['score']
+            gc   = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs   = '+' if r['gain_pct'] >= 0 else ''
+            held = r['weeks_held']
+            rows_html += f"""
+            <tr class="wick-row" data-ticker="{r['ticker']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">{r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['wick_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#aaa">{held}w</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:#fff;font-weight:600">${r['current_price']:,.4f}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    document.querySelectorAll('.wick-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker = row.dataset.ticker;
+        const existId = 'wdrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.wick-drop').forEach(d => d.remove());
+        document.querySelectorAll('.wick-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'wick-drop';
+        drop.innerHTML = `<td colspan="8" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="ws-${ticker}">Loading...</span>
+          </div>
+          <div id="wm-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="wv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('ws-' + ticker).textContent = data.error; return; }
+            document.getElementById('ws-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('wm-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: 0, to: barCount + Math.round(barCount * 0.9) });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('wv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('ws-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Weekly Wick Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Finds weekly candles with a long lower wick (2×+ body) that have closed in the
+        top 30% of range — and scores them by how many subsequent weeks have held above
+        the wick low. Higher score = stronger signal.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Wick Scan" else ''}
+
+    <section>
+      <style>
+        .wick-table {{ width:100%; border-collapse:collapse; font-size:.92rem; }}
+        .wick-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                         border-bottom:1px solid #2a2d3e; font-weight:500;
+                         cursor:pointer; user-select:none; }}
+        .wick-table th:hover {{ color:#aaa; }}
+        .wick-table th.sort-asc::after  {{ content:' ▲'; font-size:.6rem; color:#60a5fa; }}
+        .wick-table th.sort-desc::after {{ content:' ▼'; font-size:.6rem; color:#60a5fa; }}
+        .wick-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .wick-table .wick-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .wick-table .wick-row.active td {{ background:#1a2235; }}
+        .wick-drop td {{ padding:0 !important; }}
+      </style>
+      <table class="wick-table">
+        <thead><tr>
+          <th onclick="sortWick(this)">Ticker</th>
+          <th onclick="sortWick(this)">Wick Date</th>
+          <th onclick="sortWick(this)" style="text-align:center">Score</th>
+          <th onclick="sortWick(this)">Wick ×</th>
+          <th onclick="sortWick(this)">Held</th>
+          <th onclick="sortWick(this)">Close %</th>
+          <th onclick="sortWick(this)">Current</th>
+          <th onclick="sortWick(this)">Gain</th>
+        </tr></thead>
+        <tbody id="wick-tbody">
+          {rows_html if rows_html else '<tr><td colspan="8" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    <script>
+    function sortWick(th) {{
+      const tbody = document.getElementById('wick-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.wick-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+    </script>
+    {chart_js}"""
+
+    return page_wrap('Wick Scanner', 'wick', content, auto_refresh=(running and jname == 'Wick Scan'))
+
+
 # ─── EFI Scanner ──────────────────────────────────────────────────────────────
 
 def _run_efi_scan_job():
@@ -4588,6 +4806,7 @@ def admin_hub():
     fader_btn    = job_btn('▶ Run Fader Scan', '/run-fader')
     efi_btn      = job_btn('▶ Run EFI Scan', '/run-efi')
     range_btn    = job_btn('▶ Run Range Scan', '/range/run')
+    wick_btn     = job_btn('▶ Run Wick Scan', '/run-wick')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
 
@@ -4598,9 +4817,10 @@ def admin_hub():
         status_bar = '<div style="background:#052e16;color:#86efac;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">● All jobs idle</div>'
 
     # ── Last scan summaries ───────────────────────────────────────────────────
-    ch_last = load_last_results()
-    fd_last = load_last_fader_results()
-    ef_last = load_last_efi_results()
+    ch_last   = load_last_results()
+    fd_last   = load_last_fader_results()
+    ef_last   = load_last_efi_results()
+    wick_last = load_last_wick_results()
 
     def scan_summary(last, results_url):
         if not last:
@@ -4697,6 +4917,10 @@ def admin_hub():
             <div class="btn-row" style="margin-bottom:6px">{range_btn}</div>
             {scan_summary(None, '/range')}
           </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{wick_btn}</div>
+            {scan_summary(wick_last, '/wick')}
+          </div>
         </div>
       </div>
     </div>
@@ -4710,6 +4934,7 @@ def admin_hub():
         <a href="/efi"     class="btn btn-blue" style="font-size:.82rem">EFI Results</a>
         <a href="/range"   class="btn btn-blue" style="font-size:.82rem">Range Levels</a>
         <a href="/scan"    class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
+        <a href="/wick"     class="btn btn-blue" style="font-size:.82rem">Wick Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
       </div>
