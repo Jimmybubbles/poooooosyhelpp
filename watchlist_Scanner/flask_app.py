@@ -2476,6 +2476,7 @@ def asx_page():
             const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
             ema5.setData(data.ema5); ema26.setData(data.ema26);
             chart.timeScale().fitContent();
+            chart.timeScale().applyOptions({ rightOffset: 12 });
             chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
             const vc = LightweightCharts.createChart(document.getElementById('av-' + ticker), {
               layout: { background: { color: '#0a0c14' }, textColor: '#888' },
@@ -3772,6 +3773,7 @@ def us_index_page(title, active_key, tickers, etf_ticker=''):
             const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
             ema5.setData(data.ema5); ema26.setData(data.ema26);
             chart.timeScale().fitContent();
+            chart.timeScale().applyOptions({ rightOffset: 12 });
             chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
             const vc = LightweightCharts.createChart(document.getElementById('uv-' + ticker), {
               layout: { background: { color: '#0a0c14' }, textColor: '#888' },
