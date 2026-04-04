@@ -3645,7 +3645,16 @@ def wick_page():
               wickUpColor: '#22c55e', wickDownColor: '#ef4444',
             });
             candles.setData(data.ohlcv);
-            candles.attachPrimitive(new VerticalLine(wickDate));
+            // Find closest actual trading day in the data to the wick date
+            // (weekly wick date is a Friday that may not be in the daily series)
+            const wickMs = new Date(wickDate).getTime();
+            let snapDate = wickDate;
+            let minDiff = Infinity;
+            for (const bar of data.ohlcv) {
+              const diff = Math.abs(new Date(bar.time).getTime() - wickMs);
+              if (diff < minDiff) { minDiff = diff; snapDate = bar.time; }
+            }
+            candles.attachPrimitive(new VerticalLine(snapDate));
             const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
             const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
             ema5.setData(data.ema5); ema26.setData(data.ema26);
