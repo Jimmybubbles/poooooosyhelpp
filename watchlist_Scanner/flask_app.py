@@ -3534,11 +3534,32 @@ def indexes_page():
     return page_wrap('Indexes & ETFs', 'indexes', content)
 
 
-def us_index_page(title, active_key, tickers):
+def us_index_page(title, active_key, tickers, etf_ticker=''):
     """Generic page builder for US index tabs (Dow/Nasdaq/S&P/Russell)."""
     sparklines = get_us_sparklines_batch(tickers)
     latest     = get_us_latest_prices(tickers)
     with_data  = get_us_tickers_with_data(tickers)
+
+    # ── Breadth calculation from sparklines ──────────────────────────────────
+    def breadth(n):
+        up = down = flat = no_data = 0
+        for t in tickers:
+            c = sparklines.get(t, [])
+            if len(c) > n:
+                if   c[-1] > c[-1-n]: up   += 1
+                elif c[-1] < c[-1-n]: down += 1
+                else:                 flat += 1
+            else:
+                no_data += 1
+        total = up + down + flat
+        up_pct   = round(up   / total * 100, 1) if total else 0
+        down_pct = round(down / total * 100, 1) if total else 0
+        flat_pct = round(100 - up_pct - down_pct, 1)
+        return up, down, flat, up_pct, down_pct, flat_pct, total
+
+    d_up,  d_dn,  d_fl,  d_up_pct,  d_dn_pct,  d_fl_pct,  d_tot  = breadth(1)
+    w_up,  w_dn,  w_fl,  w_up_pct,  w_dn_pct,  w_fl_pct,  w_tot  = breadth(5)
+    m_up,  m_dn,  m_fl,  m_up_pct,  m_dn_pct,  m_fl_pct,  m_tot  = breadth(21)
 
     rows_html = ''
     for ticker in tickers:
@@ -3564,7 +3585,6 @@ def us_index_page(title, active_key, tickers):
         </tr>"""
 
     chart_js = """
-    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     <script>
     document.querySelectorAll('.ux-row').forEach(row => {
       row.addEventListener('click', () => {
@@ -3625,10 +3645,121 @@ def us_index_page(title, active_key, tickers):
     });
     </script>"""
 
+    # ── Build donut cards HTML ────────────────────────────────────────────────
+    donut_html = ''
+    for period, up_pct, dn_pct, fl_pct, up, dn in [
+        ('Day',   d_up_pct, d_dn_pct, d_fl_pct, d_up, d_dn),
+        ('Week',  w_up_pct, w_dn_pct, w_fl_pct, w_up, w_dn),
+        ('Month', m_up_pct, m_dn_pct, m_fl_pct, m_up, m_dn),
+    ]:
+        pid = period.lower()
+        center_style = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.3rem;font-weight:800;color:#fff'
+        donut_html += (
+            f'<div style="text-align:center">'
+            f'<div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">{period}</div>'
+            f'<div style="position:relative;width:110px;height:110px">'
+            f'<canvas id="donut-{pid}" width="110" height="110"></canvas>'
+            f'<div style="{center_style}">{up_pct}%</div>'
+            f'</div>'
+            f'<div style="font-size:.72rem;margin-top:6px">'
+            f'<span style="color:#22c55e">&#9650; {up}</span>'
+            f'<span style="color:#555;margin:0 4px">/</span>'
+            f'<span style="color:#ef4444">&#9660; {dn}</span>'
+            f'</div></div>'
+        )
+
+    etf_section = ''
+    if etf_ticker:
+        etf_section = f"""
+        <div id="etf-chart-wrap" style="flex:1;min-width:0">
+          <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">
+            {etf_ticker} — 60 Day
+          </div>
+          <div id="etf-area" style="height:180px;background:#0a0c14;border-radius:6px"></div>
+        </div>
+        <script>
+        (function(){{
+          fetch('/api/us-chart/{etf_ticker}')
+            .then(r=>r.json())
+            .then(data=>{{
+              if(data.error||!data.ohlcv) return;
+              const recent = data.ohlcv.slice(-60);
+              const LWC = LightweightCharts;
+              const chart = LWC.createChart(document.getElementById('etf-area'),{{
+                layout:{{background:{{color:'#0a0c14'}},textColor:'#555'}},
+                grid:{{vertLines:{{color:'#12141e'}},horzLines:{{color:'#12141e'}}}},
+                rightPriceScale:{{borderColor:'#1a1d2e'}},
+                timeScale:{{borderColor:'#1a1d2e',timeVisible:false}},
+                crosshair:{{mode:LightweightCharts.CrosshairMode.Normal}},
+                handleScroll:false, handleScale:false,
+              }});
+              const area = chart.addAreaSeries({{
+                lineColor:'#3b82f6', topColor:'#3b82f644',
+                bottomColor:'#3b82f600', lineWidth:2,
+              }});
+              area.setData(recent.map(b=>({{time:b.time,value:b.close}})));
+              chart.timeScale().fitContent();
+            }}).catch(()=>{{}});
+        }})();
+        </script>"""
+
     content = f"""
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
+    <!-- Dashboard header -->
     <section style="margin-bottom:20px">
-      <h2>{title} <span style="color:#555;font-weight:400;font-size:.8rem;text-transform:none;letter-spacing:0">({len(with_data)} of {len(tickers)} tickers with data · click row to expand chart)</span></h2>
+      <div style="display:flex;gap:20px;align-items:stretch;flex-wrap:wrap">
+
+        {etf_section}
+
+        <!-- Breadth donuts -->
+        <div style="display:flex;gap:16px;align-items:center;flex-shrink:0">
+          {donut_html}
+        </div>
+
+      </div>
+
+      <div style="margin-top:10px;font-size:.75rem;color:#444">
+        {len(with_data)} of {len(tickers)} tickers with data · click any row to expand chart
+      </div>
     </section>
+
+    <script>
+    (function(){{
+      const donuts = [
+        {{ id:'donut-day',   up:{d_up_pct}, dn:{d_dn_pct}, fl:{d_fl_pct} }},
+        {{ id:'donut-week',  up:{w_up_pct}, dn:{w_dn_pct}, fl:{w_fl_pct} }},
+        {{ id:'donut-month', up:{m_up_pct}, dn:{m_dn_pct}, fl:{m_fl_pct} }},
+      ];
+      donuts.forEach(d => {{
+        const ctx = document.getElementById(d.id).getContext('2d');
+        new Chart(ctx, {{
+          type: 'doughnut',
+          data: {{
+            datasets: [{{
+              data: [d.up, d.dn, d.fl],
+              backgroundColor: ['#22c55e','#ef4444','#1f2235'],
+              borderWidth: 0,
+              hoverOffset: 4,
+            }}]
+          }},
+          options: {{
+            cutout: '72%',
+            animation: {{ animateRotate: true, duration: 1000, easing: 'easeInOutQuart' }},
+            plugins: {{
+              legend: {{ display: false }},
+              tooltip: {{
+                callbacks: {{
+                  label: ctx => ['Up','Down','Flat'][ctx.dataIndex] + ': ' + ctx.parsed + '%'
+                }}
+              }}
+            }}
+          }}
+        }});
+      }});
+    }})();
+    </script>
     <section>
       <style>
         .ux-table {{ width:100%; border-collapse:collapse; font-size:.85rem; }}
@@ -3676,17 +3807,17 @@ def us_index_page(title, active_key, tickers):
 
 @app.route('/dow')
 def dow_page():
-    return us_index_page('Dow Jones 30', 'dow', DOW_30)
+    return us_index_page('Dow Jones 30', 'dow', DOW_30, etf_ticker='DIA')
 
 
 @app.route('/nasdaq')
 def nasdaq_page():
-    return us_index_page('Nasdaq 100', 'nasdaq', NASDAQ_100)
+    return us_index_page('Nasdaq 100', 'nasdaq', NASDAQ_100, etf_ticker='QQQ')
 
 
 @app.route('/sp500')
 def sp500_page():
-    return us_index_page('S&P 500', 'sp500', SP500_TICKERS)
+    return us_index_page('S&P 500', 'sp500', SP500_TICKERS, etf_ticker='SPY')
 
 
 @app.route('/russell')
@@ -3694,7 +3825,7 @@ def russell_page():
     known = set(DOW_30) | set(NASDAQ_100) | set(SP500_TICKERS)
     all_us = get_us_all_tickers_with_data()
     russell_tickers = sorted(t for t in all_us if t not in known)
-    return us_index_page('Russell / Small Caps', 'russell', russell_tickers)
+    return us_index_page('Russell / Small Caps', 'russell', russell_tickers, etf_ticker='IWM')
 
 
 # ─── How It Works ─────────────────────────────────────────────────────────────
