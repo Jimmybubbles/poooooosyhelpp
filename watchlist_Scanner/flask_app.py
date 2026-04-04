@@ -3579,14 +3579,11 @@ def wick_page():
     chart_js = """
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     <script>
-    class VerticalLine {
-      constructor(time, color = '#ef4444') {
-        this._time = time;
-        this._color = color;
-        this._chart = null;
+    // LightweightCharts v4 series primitive — paneViews() → renderer() → draw()
+    class VerticalLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
       }
-      attached({ chart }) { this._chart = chart; }
-      detached() {}
       draw(target) {
         const x = this._chart.timeScale().timeToCoordinate(this._time);
         if (x === null) return;
@@ -3598,12 +3595,32 @@ def wick_page():
           ctx.moveTo(xb, 0);
           ctx.lineTo(xb, scope.bitmapSize.height);
           ctx.strokeStyle = this._color;
-          ctx.lineWidth = 2;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
           ctx.setLineDash([6, 4]);
           ctx.stroke();
           ctx.restore();
         });
       }
+    }
+    class VerticalLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new VerticalLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class VerticalLine {
+      constructor(time, color = '#ef4444') {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new VerticalLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
     }
 
     document.querySelectorAll('.wick-row').forEach(row => {
