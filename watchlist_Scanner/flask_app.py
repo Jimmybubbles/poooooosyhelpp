@@ -3726,6 +3726,25 @@ def wick_page():
                             padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
         .wick-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
       </style>
+
+      <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="color:#aaa;font-size:.82rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW WATCHLIST</span>
+          <button onclick="copyTVList()" id="tv-copy-btn"
+            style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:5px 14px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem;font-weight:600">
+            Copy
+          </button>
+        </div>
+        <textarea id="tv-list" readonly rows="3"
+          style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:5px;
+                 color:#c7d2fe;font-size:.8rem;padding:8px 10px;resize:vertical;
+                 font-family:monospace;box-sizing:border-box;line-height:1.6"></textarea>
+        <p style="color:#444;font-size:.72rem;margin:6px 0 0">
+          Paste directly into TradingView → Watchlist → Import. Updates when you switch Last Week / All.
+        </p>
+      </div>
+
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
         <button class="wick-filter-btn active" id="wf-week" onclick="setWickFilter('week')">Last Week</button>
         <button class="wick-filter-btn"         id="wf-all"  onclick="setWickFilter('all')">All Signals</button>
@@ -3791,6 +3810,34 @@ def wick_page():
         }}
       }});
       document.getElementById('wick-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+      updateTVList();
+    }}
+
+    function updateTVList() {{
+      const tickers = [];
+      document.querySelectorAll('.wick-row').forEach(r => {{
+        if (r.style.display !== 'none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById('tv-list').value = tickers.join(',');
+    }}
+
+    function copyTVList() {{
+      const ta = document.getElementById('tv-list');
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn = document.getElementById('tv-copy-btn');
+        btn.textContent = 'Copied!';
+        btn.style.background = '#14532d';
+        btn.style.borderColor = '#22c55e';
+        btn.style.color = '#4ade80';
+        setTimeout(() => {{
+          btn.textContent = 'Copy';
+          btn.style.background = '#1e3a5f';
+          btn.style.borderColor = '#3b82f6';
+          btn.style.color = '#60a5fa';
+        }}, 2000);
+      }});
     }}
 
     // Default to last-week view on load
