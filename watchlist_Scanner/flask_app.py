@@ -2210,7 +2210,10 @@ def range_page():
     <style>
     .rtable { width:100%; border-collapse:collapse; font-size:.84rem; }
     .rtable th { text-align:left; padding:8px 12px; color:#555; border-bottom:1px solid #2a2d3e;
-                 font-weight:500; white-space:nowrap; }
+                 font-weight:500; white-space:nowrap; cursor:pointer; user-select:none; }
+    .rtable th:hover { color:#aaa; }
+    .rtable th.sort-asc::after  { content:' ▲'; font-size:.6rem; color:#60a5fa; }
+    .rtable th.sort-desc::after { content:' ▼'; font-size:.6rem; color:#60a5fa; }
     .rtable td { padding:8px 12px; border-bottom:1px solid #151820; vertical-align:middle; }
     .rtable .range-row:hover td { background:#1f2235; }
     .rtable .range-row.active td { background:#1a2235; }
@@ -2321,6 +2324,23 @@ def range_page():
           .catch(e => { document.getElementById('cstatus-' + ticker).textContent = 'Failed: ' + e; });
       });
     });
+
+    function sortRange(th) {
+      const tbody = th.closest('table').querySelector('tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.range-row'));
+      rows.sort((a, b) => {
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    }
     </script>"""
 
     def section_table(title, items, color):
@@ -2333,9 +2353,9 @@ def range_page():
           {table_style}
           <table class="rtable">
             <thead><tr>
-              <th>Ticker</th><th>Price</th><th>Type</th><th>Zone</th>
-              <th>Entry</th><th>Stop</th><th>Target</th><th>R:R</th>
-              <th>Fader</th><th>EFI</th><th>Score</th>
+              <th onclick="sortRange(this)">Ticker</th><th onclick="sortRange(this)">Price</th><th onclick="sortRange(this)">Type</th><th onclick="sortRange(this)">Zone</th>
+              <th onclick="sortRange(this)">Entry</th><th onclick="sortRange(this)">Stop</th><th onclick="sortRange(this)">Target</th><th onclick="sortRange(this)">R:R</th>
+              <th onclick="sortRange(this)">Fader</th><th onclick="sortRange(this)">EFI</th><th onclick="sortRange(this)">Score</th>
             </tr></thead>
             <tbody>{rows}</tbody>
           </table>
