@@ -35,6 +35,7 @@ from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_wick_scanner import run_wick_scan, load_last_wick_results
 from db_hammer_scanner import run_hammer_scan, load_last_hammer_results
+from db_price_channel_scanner import run_price_channel_scan, load_last_price_channel_results
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes,
                       get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR)
@@ -4229,6 +4230,397 @@ def hammer_page():
     return page_wrap('Hammer Scanner', 'hammer', content, auto_refresh=(running and jname == 'Hammer Scan'))
 
 
+# ─── Price Channel Scanner ────────────────────────────────────────────────────
+
+def _run_price_channel_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Price Channel Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_price_channel_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_price_channel_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Channel Scan'
+    threading.Thread(target=_run_price_channel_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-channels')
+def run_channels():
+    if not is_admin():
+        return redirect('/admin')
+    start_price_channel_scan()
+    return redirect('/channels')
+
+
+@app.route('/channels')
+def channels_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_price_channel_results()
+
+    if running and jname == 'Channel Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-channels" class="btn btn-blue">▶ Run Channel Scan</a>'
+
+    scan_info = ''
+    if last:
+        d = last['daily']['total']
+        w = last['weekly']['total']
+        m = last['monthly']['total']
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{d} daily · {w} weekly · {m} monthly signals "
+                     f"from {last['tickers_scanned']} tickers")
+
+    def score_color(s):
+        if s >= 8: return '#22c55e'
+        if s >= 5: return '#f59e0b'
+        return '#555'
+
+    def dir_badge(d):
+        if d == 'ascending':
+            return '<span style="color:#22c55e;font-size:.78rem;font-weight:700">▲ Up</span>'
+        return '<span style="color:#ef4444;font-size:.78rem;font-weight:700">▼ Dn</span>'
+
+    def build_rows(results, tf):
+        html = ''
+        for r in results:
+            sc = r['score']
+            html += f"""
+            <tr class="ch-row" data-ticker="{r['ticker']}" data-tf="{tf}">
+              <td><strong style="color:#60a5fa">{r['ticker']}</strong></td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:2px 9px;
+                             border-radius:10px;font-weight:700;font-size:.82rem">{sc}</span>
+              </td>
+              <td style="color:#aaa">{r['ch_pct']}%</td>
+              <td style="color:#aaa">{r['width_pct']}%</td>
+              <td style="color:#888">{r['r2']}</td>
+              <td style="color:#aaa">{r['low_touches']}L · {r['high_touches']}H</td>
+              <td style="color:#fff;font-weight:600">${r['lower']:,.4f}</td>
+              <td style="color:#fff;font-weight:600">${r['upper']:,.4f}</td>
+              <td style="color:#fff;font-weight:600">${r['current']:,.4f}</td>
+            </tr>"""
+        return html or f'<tr><td colspan="9" style="color:#555;padding:16px">No signals found.</td></tr>'
+
+    daily_rows   = build_rows(last['daily']['results'],   'daily')   if last else ''
+    weekly_rows  = build_rows(last['weekly']['results'],  'weekly')  if last else ''
+    monthly_rows = build_rows(last['monthly']['results'], 'monthly') if last else ''
+
+    no_results = '<tr><td colspan="9" style="color:#555;padding:16px">No scan run yet.</td></tr>'
+    if not last:
+        daily_rows = weekly_rows = monthly_rows = no_results
+
+    daily_total   = last['daily']['total']   if last else 0
+    weekly_total  = last['weekly']['total']  if last else 0
+    monthly_total = last['monthly']['total'] if last else 0
+
+    def tv_box(tf_id):
+        return f"""
+        <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:7px;padding:10px 12px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <span style="color:#aaa;font-size:.75rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW LIST</span>
+            <button onclick="chCopy('{tf_id}')" id="ch-copy-{tf_id}"
+              style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.75rem;font-weight:600">Copy</button>
+          </div>
+          <textarea id="ch-tv-{tf_id}" readonly rows="2"
+            style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:4px;
+                   color:#c7d2fe;font-size:.76rem;padding:6px 8px;resize:none;
+                   font-family:monospace;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>"""
+
+    def ch_table(tf_id, rows, total, sublabel):
+        return f"""
+        <div class="ch-tab-panel" id="ch-panel-{tf_id}">
+          <p style="color:#555;font-size:.78rem;margin-bottom:10px">{sublabel} &nbsp;·&nbsp; {total} signals</p>
+          {tv_box(tf_id)}
+          <table class="ch-table">
+            <thead><tr>
+              <th onclick="chSort(this,'{tf_id}')">Ticker</th>
+              <th onclick="chSort(this,'{tf_id}')" style="text-align:center">Score</th>
+              <th onclick="chSort(this,'{tf_id}')">In Channel%</th>
+              <th onclick="chSort(this,'{tf_id}')">Width%</th>
+              <th onclick="chSort(this,'{tf_id}')">R²</th>
+              <th onclick="chSort(this,'{tf_id}')">Touches</th>
+              <th onclick="chSort(this,'{tf_id}')">Lower</th>
+              <th onclick="chSort(this,'{tf_id}')">Upper</th>
+              <th onclick="chSort(this,'{tf_id}')">Current</th>
+            </tr></thead>
+            <tbody id="ch-tbody-{tf_id}">
+              {rows}
+            </tbody>
+          </table>
+        </div>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Price Channel Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:10px">
+        Ascending parallel price channels — signals when price is in the bottom 10% of
+        the channel width, near the lower trendline support. Three timeframes: daily
+        (short channels), weekly (medium), monthly (multi-year mega channels on log scale).
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Channel Scan" else ''}
+
+    <section>
+      <style>
+        .ch-tabs {{ display:flex; gap:0; margin-bottom:0; border-bottom:1px solid #2a2d3e; }}
+        .ch-tab  {{ padding:10px 22px; cursor:pointer; font-size:.85rem; color:#555;
+                   border:1px solid transparent; border-bottom:none; border-radius:6px 6px 0 0;
+                   background:transparent; font-weight:500; user-select:none; }}
+        .ch-tab:hover {{ color:#aaa; }}
+        .ch-tab.active {{ color:#60a5fa; border-color:#2a2d3e; background:#0d0f1a;
+                          font-weight:600; margin-bottom:-1px; }}
+        .ch-tab-panel {{ display:none; padding-top:16px; }}
+        .ch-tab-panel.active {{ display:block; }}
+        .ch-table {{ width:100%; border-collapse:collapse; font-size:.88rem; }}
+        .ch-table th {{ text-align:left; padding:9px 12px; color:#555; font-size:.76rem;
+                        border-bottom:1px solid #2a2d3e; font-weight:500;
+                        cursor:pointer; user-select:none; white-space:nowrap; }}
+        .ch-table th:hover {{ color:#aaa; }}
+        .ch-table th.sort-asc::after  {{ content:' ▲'; font-size:.55rem; color:#60a5fa; }}
+        .ch-table th.sort-desc::after {{ content:' ▼'; font-size:.55rem; color:#60a5fa; }}
+        .ch-table td {{ padding:9px 12px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .ch-table .ch-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .ch-table .ch-row.active td {{ background:#1a2235; border-left:2px solid #60a5fa; }}
+        .ch-chart-panel {{ background:#080a10; border:1px solid #1e2235; border-radius:10px;
+                           padding:16px 20px; margin-bottom:20px; display:none; }}
+        .ch-chart-panel.visible {{ display:block; }}
+        .score-pill {{ display:inline-block; padding:2px 9px; border-radius:10px;
+                       font-weight:700; font-size:.82rem; color:#fff; }}
+      </style>
+
+      <!-- Score legend -->
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+        <span style="font-size:.78rem;color:#888">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
+                       background:#22c55e;margin-right:4px;vertical-align:middle"></span>Score 8+ — strong channel
+        </span>
+        <span style="font-size:.78rem;color:#888">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
+                       background:#f59e0b;margin-right:4px;vertical-align:middle"></span>Score 5–7 — moderate
+        </span>
+        <span style="font-size:.78rem;color:#555">
+          In Channel% = how far price is above the lower line (0% = touching the line · 10% = max signal zone)
+        </span>
+      </div>
+
+      <!-- Shared chart panel -->
+      <div class="ch-chart-panel" id="ch-chart-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="color:#fff;font-weight:700;font-size:1.05rem" id="ch-chart-title">—</span>
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="color:#555;font-size:.75rem" id="ch-chart-meta"></span>
+            <button onclick="closeChChart()"
+              style="background:transparent;border:1px solid #2a2d3e;color:#555;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.78rem">✕ Close</button>
+          </div>
+        </div>
+        <div id="ch-chart-main" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+        <div id="ch-chart-vol"  style="height:60px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="ch-tabs">
+        <div class="ch-tab active" onclick="chTab('daily')">
+          Daily <span style="font-size:.75rem;color:#555;margin-left:4px">({daily_total})</span>
+        </div>
+        <div class="ch-tab" onclick="chTab('weekly')">
+          Weekly <span style="font-size:.75rem;color:#555;margin-left:4px">({weekly_total})</span>
+        </div>
+        <div class="ch-tab" onclick="chTab('monthly')">
+          Monthly <span style="font-size:.75rem;color:#555;margin-left:4px">({monthly_total})</span>
+        </div>
+      </div>
+
+      {ch_table('daily',   daily_rows,   daily_total,   'Short channels — weeks to months')}
+      {ch_table('weekly',  weekly_rows,  weekly_total,  'Medium channels — months to ~1.5 years')}
+      {ch_table('monthly', monthly_rows, monthly_total, 'Mega channels — multi-year (log scale)')}
+    </section>
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // ── LightweightCharts v4 VerticalLine ────────────────────────────────────
+    class ChLineRenderer {{
+      constructor(t,c,chart) {{ this._t=t; this._c=c; this._chart=chart; }}
+      draw(target) {{
+        const x=this._chart.timeScale().timeToCoordinate(this._t);
+        if(x===null) return;
+        target.useBitmapCoordinateSpace(scope=>{{
+          const ctx=scope.context, xb=Math.round(x*scope.horizontalPixelRatio);
+          ctx.save(); ctx.beginPath(); ctx.moveTo(xb,0); ctx.lineTo(xb,scope.bitmapSize.height);
+          ctx.strokeStyle=this._c; ctx.lineWidth=Math.round(2*scope.horizontalPixelRatio);
+          ctx.setLineDash([6,4]); ctx.stroke(); ctx.restore();
+        }});
+      }}
+    }}
+    class ChLinePaneView {{
+      constructor(t,c,chart) {{ this._r=new ChLineRenderer(t,c,chart); }}
+      renderer() {{ return this._r; }} zOrder() {{ return 'normal'; }}
+    }}
+    class ChLine {{
+      constructor(t,c='#60a5fa') {{ this._t=t; this._c=c; this._chart=null; this._v=[]; }}
+      attached({{chart}}) {{ this._chart=chart; this._v=[new ChLinePaneView(this._t,this._c,chart)]; }}
+      detached() {{ this._v=[]; }} paneViews() {{ return this._v; }} updateAllViews() {{}}
+    }}
+
+    // ── Tab switching ────────────────────────────────────────────────────────
+    function chTab(tf) {{
+      document.querySelectorAll('.ch-tab').forEach((t,i) => {{
+        const tfs=['daily','weekly','monthly'];
+        t.classList.toggle('active', tfs[i]===tf);
+      }});
+      document.querySelectorAll('.ch-tab-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('ch-panel-'+tf);
+      if (panel) panel.classList.add('active');
+      chUpdateTV(tf);
+    }}
+
+    // ── Sorting ──────────────────────────────────────────────────────────────
+    function chSort(th, tf) {{
+      const tbody = document.getElementById('ch-tbody-'+tf);
+      if (!tbody) return;
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.ch-row'));
+      rows.sort((a,b) => {{
+        const av=a.cells[idx].textContent.trim(), bv=b.cells[idx].textContent.trim();
+        const an=parseFloat(av.replace(/[^0-9.-]/g,'')), bn=parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp=isNaN(an) ? av.localeCompare(bv) : an-bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    // ── TV watchlist ─────────────────────────────────────────────────────────
+    function chUpdateTV(tf) {{
+      const tickers=[];
+      const tbody=document.getElementById('ch-tbody-'+tf);
+      if (tbody) tbody.querySelectorAll('.ch-row').forEach(r => tickers.push(r.dataset.ticker));
+      const ta=document.getElementById('ch-tv-'+tf);
+      if (ta) ta.value = tickers.join(',');
+    }}
+
+    function chCopy(tf) {{
+      const ta=document.getElementById('ch-tv-'+tf);
+      const btn=document.getElementById('ch-copy-'+tf);
+      if (!ta) return;
+      ta.select(); ta.setSelectionRange(0,99999);
+      navigator.clipboard.writeText(ta.value).then(()=>{{
+        btn.textContent='Copied!'; btn.style.background='#14532d';
+        btn.style.borderColor='#22c55e'; btn.style.color='#4ade80';
+        setTimeout(()=>{{
+          btn.textContent='Copy'; btn.style.background='#1e3a5f';
+          btn.style.borderColor='#3b82f6'; btn.style.color='#60a5fa';
+        }},2000);
+      }});
+    }}
+
+    // ── Chart panel ──────────────────────────────────────────────────────────
+    let chMainChart=null, chVolChart=null;
+
+    function closeChChart() {{
+      document.getElementById('ch-chart-panel').classList.remove('visible');
+      document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active'));
+      if(chMainChart){{ chMainChart.remove(); chMainChart=null; }}
+      if(chVolChart){{  chVolChart.remove();  chVolChart=null; }}
+    }}
+
+    function loadChChart(ticker) {{
+      document.getElementById('ch-chart-title').textContent=ticker;
+      document.getElementById('ch-chart-meta').textContent='Loading…';
+      const panel=document.getElementById('ch-chart-panel');
+      panel.classList.add('visible');
+      panel.scrollIntoView({{behavior:'smooth',block:'nearest'}});
+      if(chMainChart){{ chMainChart.remove(); chMainChart=null; }}
+      if(chVolChart){{  chVolChart.remove();  chVolChart=null; }}
+      document.getElementById('ch-chart-main').innerHTML='';
+      document.getElementById('ch-chart-vol').innerHTML='';
+      fetch('/api/us-chart/'+ticker)
+        .then(r=>r.json())
+        .then(data=>{{
+          if(data.error){{ document.getElementById('ch-chart-meta').textContent=data.error; return; }}
+          document.getElementById('ch-chart-meta').textContent=data.bars+' bars · '+data.date_range;
+          chMainChart=LightweightCharts.createChart(document.getElementById('ch-chart-main'),{{
+            layout:{{background:{{color:'#0a0c14'}},textColor:'#888'}},
+            grid:{{vertLines:{{color:'#1a1d2e'}},horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale:{{borderColor:'#2a2d3e'}},
+            timeScale:{{borderColor:'#2a2d3e',timeVisible:true}},
+            crosshair:{{mode:LightweightCharts.CrosshairMode.Normal}},
+          }});
+          const candles=chMainChart.addCandlestickSeries({{
+            upColor:'#22c55e',downColor:'#ef4444',
+            borderUpColor:'#22c55e',borderDownColor:'#ef4444',
+            wickUpColor:'#22c55e',wickDownColor:'#ef4444',
+          }});
+          candles.setData(data.ohlcv);
+          const ema5 =chMainChart.addLineSeries({{color:'#60a5fa',lineWidth:1,title:'EMA5'}});
+          const ema26=chMainChart.addLineSeries({{color:'#f59e0b',lineWidth:1,title:'EMA26'}});
+          ema5.setData(data.ema5); ema26.setData(data.ema26);
+          const bc=data.ohlcv.length;
+          chMainChart.timeScale().setVisibleLogicalRange({{from:Math.max(0,bc-120),to:bc+5}});
+          chMainChart.priceScale('right').applyOptions({{scaleMargins:{{top:0.12,bottom:0.18}}}});
+          chVolChart=LightweightCharts.createChart(document.getElementById('ch-chart-vol'),{{
+            layout:{{background:{{color:'#0a0c14'}},textColor:'#888'}},
+            grid:{{vertLines:{{color:'#1a1d2e'}},horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale:{{borderColor:'#2a2d3e'}},
+            timeScale:{{borderColor:'#2a2d3e',timeVisible:false}},
+          }});
+          const vs=chVolChart.addHistogramSeries({{priceFormat:{{type:'volume'}},priceScaleId:''}});
+          vs.priceScale().applyOptions({{scaleMargins:{{top:0.1,bottom:0}}}});
+          vs.setData(data.volume); chVolChart.timeScale().fitContent();
+          chMainChart.timeScale().subscribeVisibleLogicalRangeChange(r=>chVolChart.timeScale().setVisibleLogicalRange(r));
+          chVolChart.timeScale().subscribeVisibleLogicalRangeChange(r=>chMainChart.timeScale().setVisibleLogicalRange(r));
+        }})
+        .catch(e=>{{ document.getElementById('ch-chart-meta').textContent='Failed: '+e; }});
+    }}
+
+    // ── Row click ────────────────────────────────────────────────────────────
+    document.querySelectorAll('.ch-row').forEach(row=>{{
+      row.addEventListener('click',()=>{{
+        const isActive=row.classList.contains('active');
+        document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active'));
+        if(isActive){{ closeChChart(); return; }}
+        row.classList.add('active');
+        loadChChart(row.dataset.ticker);
+      }});
+    }});
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    chTab('daily');
+    </script>"""
+
+    return page_wrap('Channel Scanner', 'channels', content, auto_refresh=(running and jname == 'Channel Scan'))
+
+
 # ─── Jang's Wicks ─────────────────────────────────────────────────────────────
 
 @app.route('/jangs-wicks/run-daily')
@@ -5755,6 +6147,7 @@ def admin_hub():
     range_btn    = job_btn('▶ Run Range Scan', '/range/run')
     wick_btn     = job_btn('▶ Run Wick Scan', '/run-wick')
     hammer_btn   = job_btn('▶ Run Hammer Scan', '/run-hammer')
+    pchan_btn    = job_btn('▶ Run Channel Scan', '/run-channels')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
 
@@ -5770,6 +6163,7 @@ def admin_hub():
     ef_last   = load_last_efi_results()
     wick_last   = load_last_wick_results()
     hammer_last = load_last_hammer_results()
+    pchan_last  = load_last_price_channel_results()
 
     def scan_summary(last, results_url):
         if not last:
@@ -5874,6 +6268,10 @@ def admin_hub():
             <div class="btn-row" style="margin-bottom:6px">{hammer_btn}</div>
             {scan_summary(hammer_last, '/hammer')}
           </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{pchan_btn}</div>
+            {scan_summary(pchan_last, '/channels')}
+          </div>
         </div>
       </div>
     </div>
@@ -5888,7 +6286,8 @@ def admin_hub():
         <a href="/range"   class="btn btn-blue" style="font-size:.82rem">Range Levels</a>
         <a href="/scan"    class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
         <a href="/wick"     class="btn btn-blue" style="font-size:.82rem">Wick Scanner</a>
-        <a href="/hammer"  class="btn btn-blue" style="font-size:.82rem">Hammer Scanner</a>
+        <a href="/hammer"   class="btn btn-blue" style="font-size:.82rem">Hammer Scanner</a>
+        <a href="/channels" class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
       </div>
