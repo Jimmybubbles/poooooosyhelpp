@@ -35,7 +35,11 @@ from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_wick_scanner import run_wick_scan, load_last_wick_results
 from db_hammer_scanner import run_hammer_scan, load_last_hammer_results
-from db_price_channel_scanner import run_price_channel_scan, load_last_price_channel_results
+from db_price_channel_scanner import (
+    run_price_channel_scan, load_last_price_channel_results,
+    get_ticker_daily, resample_weekly, resample_monthly,
+    find_pivot_highs, find_pivot_lows, fit_line, CONFIGS as PCHAN_CONFIGS,
+)
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes,
                       get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR)
@@ -2798,6 +2802,97 @@ def us_chart_api(ticker):
     })
 
 
+@app.route('/api/channel-lines/<ticker>/<timeframe>')
+def channel_lines_api(ticker, timeframe):
+    """Return lower/upper channel line time-series for overlay on the chart."""
+    import numpy as np
+    ticker = ticker.upper()
+    if timeframe not in PCHAN_CONFIGS:
+        return jsonify({'error': 'invalid timeframe'})
+    cfg = PCHAN_CONFIGS[timeframe]
+    try:
+        conn = get_connection()
+        daily_df = get_ticker_daily(conn, ticker)
+        conn.close()
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+    if daily_df is None or len(daily_df) < 30:
+        return jsonify({'error': 'not enough data'})
+
+    if timeframe == 'weekly':
+        df = resample_weekly(daily_df)
+    elif timeframe == 'monthly':
+        df = resample_monthly(daily_df)
+    else:
+        df = daily_df
+
+    n_bars  = cfg['bars']
+    lb      = cfg['pivot_lb']
+    use_log = cfg['log_scale']
+    max_w   = cfg['max_width']
+    MIN_R2  = 0.65
+
+    sub = df.tail(n_bars).reset_index()
+    n   = len(sub)
+    if n < max(20, n_bars // 4):
+        return jsonify({'error': 'not enough bars'})
+
+    # Weekly/monthly rows use period-start dates; daily uses actual date column
+    dates = [str(sub.iloc[i]['date'])[:10] for i in range(n)]
+
+    raw_h = sub['high'].values.astype(float)
+    raw_l = sub['low'].values.astype(float)
+
+    if use_log and (np.any(raw_l <= 0) or np.any(raw_h <= 0)):
+        return jsonify({'error': 'non-positive prices'})
+
+    wh = np.log(raw_h) if use_log else raw_h
+    wl = np.log(raw_l) if use_log else raw_l
+    x  = np.arange(n, dtype=float)
+
+    ph = find_pivot_highs(wh.tolist(), lb)
+    pl = find_pivot_lows(wl.tolist(), lb)
+    if len(ph) < 2 or len(pl) < 2:
+        return jsonify({'error': 'no channel'})
+
+    low_slope, low_intercept, r2 = fit_line(
+        [float(i) for i in pl], [float(wl[i]) for i in pl]
+    )
+    if low_slope is None or low_slope <= 0 or r2 < MIN_R2:
+        return jsonify({'error': 'no channel'})
+
+    lower_line = low_slope * x + low_intercept
+    offsets    = [float(wh[i]) - float(lower_line[i]) for i in ph]
+    if not offsets or max(offsets) <= 0:
+        return jsonify({'error': 'no channel'})
+
+    ch_offset  = float(max(offsets))
+    upper_line = lower_line + ch_offset
+
+    # Width filter — must match scanner
+    c_low_now = float(lower_line[-1])
+    if use_log:
+        width_pct = float((np.exp(ch_offset) - 1) * 100)
+    else:
+        width_pct = float(ch_offset / abs(c_low_now) * 100) if c_low_now > 0 else 0.0
+    if width_pct > max_w:
+        return jsonify({'error': 'channel too wide'})
+
+    # Convert to actual prices
+    if use_log:
+        lower_prices = [float(np.exp(v)) for v in lower_line]
+        upper_prices = [float(np.exp(v)) for v in upper_line]
+    else:
+        lower_prices = [float(v) for v in lower_line]
+        upper_prices = [float(v) for v in upper_line]
+
+    lower_series = [{'time': dates[i], 'value': round(lower_prices[i], 4)} for i in range(n)]
+    upper_series = [{'time': dates[i], 'value': round(upper_prices[i], 4)} for i in range(n)]
+
+    return jsonify({'lower': lower_series, 'upper': upper_series, 'r2': round(r2, 3)})
+
+
 # ─── ASX Picks ────────────────────────────────────────────────────────────────
 
 @app.route('/asx/picks')
@@ -4554,8 +4649,8 @@ def channels_page():
       if(chVolChart){{  chVolChart.remove();  chVolChart=null; }}
     }}
 
-    function loadChChart(ticker) {{
-      document.getElementById('ch-chart-title').textContent=ticker;
+    function loadChChart(ticker, tf) {{
+      document.getElementById('ch-chart-title').textContent=ticker+' ('+tf+')';
       document.getElementById('ch-chart-meta').textContent='Loading…';
       const panel=document.getElementById('ch-chart-panel');
       panel.classList.add('visible');
@@ -4564,11 +4659,16 @@ def channels_page():
       if(chVolChart){{  chVolChart.remove();  chVolChart=null; }}
       document.getElementById('ch-chart-main').innerHTML='';
       document.getElementById('ch-chart-vol').innerHTML='';
-      fetch('/api/us-chart/'+ticker)
-        .then(r=>r.json())
-        .then(data=>{{
+
+      // Load OHLCV + channel lines in parallel
+      Promise.all([
+        fetch('/api/us-chart/'+ticker).then(r=>r.json()),
+        fetch('/api/channel-lines/'+ticker+'/'+tf).then(r=>r.json()),
+      ]).then(([data, chLines])=>{{
           if(data.error){{ document.getElementById('ch-chart-meta').textContent=data.error; return; }}
-          document.getElementById('ch-chart-meta').textContent=data.bars+' bars · '+data.date_range;
+          document.getElementById('ch-chart-meta').textContent=
+            data.bars+' bars · '+data.date_range
+            +(chLines.r2 ? ' · Channel R²='+chLines.r2 : '');
           chMainChart=LightweightCharts.createChart(document.getElementById('ch-chart-main'),{{
             layout:{{background:{{color:'#0a0c14'}},textColor:'#888'}},
             grid:{{vertLines:{{color:'#1a1d2e'}},horzLines:{{color:'#1a1d2e'}}}},
@@ -4585,6 +4685,32 @@ def channels_page():
           const ema5 =chMainChart.addLineSeries({{color:'#60a5fa',lineWidth:1,title:'EMA5'}});
           const ema26=chMainChart.addLineSeries({{color:'#f59e0b',lineWidth:1,title:'EMA26'}});
           ema5.setData(data.ema5); ema26.setData(data.ema26);
+
+          // Draw channel lines if available
+          if(chLines.lower && chLines.upper) {{
+            const lowerSeries=chMainChart.addLineSeries({{
+              color:'#22c55e', lineWidth:2, lineStyle:0,
+              title:'Lower', priceLineVisible:false, lastValueVisible:false,
+            }});
+            lowerSeries.setData(chLines.lower);
+            const upperSeries=chMainChart.addLineSeries({{
+              color:'#3b82f6', lineWidth:2, lineStyle:0,
+              title:'Upper', priceLineVisible:false, lastValueVisible:false,
+            }});
+            upperSeries.setData(chLines.upper);
+            // Signal zone: bottom 10% of channel — shade by drawing a thin band
+            // (approximate: draw a dashed line at lower + 10% of (upper-upper) offset)
+            const zoneLine=chMainChart.addLineSeries({{
+              color:'#22c55e55', lineWidth:1, lineStyle:2,
+              priceLineVisible:false, lastValueVisible:false,
+            }});
+            const zoneData=chLines.lower.map((pt,i)=>{{
+              const uv=chLines.upper[i]?chLines.upper[i].value:pt.value;
+              return {{time:pt.time, value:pt.value+(uv-pt.value)*0.10}};
+            }});
+            zoneLine.setData(zoneData);
+          }}
+
           const bc=data.ohlcv.length;
           chMainChart.timeScale().setVisibleLogicalRange({{from:Math.max(0,bc-120),to:bc+5}});
           chMainChart.priceScale('right').applyOptions({{scaleMargins:{{top:0.12,bottom:0.18}}}});
@@ -4610,7 +4736,7 @@ def channels_page():
         document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active'));
         if(isActive){{ closeChChart(); return; }}
         row.classList.add('active');
-        loadChChart(row.dataset.ticker);
+        loadChChart(row.dataset.ticker, row.dataset.tf);
       }});
     }});
 
