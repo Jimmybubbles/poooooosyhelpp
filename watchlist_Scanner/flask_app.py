@@ -783,6 +783,7 @@ def nav_html(active=''):
         {lnk('/asx/picks','ASX Picks','asxpicks')}
         {lnk('/dividend','Dividend Picks','dividend')}
         {lnk('/journal','Trade Journal','journal')}
+        {lnk("/jangs-wicks","Jang's Wicks",'jangs-wicks')}
         {lnk('/ask','Ask Jimmy','ask')}
         {admin_lnk}
       </nav>
@@ -4226,6 +4227,403 @@ def hammer_page():
     {chart_js}"""
 
     return page_wrap('Hammer Scanner', 'hammer', content, auto_refresh=(running and jname == 'Hammer Scan'))
+
+
+# ─── Jang's Wicks ─────────────────────────────────────────────────────────────
+
+@app.route('/jangs-wicks')
+def jangs_wicks_page():
+    daily  = load_last_hammer_results()
+    weekly = load_last_wick_results()
+
+    def score_color(s):
+        if s >= 8: return '#22c55e'
+        if s >= 5: return '#f59e0b'
+        return '#555'
+
+    # ── Daily hammer rows ──────────────────────────────────────────────────────
+    daily_rows = ''
+    if daily and daily.get('results'):
+        for r in daily['results']:
+            sc  = r['score']
+            gc  = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs  = '+' if r['gain_pct'] >= 0 else ''
+            bull = '▲' if r.get('bullish') else '▽'
+            bc   = '#22c55e' if r.get('bullish') else '#ef4444'
+            vol  = ' ⚡' if r.get('vol_surge') else ''
+            daily_rows += f"""
+            <tr class="jw-row" data-ticker="{r['ticker']}" data-date="{r['hammer_date']}" data-side="daily">
+              <td><strong style="color:#60a5fa">{r['ticker']}</strong></td>
+              <td style="color:#aaa;font-size:.82rem">{r['hammer_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:2px 9px;
+                             border-radius:10px;font-weight:700;font-size:.82rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:{bc};font-weight:600;font-size:.82rem">{bull}{vol}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    # ── Weekly wick rows ───────────────────────────────────────────────────────
+    weekly_rows = ''
+    if weekly and weekly.get('results'):
+        for r in weekly['results']:
+            sc  = r['score']
+            gc  = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs  = '+' if r['gain_pct'] >= 0 else ''
+            weekly_rows += f"""
+            <tr class="jw-row" data-ticker="{r['ticker']}" data-date="{r['wick_date']}" data-side="weekly">
+              <td><strong style="color:#60a5fa">{r['ticker']}</strong></td>
+              <td style="color:#aaa;font-size:.82rem">{r['wick_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:2px 9px;
+                             border-radius:10px;font-weight:700;font-size:.82rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#aaa">{r['weeks_held']}w</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    daily_info  = f"{daily['scan_date']} · {daily['total']} signals"   if daily  else 'No scan yet'
+    weekly_info = f"{weekly['scan_date']} · {weekly['total']} signals"  if weekly else 'No scan yet'
+
+    content = f"""
+    <style>
+      .jw-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }}
+      @media(max-width:900px) {{ .jw-grid {{ grid-template-columns:1fr; }} }}
+      .jw-card {{ background:#0d0f1a; border:1px solid #1e2235; border-radius:10px; padding:16px; }}
+      .jw-card h3 {{ font-size:.72rem; font-weight:700; color:#777; text-transform:uppercase;
+                    letter-spacing:.08em; margin-bottom:12px; }}
+      .jw-table {{ width:100%; border-collapse:collapse; font-size:.88rem; }}
+      .jw-table th {{ text-align:left; padding:8px 10px; color:#555; font-size:.74rem;
+                     border-bottom:1px solid #2a2d3e; font-weight:500;
+                     cursor:pointer; user-select:none; white-space:nowrap; }}
+      .jw-table th:hover {{ color:#aaa; }}
+      .jw-table th.sort-asc::after  {{ content:' ▲'; font-size:.55rem; color:#60a5fa; }}
+      .jw-table th.sort-desc::after {{ content:' ▼'; font-size:.55rem; color:#60a5fa; }}
+      .jw-table td {{ padding:8px 10px; border-bottom:1px solid #151820; vertical-align:middle; }}
+      .jw-table .jw-row:hover td {{ background:#1f2235; cursor:pointer; }}
+      .jw-table .jw-row.active td {{ background:#1a2235; border-left:2px solid #f59e0b; }}
+      .jw-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                        padding:5px 13px; border-radius:6px; cursor:pointer; font-size:.78rem; }}
+      .jw-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
+      .jw-tv-box {{ background:#0d0f1a; border:1px solid #1e2235; border-radius:7px;
+                   padding:10px 12px; margin-bottom:10px; }}
+      .jw-chart-panel {{ background:#080a10; border:1px solid #1e2235; border-radius:10px;
+                         padding:16px 20px; margin-bottom:24px; display:none; }}
+      .jw-chart-panel.visible {{ display:block; }}
+      .score-legend {{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:14px; }}
+      .score-legend span {{ font-size:.75rem; color:#888; }}
+      .score-legend .dot {{ display:inline-block; width:10px; height:10px; border-radius:50%;
+                            margin-right:4px; vertical-align:middle; }}
+    </style>
+
+    <section style="margin-bottom:20px">
+      <h2 style="margin-bottom:4px">Jang's Wicks</h2>
+      <p style="font-size:.88rem;color:#555;margin-bottom:14px">
+        Daily and weekly wick signals — click any ticker to load the chart.
+      </p>
+      <div class="score-legend">
+        <span><span class="dot" style="background:#22c55e"></span>Score 8+ — strong signal</span>
+        <span><span class="dot" style="background:#f59e0b"></span>Score 5–7 — moderate signal</span>
+        <span><span class="dot" style="background:#555"></span>Score &lt;5 — weak signal</span>
+        <span style="color:#444">⚡ = above-average volume &nbsp;·&nbsp; ▲ = bullish close &nbsp;·&nbsp; ▽ = bearish close</span>
+      </div>
+    </section>
+
+    <!-- Chart panel (shared, full-width) -->
+    <div class="jw-chart-panel" id="jw-chart-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="color:#fff;font-weight:700;font-size:1.05rem" id="jw-chart-title">—</span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="color:#555;font-size:.75rem" id="jw-chart-meta"></span>
+          <button onclick="closeJwChart()"
+            style="background:transparent;border:1px solid #2a2d3e;color:#555;padding:4px 12px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem">✕ Close</button>
+        </div>
+      </div>
+      <div id="jw-chart-main" style="height:400px;background:#0a0c14;border-radius:6px"></div>
+      <div id="jw-chart-vol"  style="height:60px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+    </div>
+
+    <div class="jw-grid">
+
+      <!-- ── Daily Hammers ── -->
+      <div class="jw-card">
+        <h3>Daily Close Hammers</h3>
+        <p style="color:#555;font-size:.75rem;margin-bottom:10px">{daily_info}</p>
+
+        <div class="jw-tv-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <span style="color:#aaa;font-size:.75rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW LIST</span>
+            <button onclick="copyJwList('daily')" id="jw-copy-daily"
+              style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.75rem;font-weight:600">Copy</button>
+          </div>
+          <textarea id="jw-tv-daily" readonly rows="2"
+            style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:4px;
+                   color:#c7d2fe;font-size:.76rem;padding:6px 8px;resize:none;
+                   font-family:monospace;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+          <button class="jw-filter-btn active" id="jw-df-today" onclick="jwFilter('daily','today')">Today</button>
+          <button class="jw-filter-btn"         id="jw-df-all"   onclick="jwFilter('daily','all')">All</button>
+          <span id="jw-daily-count" style="color:#555;font-size:.75rem;margin-left:4px"></span>
+        </div>
+
+        <table class="jw-table" id="jw-daily-tbl">
+          <thead><tr>
+            <th onclick="jwSort(this,'daily')">Ticker</th>
+            <th onclick="jwSort(this,'daily')">Date</th>
+            <th onclick="jwSort(this,'daily')" style="text-align:center">Score</th>
+            <th onclick="jwSort(this,'daily')">Wick×</th>
+            <th onclick="jwSort(this,'daily')">Close%</th>
+            <th onclick="jwSort(this,'daily')">Body</th>
+            <th onclick="jwSort(this,'daily')">Gain</th>
+          </tr></thead>
+          <tbody id="jw-daily-tbody">
+            {daily_rows if daily_rows else '<tr><td colspan="7" style="color:#555;padding:16px">No scan results yet.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── Weekly Wicks ── -->
+      <div class="jw-card">
+        <h3>Weekly Close Wicks</h3>
+        <p style="color:#555;font-size:.75rem;margin-bottom:10px">{weekly_info}</p>
+
+        <div class="jw-tv-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <span style="color:#aaa;font-size:.75rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW LIST</span>
+            <button onclick="copyJwList('weekly')" id="jw-copy-weekly"
+              style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.75rem;font-weight:600">Copy</button>
+          </div>
+          <textarea id="jw-tv-weekly" readonly rows="2"
+            style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:4px;
+                   color:#c7d2fe;font-size:.76rem;padding:6px 8px;resize:none;
+                   font-family:monospace;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+          <button class="jw-filter-btn active" id="jw-wf-week" onclick="jwFilter('weekly','week')">Last Week</button>
+          <button class="jw-filter-btn"         id="jw-wf-all"  onclick="jwFilter('weekly','all')">All</button>
+          <span id="jw-weekly-count" style="color:#555;font-size:.75rem;margin-left:4px"></span>
+        </div>
+
+        <table class="jw-table" id="jw-weekly-tbl">
+          <thead><tr>
+            <th onclick="jwSort(this,'weekly')">Ticker</th>
+            <th onclick="jwSort(this,'weekly')">Date</th>
+            <th onclick="jwSort(this,'weekly')" style="text-align:center">Score</th>
+            <th onclick="jwSort(this,'weekly')">Wick×</th>
+            <th onclick="jwSort(this,'weekly')">Held</th>
+            <th onclick="jwSort(this,'weekly')">Close%</th>
+            <th onclick="jwSort(this,'weekly')">Gain</th>
+          </tr></thead>
+          <tbody id="jw-weekly-tbody">
+            {weekly_rows if weekly_rows else '<tr><td colspan="7" style="color:#555;padding:16px">No scan results yet.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /.jw-grid -->
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // ── LightweightCharts v4 VerticalLine primitive ──────────────────────────
+    class JwLineRenderer {{
+      constructor(time, color, chart) {{ this._time=time; this._color=color; this._chart=chart; }}
+      draw(target) {{
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {{
+          const ctx=scope.context, xb=Math.round(x*scope.horizontalPixelRatio);
+          ctx.save(); ctx.beginPath(); ctx.moveTo(xb,0); ctx.lineTo(xb,scope.bitmapSize.height);
+          ctx.strokeStyle=this._color; ctx.lineWidth=Math.round(2*scope.horizontalPixelRatio);
+          ctx.setLineDash([6,4]); ctx.stroke(); ctx.restore();
+        }});
+      }}
+    }}
+    class JwLinePaneView {{
+      constructor(t,c,chart) {{ this._r=new JwLineRenderer(t,c,chart); }}
+      renderer() {{ return this._r; }} zOrder() {{ return 'normal'; }}
+    }}
+    class JwLine {{
+      constructor(time,color='#f59e0b') {{ this._time=time; this._color=color; this._chart=null; this._views=[]; }}
+      attached({{chart}}) {{ this._chart=chart; this._views=[new JwLinePaneView(this._time,this._color,chart)]; }}
+      detached() {{ this._views=[]; }} paneViews() {{ return this._views; }} updateAllViews() {{}}
+    }}
+
+    // ── Chart state ──────────────────────────────────────────────────────────
+    let jwMainChart=null, jwVolChart=null;
+
+    function closeJwChart() {{
+      document.getElementById('jw-chart-panel').classList.remove('visible');
+      document.querySelectorAll('.jw-row.active').forEach(r => r.classList.remove('active'));
+      if (jwMainChart) {{ jwMainChart.remove(); jwMainChart=null; }}
+      if (jwVolChart)  {{ jwVolChart.remove();  jwVolChart=null; }}
+    }}
+
+    function loadJwChart(ticker, signalDate) {{
+      document.getElementById('jw-chart-title').textContent = ticker;
+      document.getElementById('jw-chart-meta').textContent  = 'Loading…';
+      const panel = document.getElementById('jw-chart-panel');
+      panel.classList.add('visible');
+      panel.scrollIntoView({{behavior:'smooth', block:'nearest'}});
+
+      if (jwMainChart) {{ jwMainChart.remove(); jwMainChart=null; }}
+      if (jwVolChart)  {{ jwVolChart.remove();  jwVolChart=null; }}
+      document.getElementById('jw-chart-main').innerHTML = '';
+      document.getElementById('jw-chart-vol').innerHTML  = '';
+
+      fetch('/api/us-chart/' + ticker)
+        .then(r => r.json())
+        .then(data => {{
+          if (data.error) {{ document.getElementById('jw-chart-meta').textContent=data.error; return; }}
+          document.getElementById('jw-chart-meta').textContent = data.bars+' bars · '+data.date_range;
+
+          jwMainChart = LightweightCharts.createChart(document.getElementById('jw-chart-main'), {{
+            layout: {{background:{{color:'#0a0c14'}}, textColor:'#888'}},
+            grid: {{vertLines:{{color:'#1a1d2e'}}, horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale: {{borderColor:'#2a2d3e'}},
+            timeScale: {{borderColor:'#2a2d3e', timeVisible:true}},
+            crosshair: {{mode:LightweightCharts.CrosshairMode.Normal}},
+          }});
+          const candles = jwMainChart.addCandlestickSeries({{
+            upColor:'#22c55e', downColor:'#ef4444',
+            borderUpColor:'#22c55e', borderDownColor:'#ef4444',
+            wickUpColor:'#22c55e', wickDownColor:'#ef4444',
+          }});
+          candles.setData(data.ohlcv);
+
+          // Snap to nearest bar to signal date
+          const sigMs = new Date(signalDate).getTime();
+          let snapDate=signalDate, minDiff=Infinity;
+          for (const bar of data.ohlcv) {{
+            const diff = Math.abs(new Date(bar.time).getTime()-sigMs);
+            if (diff<minDiff) {{ minDiff=diff; snapDate=bar.time; }}
+          }}
+          candles.attachPrimitive(new JwLine(snapDate));
+
+          const ema5  = jwMainChart.addLineSeries({{color:'#60a5fa', lineWidth:1, title:'EMA5'}});
+          const ema26 = jwMainChart.addLineSeries({{color:'#f59e0b', lineWidth:1, title:'EMA26'}});
+          ema5.setData(data.ema5); ema26.setData(data.ema26);
+
+          const bc = data.ohlcv.length;
+          jwMainChart.timeScale().setVisibleLogicalRange({{from:Math.max(0,bc-120), to:bc+5}});
+          jwMainChart.priceScale('right').applyOptions({{scaleMargins:{{top:0.12, bottom:0.18}}}});
+
+          jwVolChart = LightweightCharts.createChart(document.getElementById('jw-chart-vol'), {{
+            layout: {{background:{{color:'#0a0c14'}}, textColor:'#888'}},
+            grid: {{vertLines:{{color:'#1a1d2e'}}, horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale: {{borderColor:'#2a2d3e'}},
+            timeScale: {{borderColor:'#2a2d3e', timeVisible:false}},
+          }});
+          const vs = jwVolChart.addHistogramSeries({{priceFormat:{{type:'volume'}}, priceScaleId:''}});
+          vs.priceScale().applyOptions({{scaleMargins:{{top:0.1, bottom:0}}}});
+          vs.setData(data.volume); jwVolChart.timeScale().fitContent();
+
+          jwMainChart.timeScale().subscribeVisibleLogicalRangeChange(r => jwVolChart.timeScale().setVisibleLogicalRange(r));
+          jwVolChart.timeScale().subscribeVisibleLogicalRangeChange(r => jwMainChart.timeScale().setVisibleLogicalRange(r));
+        }})
+        .catch(e => {{ document.getElementById('jw-chart-meta').textContent='Failed: '+e; }});
+    }}
+
+    // ── Row click ────────────────────────────────────────────────────────────
+    document.querySelectorAll('.jw-row').forEach(row => {{
+      row.addEventListener('click', () => {{
+        const isActive = row.classList.contains('active');
+        document.querySelectorAll('.jw-row.active').forEach(r => r.classList.remove('active'));
+        if (isActive) {{ closeJwChart(); return; }}
+        row.classList.add('active');
+        loadJwChart(row.dataset.ticker, row.dataset.date);
+      }});
+    }});
+
+    // ── Sorting ──────────────────────────────────────────────────────────────
+    function jwSort(th, side) {{
+      const tbodyId = side==='daily' ? 'jw-daily-tbody' : 'jw-weekly-tbody';
+      const tbody = document.getElementById(tbodyId);
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.jw-row'));
+      rows.sort((a,b) => {{
+        const av=a.cells[idx].textContent.trim(), bv=b.cells[idx].textContent.trim();
+        const an=parseFloat(av.replace(/[^0-9.-]/g,'')), bn=parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp=isNaN(an) ? av.localeCompare(bv) : an-bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    // ── Filter ───────────────────────────────────────────────────────────────
+    function getLatestDate(side) {{
+      let latest='';
+      document.querySelectorAll(`.jw-row[data-side="${{side}}"]`).forEach(r => {{
+        const d=r.dataset.date||''; if(d>latest) latest=d;
+      }});
+      return latest;
+    }}
+
+    function jwFilter(side, mode) {{
+      const isDaily = side==='daily';
+      if (isDaily) {{
+        document.getElementById('jw-df-today').classList.toggle('active', mode==='today');
+        document.getElementById('jw-df-all').classList.toggle('active',   mode==='all');
+      }} else {{
+        document.getElementById('jw-wf-week').classList.toggle('active', mode==='week');
+        document.getElementById('jw-wf-all').classList.toggle('active',  mode==='all');
+      }}
+      const latest = getLatestDate(side);
+      const countId = isDaily ? 'jw-daily-count' : 'jw-weekly-count';
+      let visible=0;
+      document.querySelectorAll(`.jw-row[data-side="${{side}}"]`).forEach(r => {{
+        const show = (mode==='all') || (r.dataset.date===latest);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        if (!show && r.classList.contains('active')) closeJwChart();
+      }});
+      document.getElementById(countId).textContent = visible+' signal'+(visible!==1?'s':'');
+      jwUpdateTVList(side);
+    }}
+
+    // ── TV list ──────────────────────────────────────────────────────────────
+    function jwUpdateTVList(side) {{
+      const tickers=[];
+      document.querySelectorAll(`.jw-row[data-side="${{side}}"]`).forEach(r => {{
+        if (r.style.display!=='none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById(side==='daily' ? 'jw-tv-daily' : 'jw-tv-weekly').value = tickers.join(',');
+    }}
+
+    function copyJwList(side) {{
+      const taId = side==='daily' ? 'jw-tv-daily' : 'jw-tv-weekly';
+      const btnId = side==='daily' ? 'jw-copy-daily' : 'jw-copy-weekly';
+      const ta = document.getElementById(taId);
+      ta.select(); ta.setSelectionRange(0,99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn=document.getElementById(btnId);
+        btn.textContent='Copied!'; btn.style.background='#14532d';
+        btn.style.borderColor='#22c55e'; btn.style.color='#4ade80';
+        setTimeout(()=>{{
+          btn.textContent='Copy'; btn.style.background='#1e3a5f';
+          btn.style.borderColor='#3b82f6'; btn.style.color='#60a5fa';
+        }},2000);
+      }});
+    }}
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    jwFilter('daily',  'today');
+    jwFilter('weekly', 'week');
+    </script>"""
+
+    return page_wrap("Jang's Wicks", 'jangs-wicks', content)
 
 
 # ─── EFI Scanner ──────────────────────────────────────────────────────────────
