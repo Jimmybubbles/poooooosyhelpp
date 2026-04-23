@@ -34,6 +34,7 @@ from db_channel_scanner import run_scan, load_last_results, get_connection, get_
 from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_wick_scanner import run_wick_scan, load_last_wick_results
+from db_hammer_scanner import run_hammer_scan, load_last_hammer_results
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes,
                       get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR)
@@ -3868,6 +3869,365 @@ def wick_page():
     return page_wrap('Wick Scanner', 'wick', content, auto_refresh=(running and jname == 'Wick Scan'))
 
 
+# ─── Hammer Scanner ───────────────────────────────────────────────────────────
+
+def _run_hammer_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Hammer Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_hammer_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_hammer_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Hammer Scan'
+    threading.Thread(target=_run_hammer_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-hammer')
+def run_hammer():
+    if not is_admin():
+        return redirect('/admin')
+    start_hammer_scan()
+    return redirect('/hammer')
+
+
+@app.route('/hammer')
+def hammer_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_hammer_results()
+
+    if running and jname == 'Hammer Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-hammer" class="btn btn-blue">▶ Run Hammer Scan</a>'
+
+    def score_color(s):
+        if s >= 8:  return '#22c55e'
+        if s >= 5:  return '#f59e0b'
+        return '#555'
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc   = r['score']
+            gc   = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs   = '+' if r['gain_pct'] >= 0 else ''
+            held = r['days_held']
+            bull_icon = '▲' if r.get('bullish') else '▽'
+            bull_col  = '#22c55e' if r.get('bullish') else '#ef4444'
+            vol_icon  = ' ⚡' if r.get('vol_surge') else ''
+            rows_html += f"""
+            <tr class="hammer-row" data-ticker="{r['ticker']}" data-hammer-date="{r['hammer_date']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">{r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['hammer_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#aaa">{held}d</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:{bull_col};font-weight:600">{bull_icon}{vol_icon}</td>
+              <td style="color:#fff;font-weight:600">${r['current_price']:,.4f}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // LightweightCharts v4 series primitive — paneViews() → renderer() → draw()
+    class HammerLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
+      }
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+    class HammerLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new HammerLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class HammerLine {
+      constructor(time, color = '#f59e0b') {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new HammerLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
+    }
+
+    document.querySelectorAll('.hammer-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker      = row.dataset.ticker;
+        const hammerDate  = row.dataset.hammerDate;
+        const existId     = 'hdrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.hammer-drop').forEach(d => d.remove());
+        document.querySelectorAll('.hammer-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'hammer-drop';
+        drop.innerHTML = `<td colspan="9" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="hs-${ticker}">Loading...</span>
+          </div>
+          <div id="hm-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="hv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('hs-' + ticker).textContent = data.error; return; }
+            document.getElementById('hs-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('hm-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            // Snap to the exact hammer date (daily data — should match exactly)
+            const hammerMs = new Date(hammerDate).getTime();
+            let snapDate = hammerDate;
+            let minDiff = Infinity;
+            for (const bar of data.ohlcv) {
+              const diff = Math.abs(new Date(bar.time).getTime() - hammerMs);
+              if (diff < minDiff) { minDiff = diff; snapDate = bar.time; }
+            }
+            candles.attachPrimitive(new HammerLine(snapDate));
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, barCount - 120), to: barCount + 5 });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('hv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('hs-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Daily Hammer Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Finds daily hammer candles — small body near the top of range with a long lower wick
+        (2×+ body) showing buyers rejected the lows. Scored by wick strength, close position,
+        bullish body, volume surge, and how many days the hammer low has held.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Hammer Scan" else ''}
+
+    <section>
+      <style>
+        .hammer-table {{ width:100%; border-collapse:collapse; font-size:.92rem; }}
+        .hammer-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                           border-bottom:1px solid #2a2d3e; font-weight:500;
+                           cursor:pointer; user-select:none; }}
+        .hammer-table th:hover {{ color:#aaa; }}
+        .hammer-table th.sort-asc::after  {{ content:' ▲'; font-size:.6rem; color:#60a5fa; }}
+        .hammer-table th.sort-desc::after {{ content:' ▼'; font-size:.6rem; color:#60a5fa; }}
+        .hammer-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .hammer-table .hammer-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .hammer-table .hammer-row.active td {{ background:#1a2235; }}
+        .hammer-drop td {{ padding:0 !important; }}
+        .hammer-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                              padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
+        .hammer-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
+      </style>
+
+      <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="color:#aaa;font-size:.82rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW WATCHLIST</span>
+          <button onclick="copyHammerList()" id="htv-copy-btn"
+            style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:5px 14px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem;font-weight:600">
+            Copy
+          </button>
+        </div>
+        <textarea id="htv-list" readonly rows="3"
+          style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:5px;
+                 color:#c7d2fe;font-size:.8rem;padding:8px 10px;resize:vertical;
+                 font-family:monospace;box-sizing:border-box;line-height:1.6"></textarea>
+        <p style="color:#444;font-size:.72rem;margin:6px 0 0">
+          Paste directly into TradingView → Watchlist → Import. Updates when you switch Today / All.
+        </p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="hammer-filter-btn active" id="hf-today" onclick="setHammerFilter('today')">Today</button>
+        <button class="hammer-filter-btn"         id="hf-all"   onclick="setHammerFilter('all')">All Signals</button>
+        <span id="hammer-count" style="color:#555;font-size:.78rem;margin-left:4px"></span>
+      </div>
+      <table class="hammer-table">
+        <thead><tr>
+          <th onclick="sortHammer(this)">Ticker</th>
+          <th onclick="sortHammer(this)">Date</th>
+          <th onclick="sortHammer(this)" style="text-align:center">Score</th>
+          <th onclick="sortHammer(this)">Wick ×</th>
+          <th onclick="sortHammer(this)">Held</th>
+          <th onclick="sortHammer(this)">Close %</th>
+          <th onclick="sortHammer(this)">Body</th>
+          <th onclick="sortHammer(this)">Current</th>
+          <th onclick="sortHammer(this)">Gain</th>
+        </tr></thead>
+        <tbody id="hammer-tbody">
+          {rows_html if rows_html else '<tr><td colspan="9" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    <script>
+    function sortHammer(th) {{
+      const tbody = document.getElementById('hammer-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.hammer-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    function getMostRecentHammerDate() {{
+      let latest = '';
+      document.querySelectorAll('.hammer-row').forEach(r => {{
+        const d = r.dataset.hammerDate || '';
+        if (d > latest) latest = d;
+      }});
+      return latest;
+    }}
+
+    function setHammerFilter(mode) {{
+      document.getElementById('hf-today').classList.toggle('active', mode === 'today');
+      document.getElementById('hf-all').classList.toggle('active',   mode === 'all');
+      const latestDate = getMostRecentHammerDate();
+      let visible = 0;
+      document.querySelectorAll('.hammer-row').forEach(r => {{
+        const show = (mode === 'all') || (r.dataset.hammerDate === latestDate);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        if (!show) {{
+          const drop = document.getElementById('hdrop-' + r.dataset.ticker);
+          if (drop) {{ drop.remove(); r.classList.remove('active'); }}
+        }}
+      }});
+      document.getElementById('hammer-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+      updateHammerList();
+    }}
+
+    function updateHammerList() {{
+      const tickers = [];
+      document.querySelectorAll('.hammer-row').forEach(r => {{
+        if (r.style.display !== 'none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById('htv-list').value = tickers.join(',');
+    }}
+
+    function copyHammerList() {{
+      const ta = document.getElementById('htv-list');
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn = document.getElementById('htv-copy-btn');
+        btn.textContent = 'Copied!';
+        btn.style.background = '#14532d';
+        btn.style.borderColor = '#22c55e';
+        btn.style.color = '#4ade80';
+        setTimeout(() => {{
+          btn.textContent = 'Copy';
+          btn.style.background = '#1e3a5f';
+          btn.style.borderColor = '#3b82f6';
+          btn.style.color = '#60a5fa';
+        }}, 2000);
+      }});
+    }}
+
+    setHammerFilter('today');
+    </script>
+    {chart_js}"""
+
+    return page_wrap('Hammer Scanner', 'hammer', content, auto_refresh=(running and jname == 'Hammer Scan'))
+
+
 # ─── EFI Scanner ──────────────────────────────────────────────────────────────
 
 def _run_efi_scan_job():
@@ -4968,6 +5328,7 @@ def admin_hub():
     efi_btn      = job_btn('▶ Run EFI Scan', '/run-efi')
     range_btn    = job_btn('▶ Run Range Scan', '/range/run')
     wick_btn     = job_btn('▶ Run Wick Scan', '/run-wick')
+    hammer_btn   = job_btn('▶ Run Hammer Scan', '/run-hammer')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
 
@@ -4981,7 +5342,8 @@ def admin_hub():
     ch_last   = load_last_results()
     fd_last   = load_last_fader_results()
     ef_last   = load_last_efi_results()
-    wick_last = load_last_wick_results()
+    wick_last   = load_last_wick_results()
+    hammer_last = load_last_hammer_results()
 
     def scan_summary(last, results_url):
         if not last:
@@ -5082,6 +5444,10 @@ def admin_hub():
             <div class="btn-row" style="margin-bottom:6px">{wick_btn}</div>
             {scan_summary(wick_last, '/wick')}
           </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{hammer_btn}</div>
+            {scan_summary(hammer_last, '/hammer')}
+          </div>
         </div>
       </div>
     </div>
@@ -5096,6 +5462,7 @@ def admin_hub():
         <a href="/range"   class="btn btn-blue" style="font-size:.82rem">Range Levels</a>
         <a href="/scan"    class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
         <a href="/wick"     class="btn btn-blue" style="font-size:.82rem">Wick Scanner</a>
+        <a href="/hammer"  class="btn btn-blue" style="font-size:.82rem">Hammer Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
       </div>
