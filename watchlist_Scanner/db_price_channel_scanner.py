@@ -49,6 +49,7 @@ CONFIGS = {
         'pivot_lb':  8,
         'tolerance': 0.15,   # touch = within 15% of channel width of the line
         'log_scale': False,
+        'max_width': 35.0,   # reject channels wider than this % of price
         'label':     'Daily',
         'sublabel':  'Short channels — weeks to months',
     },
@@ -57,6 +58,7 @@ CONFIGS = {
         'pivot_lb':  5,
         'tolerance': 0.15,
         'log_scale': False,
+        'max_width': 50.0,
         'label':     'Weekly',
         'sublabel':  'Medium channels — months to ~1.5 years',
     },
@@ -65,6 +67,7 @@ CONFIGS = {
         'pivot_lb':  3,
         'tolerance': 0.15,
         'log_scale': True,   # log scale for multi-year channels
+        'max_width': 65.0,   # wider allowed for mega channels
         'label':     'Monthly',
         'sublabel':  'Mega channels — multi-year',
     },
@@ -151,12 +154,13 @@ def detect_channel(df, cfg):
     Attempt to detect an ascending parallel price channel.
     Returns a result dict or None.
     """
-    n_bars   = cfg['bars']
-    lb       = cfg['pivot_lb']
-    tol      = cfg['tolerance']
-    use_log  = cfg['log_scale']
-    MIN_R2   = 0.65
-    MIN_BARS = max(20, n_bars // 4)
+    n_bars    = cfg['bars']
+    lb        = cfg['pivot_lb']
+    tol       = cfg['tolerance']
+    use_log   = cfg['log_scale']
+    max_width = cfg['max_width']
+    MIN_R2    = 0.65
+    MIN_BARS  = max(20, n_bars // 4)
 
     sub = df.tail(n_bars).reset_index(drop=True)
     n   = len(sub)
@@ -262,13 +266,16 @@ def detect_channel(df, cfg):
     if   age_ratio >= 0.70: score += 2
     elif age_ratio >= 0.40: score += 1
 
-    # Width bonus: narrower channel = cleaner signal
-    # width_pct = channel width as % of the lower line price
+    # Width check — reject channels that are too wide to be meaningful
     if use_log:
         width_pct = float((np.exp(ch_offset) - 1) * 100)
     else:
         width_pct = float(ch_offset / abs(c_low) * 100) if c_low > 0 else 0.0
 
+    if width_pct > max_width:
+        return None   # channel too wide — noisy or not a real channel
+
+    # Width bonus: narrower channel = cleaner signal
     if width_pct < 20: score += 1
 
     # ── Convert back to actual prices ────────────────────────────────────────
