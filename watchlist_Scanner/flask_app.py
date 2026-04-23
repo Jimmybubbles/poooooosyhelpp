@@ -4231,10 +4231,31 @@ def hammer_page():
 
 # ─── Jang's Wicks ─────────────────────────────────────────────────────────────
 
+@app.route('/jangs-wicks/run-daily')
+def jangs_run_daily():
+    if not current_user_id() and not is_admin():
+        return redirect('/ask/login')
+    start_hammer_scan()
+    return redirect('/jangs-wicks')
+
+
+@app.route('/jangs-wicks/run-weekly')
+def jangs_run_weekly():
+    if not current_user_id() and not is_admin():
+        return redirect('/ask/login')
+    start_wick_scan()
+    return redirect('/jangs-wicks')
+
+
 @app.route('/jangs-wicks')
 def jangs_wicks_page():
-    daily  = load_last_hammer_results()
-    weekly = load_last_wick_results()
+    daily   = load_last_hammer_results()
+    weekly  = load_last_wick_results()
+    logged_in = current_user_id() or is_admin()
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
 
     def score_color(s):
         if s >= 8: return '#22c55e'
@@ -4325,6 +4346,13 @@ def jangs_wicks_page():
       <p style="font-size:.88rem;color:#555;margin-bottom:14px">
         Daily and weekly wick signals — click any ticker to load the chart.
       </p>
+      {'<div class="btn-row" style="margin-bottom:14px">' + (
+          '<span class="btn btn-off">⏳ ' + jname + ' running…</span>'
+          if running else
+          '<a href="/jangs-wicks/run-daily" class="btn btn-blue">▶ Run Daily Scan</a>'
+          '<a href="/jangs-wicks/run-weekly" class="btn btn-blue">▶ Run Weekly Scan</a>'
+      ) + '</div>' if logged_in else
+      '<p style="font-size:.82rem;color:#555;margin-bottom:14px"><a href="/ask/login" style="color:#60a5fa">Log in</a> to run scans.</p>'}
       <div class="score-legend">
         <span><span class="dot" style="background:#22c55e"></span>Score 8+ — strong signal</span>
         <span><span class="dot" style="background:#f59e0b"></span>Score 5–7 — moderate signal</span>
@@ -4623,7 +4651,7 @@ def jangs_wicks_page():
     jwFilter('weekly', 'week');
     </script>"""
 
-    return page_wrap("Jang's Wicks", 'jangs-wicks', content)
+    return page_wrap("Jang's Wicks", 'jangs-wicks', content, auto_refresh=(running and jname in ('Hammer Scan','Wick Scan')))
 
 
 # ─── EFI Scanner ──────────────────────────────────────────────────────────────
