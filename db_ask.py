@@ -175,3 +175,56 @@ def get_username(user_id):
         row = cur.fetchone()
     conn.close()
     return row[0] if row else None
+
+
+def get_user_stats():
+    """Admin analytics: user list with question counts + summary stats."""
+    conn = get_connection()
+    with conn.cursor() as cur:
+        # Summary counts
+        cur.execute("SELECT COUNT(*) FROM ask_users")
+        total_users = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM ask_questions")
+        total_questions = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM ask_questions WHERE status = 'pending'")
+        pending = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM ask_questions WHERE status = 'answered'")
+        answered = cur.fetchone()[0]
+
+        cur.execute("""
+            SELECT COUNT(*) FROM ask_users
+            WHERE created_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        """)
+        new_this_week = cur.fetchone()[0]
+
+        # User list with question counts and last activity
+        cur.execute("""
+            SELECT u.id, u.username, u.email, u.created_date,
+                   COUNT(q.id) AS q_count,
+                   MAX(q.created_date) AS last_question
+            FROM ask_users u
+            LEFT JOIN ask_questions q ON q.user_id = u.id
+            GROUP BY u.id, u.username, u.email, u.created_date
+            ORDER BY u.created_date DESC
+        """)
+        users = [{
+            'id':            r[0],
+            'username':      r[1],
+            'email':         r[2] or '',
+            'created_date':  str(r[3])[:10],
+            'q_count':       r[4],
+            'last_question': str(r[5])[:10] if r[5] else '—',
+        } for r in cur.fetchall()]
+
+    conn.close()
+    return {
+        'total_users':    total_users,
+        'total_questions': total_questions,
+        'pending':        pending,
+        'answered':       answered,
+        'new_this_week':  new_this_week,
+        'users':          users,
+    }
