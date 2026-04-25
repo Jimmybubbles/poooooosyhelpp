@@ -107,6 +107,24 @@ def insert_dataframe(conn, ticker, df):
     return len(rows)
 
 
+def remove_from_csv(tickers_to_remove):
+    """Remove a list of tickers from 5000.csv."""
+    if not tickers_to_remove:
+        return
+    try:
+        df = pd.read_csv(TICKER_FILE)
+        col = 'Ticker' if 'Ticker' in df.columns else df.columns[0]
+        remove_set = {t.upper() for t in tickers_to_remove}
+        before = len(df)
+        df = df[~df[col].str.upper().isin(remove_set)]
+        removed = before - len(df)
+        if removed:
+            df.to_csv(TICKER_FILE, index=False)
+            print(f"Removed {removed} failed tickers from 5000.csv")
+    except Exception as e:
+        print(f"Warning: could not update 5000.csv — {e}")
+
+
 def main():
     print("=" * 70)
     print("DB INITIAL DOWNLOAD")
@@ -176,6 +194,7 @@ def main():
     print(f"Failed:         {failed}")
     if failed_tickers:
         print(f"Failed tickers: {', '.join(failed_tickers[:20])}")
+        remove_from_csv(failed_tickers)
     print(f"Completed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
 

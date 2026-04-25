@@ -100,11 +100,16 @@ def init_tables():
                 notes       TEXT
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
-        # Add notes column if table already existed without it
-        try:
-            cur.execute("ALTER TABLE asx_trades ADD COLUMN notes TEXT")
-        except Exception:
-            pass  # Column already exists
+        for col_sql in [
+            "ALTER TABLE asx_trades ADD COLUMN notes TEXT",
+            "ALTER TABLE asx_trades ADD COLUMN sell_reason TEXT",
+            "ALTER TABLE asx_trades ADD COLUMN sell_image VARCHAR(500)",
+            "ALTER TABLE asx_trades ADD COLUMN pick_id INT",
+        ]:
+            try:
+                cur.execute(col_sql)
+            except Exception:
+                pass
     conn.commit()
     conn.close()
 
@@ -334,7 +339,7 @@ def buy_asx_stock(ticker, shares, buy_price, target_price, reason, image_filenam
         conn.close()
 
 
-def sell_asx_stock(pick_id, sell_price):
+def sell_asx_stock(pick_id, sell_price, sell_reason='', sell_image=''):
     sell_price = float(sell_price)
     conn = get_connection()
     try:
@@ -354,9 +359,101 @@ def sell_asx_stock(pick_id, sell_price):
             cur.execute("UPDATE asx_picks SET status = 'closed' WHERE id = %s", (pick_id,))
             cur.execute("UPDATE asx_account SET cash = cash + %s WHERE id = 1", (total_value,))
             cur.execute("""
-                INSERT INTO asx_trades (ticker, action, shares, price, total, pnl, trade_date)
-                VALUES (%s, 'SELL', %s, %s, %s, %s, %s)
-            """, (ticker, shares, sell_price, total_value, pnl, datetime.now()))
+                INSERT INTO asx_trades (ticker, action, shares, price, total, pnl, trade_date, sell_reason, sell_image, pick_id)
+                VALUES (%s, 'SELL', %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (ticker, shares, sell_price, total_value, pnl, datetime.now(),
+                  sell_reason or None, sell_image or None, pick_id))
+        conn.commit()
+        return True, pnl
+    except Exception as e:
+        conn.rollback()
+        return False, str(e)
+    finally:
+        conn.close()
+
+
+def get_closed_asx_trades():
+    """Returns closed ASX trades with both buy and sell data."""
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT
+                p.id, p.ticker, p.shares, p.buy_price, p.reason,
+                p.image_path, p.bought_date,
+                t.price, t.pnl, t.trade_date, t.sell_reason, t.sell_image
+            FROM asx_picks p
+            LEFT JOIN asx_trades t ON t.pick_id = p.id AND t.action = 'SELL'
+            WHERE p.status = 'closed'
+            ORDER BY t.trade_date DESC
+        """)
+        rows = cur.fetchall()
+    conn.close()
+    trades = []
+    for r in rows:
+        buy_price  = float(r[3]) if r[3] else 0
+        sell_price = float(r[7]) if r[7] else 0
+        pnl        = float(r[8]) if r[8] is not None else 0
+        cost       = float(r[2]) * buy_price if r[2] else 0
+        pnl_pct    = (pnl / cost * 100) if cost else 0
+        trades.append({
+            'id':          r[0],
+            'ticker':      r[1],
+            'shares':      float(r[2]) if r[2] else 0,
+            'buy_price':   buy_price,
+            'buy_reason':  r[4] or '',
+            'buy_image':   r[5] or '',
+            'bought_date': str(r[6])[:10] if r[6] else '',
+            'sell_price':  sell_price,
+            'pnl':         pnl,
+            'pnl_pct':     pnl_pct,
+            'sell_date':   str(r[9])[:10] if r[9] else '',
+            'sell_reason': r[10] or '',
+            'sell_image':  r[11] or '',
+            'market':      'ASX',
+        })
+    return trades
+
+
+def delete_closed_asx_trade(pick_id):
+    """Delete a closed ASX trade and its sell record from the journal."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM asx_trades WHERE pick_id = %s", (pick_id,))
+            cur.execute("DELETE FROM asx_picks WHERE id = %s AND status = 'closed'", (pick_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+
+def add_manual_closed_asx_trade(ticker, shares, buy_price, buy_date, buy_reason, buy_image,
+                                 sell_price, sell_date, sell_reason, sell_image):
+    """Manually insert a closed ASX trade into the journal (backfill)."""
+    ticker = ticker.upper()
+    shares = float(shares)
+    buy_price  = float(buy_price)
+    sell_price = float(sell_price)
+    total_value = shares * sell_price
+    pnl = total_value - (shares * buy_price)
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO asx_picks (ticker, shares, buy_price, reason, image_path, bought_date, status)
+                VALUES (%s, %s, %s, %s, %s, %s, 'closed')
+            """, (ticker, shares, buy_price, buy_reason or None, buy_image or None, buy_date))
+            pick_id = conn.insert_id()
+            cur.execute("""
+                INSERT INTO asx_trades (ticker, action, shares, price, total, pnl, trade_date,
+                                        sell_reason, sell_image, pick_id)
+                VALUES (%s, 'SELL', %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (ticker, shares, sell_price, total_value, pnl, sell_date,
+                  sell_reason or None, sell_image or None, pick_id))
         conn.commit()
         return True, pnl
     except Exception as e:
