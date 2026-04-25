@@ -32,17 +32,29 @@ import pymysql
 from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT, ADMIN_PASSWORD, SECRET_KEY
 from db_channel_scanner import run_scan, load_last_results, get_connection, get_ticker_data
 from db_fader_scanner import run_fader_scan, load_last_fader_results
+from db_efi_scanner import run_efi_scan, load_last_efi_results
+from db_wick_scanner import run_wick_scan, load_last_wick_results
+from db_hammer_scanner import run_hammer_scan, load_last_hammer_results
+from db_price_channel_scanner import (
+    run_price_channel_scan, load_last_price_channel_results,
+    get_ticker_daily, resample_weekly, resample_monthly,
+    find_pivot_highs, find_pivot_lows, fit_line, CONFIGS as PCHAN_CONFIGS,
+)
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
-                      get_history, buy_stock, sell_stock, get_daily_changes, UPLOADS_DIR)
+                      get_history, buy_stock, sell_stock, get_daily_changes,
+                      get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR)
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
                     submit_question, answer_question, get_questions, get_username,
                     get_user_stats)
+from db_dividend import (init_tables as init_dividend_tables, get_all_dividend_stocks,
+                         get_dividend_stock, upsert_dividend_stock, delete_dividend_stock)
 from db_asx import (init_tables as init_asx_tables, ASX_200,
                     get_asx_sparklines_batch, get_asx_latest_prices,
                     get_asx_chart_data, get_tickers_with_data,
                     get_asx_account, get_asx_picks, get_asx_history,
                     get_asx_portfolio_value, buy_asx_stock, sell_asx_stock,
-                    get_asx_daily_changes)
+                    get_asx_daily_changes, get_closed_asx_trades,
+                    add_manual_closed_asx_trade, delete_closed_asx_trade)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -61,6 +73,7 @@ try:
     init_tables()
     init_ask_tables()
     init_asx_tables()
+    init_dividend_tables()
 except Exception:
     pass
 
@@ -120,12 +133,56 @@ MACRO_INSTRUMENTS = [
     ('^TNX',     'US 10Y Yield'),
 ]
 
+DOW_30 = [
+    'AAPL','AMGN','AMZN','AXP','BA','CAT','CRM','CSCO','CVX','DIS',
+    'DOW','GS','HD','HON','IBM','JNJ','JPM','KO','MCD','MMM',
+    'MRK','MSFT','NKE','NVDA','PG','TRV','UNH','V','VZ','WMT',
+]
+
+NASDAQ_100 = [
+    'AAPL','MSFT','NVDA','AMZN','META','GOOGL','GOOG','TSLA','AVGO','COST',
+    'NFLX','AMD','ADBE','QCOM','TMUS','TXN','AMGN','INTU','INTC','HON',
+    'AMAT','CMCSA','BKNG','ISRG','MU','LRCX','PANW','ADI','KLAC','REGN',
+    'CRWD','SNPS','CDNS','MELI','ORLY','ABNB','PYPL','CTAS','FTNT','NXPI',
+    'MNST','MDLZ','ADP','PAYX','ROST','PCAR','MAR','CPRT','CHTR','MCHP',
+    'WDAY','EXC','MRNA','KDP','DLTR','FAST','ODFL','EA','DXCM','CTSH',
+    'XEL','BIIB','IDXX','TEAM','ZS','VRTX','ANSS','TTWO','ILMN','GEHC',
+    'CEG','FANG','ON','CSGP','ENPH','WBD','LULU','MRVL','DASH','CSX',
+    'VRSK','SBUX','ASML','PDD','SIRI','ALGN','SWKS','NTES','SMCI','ARM',
+]
+
+SP500_TICKERS = [
+    'AAPL','MSFT','NVDA','AMZN','META','GOOGL','GOOG','TSLA','BRK-B','AVGO',
+    'LLY','JPM','UNH','XOM','V','JNJ','MA','PG','HD','COST',
+    'MRK','ABBV','CVX','WMT','BAC','KO','MCD','PEP','CSCO','ORCL',
+    'ACN','TMO','CRM','WFC','LIN','ABT','AMD','NFLX','DIS','QCOM',
+    'TXN','DHR','NKE','PM','INTC','HON','NEE','T','AMGN','UPS',
+    'IBM','CAT','SBUX','RTX','GE','SPGI','BMY','LOW','INTU','GS',
+    'DE','ELV','AMAT','MS','MMC','MDLZ','GILD','ADP','BKNG','SYK',
+    'BLK','CVS','CB','ADI','LRCX','AMT','ISRG','TJX','VRTX','C',
+    'REGN','SO','MO','ZTS','PLD','AXP','BSX','MMM','CL','SCHW',
+    'DUK','MU','CI','BDX','HCA','EOG','KLAC','PNC','USB','ITW',
+    'F','GM','ETN','CME','AON','PSA','FDX','TGT','SHW','NSC',
+    'MCO','ECL','MAR','PANW','SNPS','CDNS','CRWD','ORLY','MELI','BA',
+    'DELL','HPQ','HPE','PYPL','UBER','COIN','RIVN','SNAP','PINS','RBLX',
+    'PLTR','ANET','SMCI','ARM','AXON','DDOG','HUBS','ZM','DOCU','OKTA',
+    'SNOW','MDB','CFLT','GTLB','PATH','U','APPN','APPF','PCVX','TMDX',
+    'WRB','AFL','MET','PRU','TRV','ALL','AIG','PFG','UNM','CNO',
+    'DFS','COF','SYF','ADS','SLM','NAVI','CACC','OMF','ALLY','SOFI',
+    'WFC','KEY','RF','FITB','CFG','HBAN','ZION','MTB','CMA','SIVB',
+    'WAL','BOKF','WTFC','IBCP','FULT','SNV','GBCI','FBIZ','FFIN','TBBK',
+]
+
 def get_perf_data(tickers):
     """
     Returns {ticker: {d1, w1, m1, m3}} % change for each ticker.
-    Pulls last 65 trading days of closes in one query.
+    Pulls last 95 days of closes in one query.
+    Also returns _error key if something went wrong, and _rows_found count.
     """
+    from collections import defaultdict
     result = {t: {'d1': None, 'w1': None, 'm1': None, 'm3': None} for t in tickers}
+    result['_error'] = None
+    result['_rows_found'] = 0
     try:
         conn = get_connection()
         fmt = ','.join(['%s'] * len(tickers))
@@ -140,10 +197,12 @@ def get_perf_data(tickers):
             rows = cur.fetchall()
         conn.close()
 
-        from collections import defaultdict
+        result['_rows_found'] = len(rows)
+
         grouped = defaultdict(list)
         for ticker, _, close in rows:
-            grouped[ticker.upper()].append(float(close))
+            if close is not None:
+                grouped[ticker.upper()].append(float(close))
 
         def pct(closes, n):
             if len(closes) > n:
@@ -160,9 +219,90 @@ def get_perf_data(tickers):
                 result[ticker]['m1'] = pct(closes, 21)
             if len(closes) >= 64:
                 result[ticker]['m3'] = pct(closes, 63)
+    except Exception as e:
+        result['_error'] = str(e)
+    return result
+
+
+def get_us_sparklines_batch(tickers, bars=60):
+    """Return {ticker: [last N closes]} from the prices table."""
+    from collections import defaultdict
+    result = defaultdict(list)
+    if not tickers:
+        return result
+    try:
+        conn = get_connection()
+        fmt = ','.join(['%s'] * len(tickers))
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT ticker, close FROM prices
+                WHERE ticker IN ({fmt})
+                  AND date >= DATE_SUB(CURDATE(), INTERVAL 95 DAY)
+                ORDER BY ticker, date ASC
+            """, [t.upper() for t in tickers])
+            for ticker, close in cur.fetchall():
+                if close is not None:
+                    result[ticker.upper()].append(float(close))
+        conn.close()
+        return {t: v[-bars:] for t, v in result.items()}
+    except Exception:
+        return result
+
+
+def get_us_latest_prices(tickers):
+    """Return {ticker: latest_close} from the prices table."""
+    result = {}
+    if not tickers:
+        return result
+    try:
+        conn = get_connection()
+        fmt = ','.join(['%s'] * len(tickers))
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT p.ticker, p.close
+                FROM prices p
+                INNER JOIN (
+                    SELECT ticker, MAX(date) AS max_date
+                    FROM prices WHERE ticker IN ({fmt})
+                    GROUP BY ticker
+                ) m ON p.ticker = m.ticker AND p.date = m.max_date
+            """, [t.upper() for t in tickers])
+            for ticker, close in cur.fetchall():
+                result[ticker.upper()] = float(close) if close else None
+        conn.close()
     except Exception:
         pass
     return result
+
+
+def get_us_tickers_with_data(tickers):
+    """Return set of tickers from the given list that have data in prices table."""
+    if not tickers:
+        return set()
+    try:
+        conn = get_connection()
+        fmt = ','.join(['%s'] * len(tickers))
+        with conn.cursor() as cur:
+            cur.execute(f"SELECT DISTINCT ticker FROM prices WHERE ticker IN ({fmt})",
+                        [t.upper() for t in tickers])
+            result = {r[0].upper() for r in cur.fetchall()}
+        conn.close()
+        return result
+    except Exception:
+        return set()
+
+
+def get_us_all_tickers_with_data():
+    """Return all distinct tickers in the prices table."""
+    try:
+        conn = get_connection()
+        with conn.cursor() as cur:
+            cur.execute("SELECT DISTINCT ticker FROM prices ORDER BY ticker")
+            result = [r[0].upper() for r in cur.fetchall()]
+        conn.close()
+        return result
+    except Exception:
+        return []
 
 
 def perf_color(val):
@@ -630,22 +770,27 @@ def nav_html(active=''):
         auth_btn = f'<span style="font-size:.78rem;color:#aaa;margin-left:8px">Hi, {current_username()}</span> <a href="/ask/logout" style="font-size:.78rem;color:#555;margin-left:6px">Logout</a>'
     else:
         auth_btn = '<a href="/ask/login" style="font-size:.78rem;padding:5px 12px;background:#252839;border-radius:6px;color:#aaa">Login</a>'
+    admin_lnk = f'<span style="width:1px;background:#2a2d3e;align-self:stretch;margin:0 4px"></span>{lnk("/admin","Admin","admin")}' if is_admin() else ''
+
     return f"""
     <header>
       <h1>Stock Manager</h1>
       <nav>
         {lnk('/','Dashboard','home')}
-        {lnk('/scan','Channel Scanner','scan')}
-        {lnk('/results','Results','results')}
+        {lnk('/how-it-works','How It Works','howitworks')}
+        {lnk('/indexes','Indexes & ETFs','indexes')}
+        {lnk('/nasdaq','Nasdaq 100','nasdaq')}
+        {lnk('/dow','Dow 30','dow')}
+        {lnk('/sp500','S&amp;P 500','sp500')}
+        {lnk('/russell','Russell / Small Caps','russell')}
         {lnk('/picks',"Jimmy's Picks",'picks')}
-        {lnk('/ask','Ask Jimmy','ask')}
-        {lnk('/range','Range Levels','range')}
         {lnk('/asx','ASX 200','asx')}
         {lnk('/asx/picks','ASX Picks','asxpicks')}
-        {lnk('/fader','Fader Scan','fader')}
-        {lnk('/indexes','Indexes & ETFs','indexes')}
-        {lnk('/log-view','Log','log')}
-        {lnk('/admin/analytics','Analytics','analytics') if is_admin() else ''}
+        {lnk('/dividend','Dividend Picks','dividend')}
+        {lnk('/journal','Trade Journal','journal')}
+        {lnk("/jangs-wicks","Jang's Wicks",'jangs-wicks')}
+        {lnk('/ask','Ask Jimmy','ask')}
+        {admin_lnk}
       </nav>
       {badge}
       {auth_btn}
@@ -700,26 +845,6 @@ def index():
         running = _job_running
 
     err = f'<div class="err-box"><strong>DB Error:</strong> {stats["error"]}</div>' if stats['error'] else ''
-
-    last_refresh   = get_last_refresh_date()
-    refreshed_today = already_refreshed_today()
-
-    if not is_admin():
-        daily_btn = initial_btn = refresh_btn = ''
-    elif running:
-        daily_btn   = '<span class="btn btn-off">Run Daily Update</span>'
-        initial_btn = '<span class="btn btn-off">Run Initial Download</span>'
-        refresh_btn = '<span class="btn btn-off">⏳ Updating prices…</span>'
-    elif refreshed_today:
-        refresh_btn = f'<span class="btn btn-off" style="background:#14532d;color:#86efac;cursor:default">✓ Prices updated today</span>'
-        daily_btn   = '<a href="/run-daily" class="btn btn-blue">Run Daily Update</a>'
-        initial_btn = '<a href="/run-initial" class="btn btn-amber" onclick="return confirm(\'This takes 1–2 hours. Continue?\')">Run Initial Download</a>'
-    else:
-        refresh_btn = '<a href="/run-refresh" class="btn btn-green" style="font-size:.95rem;padding:10px 22px">⟳ Update US &amp; ASX Prices</a>'
-        daily_btn   = '<a href="/run-daily" class="btn btn-blue">Run Daily Update</a>'
-        initial_btn = '<a href="/run-initial" class="btn btn-amber" onclick="return confirm(\'This takes 1–2 hours. Continue?\')">Run Initial Download</a>'
-
-    refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Never updated today'
 
     def pnl_html(val):
         c = '#22c55e' if val >= 0 else '#ef4444'
@@ -888,22 +1013,7 @@ def index():
       {'<table class="trade-table"><tr><th>Date</th><th>Ticker</th><th>Action</th><th>Price</th><th>Total</th><th>P&L</th></tr>' + hist_rows + '</table>' if hist_rows else '<p class="note">No trades yet. <a href="/picks">Add your first pick →</a></p>'}
     </section>
 
-    <!-- Admin data actions -->
-    {f'''<section>
-      <h2>Price Data</h2>
-      <div class="btn-row" style="margin-bottom:10px">
-        {refresh_btn}
-      </div>
-      <p class="note">{refresh_note} &nbsp;·&nbsp; Updates both US and ASX prices in one go.</p>
-      <details style="margin-top:12px">
-        <summary style="font-size:.75rem;color:#444;cursor:pointer">Advanced options</summary>
-        <div class="btn-row" style="margin-top:10px">
-          {daily_btn}
-          {initial_btn}
-        </div>
-        <p class="note">US only · Initial download takes 1–2 hours.</p>
-      </details>
-    </section>''' if is_admin() else ''}
+    {f'<div style="text-align:right;margin-top:4px"><a href="/admin" style="font-size:.78rem;color:#555">→ Admin Panel</a></div>' if is_admin() else ''}
     """
 
     return page_wrap('Dashboard', 'home', content, auto_refresh=running)
@@ -1381,7 +1491,7 @@ def _run_refresh_job():
 
         # ── US open positions ─────────────────────────────────────────────────
         with conn.cursor() as cur:
-            cur.execute("SELECT DISTINCT ticker FROM picks WHERE status='open'")
+            cur.execute("SELECT DISTINCT ticker FROM jimmy_picks WHERE status='open'")
             us_tickers = [r[0] for r in cur.fetchall()]
 
         log(f"US open positions: {', '.join(us_tickers) if us_tickers else 'none'}\n")
@@ -1485,8 +1595,7 @@ def start_refresh_job():
 def run_refresh():
     if not is_admin():
         return redirect('/')
-    if not already_refreshed_today():
-        start_refresh_job()
+    start_refresh_job()
     return redirect('/')
 
 
@@ -1633,14 +1742,13 @@ def picks_page():
             reason_html = f'<p style="color:#aaa;font-size:.83rem;margin-bottom:12px;line-height:1.5">{p["reason"]}</p>' if p['reason'] else ''
 
             if is_admin():
+                pticker = p['ticker']
                 action_html = f"""
-                <form method="POST" action="/picks/sell/{p['id']}" style="display:flex;gap:8px;align-items:center">
-                  <input name="sell_price" type="number" step="0.0001" value="{p['current_price']:.4f}"
-                    style="width:150px;padding:7px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem">
-                  <button type="submit" class="btn btn-amber" style="padding:7px 16px"
-                    onclick="return confirm('Sell {p['shares']} shares of {p['ticker']}?')">Sell</button>
-                  <a href="/chart/{p['ticker']}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">Chart</a>
-                </form>"""
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn btn-amber" style="padding:7px 16px"
+                    onclick="openSellModal({p['id']},'{pticker}',{p['shares']},{p['current_price']:.4f},'/picks/sell/{p['id']}')">Sell</button>
+                  <a href="/chart/{pticker}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">Chart</a>
+                </div>"""
             else:
                 action_html = f'<a href="/chart/{p["ticker"]}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">View Chart</a>'
 
@@ -1714,7 +1822,48 @@ def picks_page():
     err = request.args.get('err', '')
     err_html = f'<div class="err-box">{err}</div>' if err else ''
 
-    content = err_html + msg_html + summary + add_form + pos_html + hist_html
+    sell_modal = """
+    <div id="sell-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center">
+      <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px;width:100%;max-width:500px;margin:20px">
+        <h3 id="sell-modal-title" style="margin:0 0 20px">Sell Position</h3>
+        <form id="sell-form" method="POST" enctype="multipart/form-data">
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Price *</label>
+            <input id="sell-price-input" name="sell_price" type="number" step="0.0001" required
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I sold</label>
+            <textarea name="sell_reason" rows="4" placeholder="Stop loss hit, thesis broke, took profit at target..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div style="margin-bottom:20px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Chart Screenshot (sell setup)</label>
+            <input name="sell_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-amber" style="flex:1">Confirm Sell</button>
+            <button type="button" class="btn" style="flex:1;background:#252839" onclick="closeSellModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+    function openSellModal(pickId, ticker, shares, currentPrice, action) {
+      document.getElementById('sell-modal-title').textContent = 'Sell ' + shares + ' shares of ' + ticker;
+      document.getElementById('sell-price-input').value = currentPrice;
+      document.getElementById('sell-form').action = action;
+      document.getElementById('sell-modal').style.display = 'flex';
+    }
+    function closeSellModal() {
+      document.getElementById('sell-modal').style.display = 'none';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSellModal();
+    });
+    </script>"""
+
+    content = err_html + msg_html + summary + add_form + pos_html + hist_html + sell_modal
     return page_wrap("Jimmy's Picks", 'picks', content)
 
 
@@ -1747,8 +1896,18 @@ def picks_buy():
 def picks_sell(pick_id):
     if not is_admin():
         return redirect('/picks')
-    sell_price = float(request.form.get('sell_price', 0))
-    ok, result = sell_stock(pick_id, sell_price)
+    sell_price  = float(request.form.get('sell_price', 0))
+    sell_reason = request.form.get('sell_reason', '').strip()
+
+    sell_image = ''
+    file = request.files.get('sell_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        sell_image = f"sell_{pick_id}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, sell_image))
+
+    ok, result = sell_stock(pick_id, sell_price, sell_reason, sell_image)
     if ok:
         sign = '+' if result >= 0 else ''
         return redirect(f'/picks?msg=Position+closed.+P%26L:+{sign}${result:.2f}')
@@ -2058,7 +2217,10 @@ def range_page():
     <style>
     .rtable { width:100%; border-collapse:collapse; font-size:.84rem; }
     .rtable th { text-align:left; padding:8px 12px; color:#555; border-bottom:1px solid #2a2d3e;
-                 font-weight:500; white-space:nowrap; }
+                 font-weight:500; white-space:nowrap; cursor:pointer; user-select:none; }
+    .rtable th:hover { color:#aaa; }
+    .rtable th.sort-asc::after  { content:' ▲'; font-size:.6rem; color:#60a5fa; }
+    .rtable th.sort-desc::after { content:' ▼'; font-size:.6rem; color:#60a5fa; }
     .rtable td { padding:8px 12px; border-bottom:1px solid #151820; vertical-align:middle; }
     .rtable .range-row:hover td { background:#1f2235; }
     .rtable .range-row.active td { background:#1a2235; }
@@ -2169,6 +2331,23 @@ def range_page():
           .catch(e => { document.getElementById('cstatus-' + ticker).textContent = 'Failed: ' + e; });
       });
     });
+
+    function sortRange(th) {
+      const tbody = th.closest('table').querySelector('tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.range-row'));
+      rows.sort((a, b) => {
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    }
     </script>"""
 
     def section_table(title, items, color):
@@ -2181,9 +2360,9 @@ def range_page():
           {table_style}
           <table class="rtable">
             <thead><tr>
-              <th>Ticker</th><th>Price</th><th>Type</th><th>Zone</th>
-              <th>Entry</th><th>Stop</th><th>Target</th><th>R:R</th>
-              <th>Fader</th><th>EFI</th><th>Score</th>
+              <th onclick="sortRange(this)">Ticker</th><th onclick="sortRange(this)">Price</th><th onclick="sortRange(this)">Type</th><th onclick="sortRange(this)">Zone</th>
+              <th onclick="sortRange(this)">Entry</th><th onclick="sortRange(this)">Stop</th><th onclick="sortRange(this)">Target</th><th onclick="sortRange(this)">R:R</th>
+              <th onclick="sortRange(this)">Fader</th><th onclick="sortRange(this)">EFI</th><th onclick="sortRange(this)">Score</th>
             </tr></thead>
             <tbody>{rows}</tbody>
           </table>
@@ -2324,7 +2503,9 @@ def asx_page():
             const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
             const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
             ema5.setData(data.ema5); ema26.setData(data.ema26);
-            chart.timeScale().fitContent();
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: 0, to: barCount + Math.round(barCount * 0.9) });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
             const vc = LightweightCharts.createChart(document.getElementById('av-' + ticker), {
               layout: { background: { color: '#0a0c14' }, textColor: '#888' },
               grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
@@ -2342,21 +2523,164 @@ def asx_page():
     });
     </script>"""
 
+    # ── ASX breadth from sparklines ───────────────────────────────────────────
+    def asx_breadth(n):
+        up = down = flat = 0
+        for t in sorted(ASX_200):
+            c = sparklines.get(t, [])
+            if len(c) > n:
+                if   c[-1] > c[-1-n]: up   += 1
+                elif c[-1] < c[-1-n]: down += 1
+                else:                 flat += 1
+        total = up + down + flat
+        up_pct   = round(up   / total * 100, 1) if total else 0
+        down_pct = round(down / total * 100, 1) if total else 0
+        flat_pct = round(100 - up_pct - down_pct, 1)
+        return up, down, flat, up_pct, down_pct, flat_pct
+
+    ad_up, ad_dn, ad_fl, ad_up_pct, ad_dn_pct, ad_fl_pct = asx_breadth(1)
+    aw_up, aw_dn, aw_fl, aw_up_pct, aw_dn_pct, aw_fl_pct = asx_breadth(5)
+    am_up, am_dn, am_fl, am_up_pct, am_dn_pct, am_fl_pct = asx_breadth(21)
+
+    asx_donut_html = ''
+    for period, up_pct, dn_pct, fl_pct, up, dn in [
+        ('Day',   ad_up_pct, ad_dn_pct, ad_fl_pct, ad_up, ad_dn),
+        ('Week',  aw_up_pct, aw_dn_pct, aw_fl_pct, aw_up, aw_dn),
+        ('Month', am_up_pct, am_dn_pct, am_fl_pct, am_up, am_dn),
+    ]:
+        pid = 'asx-' + period.lower()
+        cs = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff;white-space:nowrap'
+        asx_donut_html += (
+            f'<div style="text-align:center">'
+            f'<div style="font-size:.82rem;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{period}</div>'
+            f'<div style="position:relative;width:150px;height:150px">'
+            f'<canvas id="donut-{pid}" width="150" height="150"></canvas>'
+            f'<div style="{cs}">{up_pct}%</div>'
+            f'</div>'
+            f'<div style="font-size:.88rem;margin-top:10px;font-weight:600">'
+            f'<span style="color:#22c55e">&#9650; {up} up</span>'
+            f'<span style="color:#555;margin:0 8px">/</span>'
+            f'<span style="color:#ef4444">&#9660; {dn} down</span>'
+            f'</div></div>'
+        )
+
+    # Updated rows with bigger fonts + day %
+    rows_html2 = ''
+    for ticker in sorted(ASX_200):
+        closes  = sparklines.get(ticker, [])
+        price   = latest.get(ticker)
+        svg2    = sparkline_svg(closes)
+        price_s = f'A${price:.3f}' if price else '—'
+        has_row = ticker in with_data
+        day_chg = ''
+        if len(closes) >= 2:
+            pct = (closes[-1] - closes[-2]) / closes[-2] * 100
+            col = '#22c55e' if pct >= 0 else '#ef4444'
+            day_chg = f'<span style="color:{col};font-size:.95rem;font-weight:600">{"+" if pct>=0 else ""}{pct:.2f}%</span>'
+        rows_html2 += f"""
+        <tr class="asx-row" data-ticker="{ticker}" style="cursor:{'pointer' if has_row else 'default'}">
+          <td>
+            <div style="display:flex;align-items:center;gap:12px">
+              <strong style="color:#60a5fa;min-width:68px;font-size:1rem">{ticker}</strong>
+              {svg2 if has_row else ''}
+            </div>
+          </td>
+          <td style="font-weight:700;color:#fff;font-size:1rem">{price_s}</td>
+          <td style="font-size:.95rem;font-weight:600">{day_chg}</td>
+        </tr>"""
+
     content = f"""
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
+    <!-- Dashboard header -->
     <section style="margin-bottom:20px">
-      <h2>ASX 200 <span style="color:#555;font-weight:400;font-size:.8rem;text-transform:none;letter-spacing:0">({len(with_data)} tickers with data · click row to expand chart)</span></h2>
-      <div class="btn-row" style="margin-bottom:0">{dl_btn}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span></span>
+        <div class="btn-row">{dl_btn}</div>
+      </div>
+
+      <!-- STW area chart -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:.78rem;color:#888;font-weight:600;margin-bottom:8px">
+          STW &nbsp;<span style="color:#555;font-weight:400">— ASX 200 ETF · 60 Day</span>
+        </div>
+        <div id="asx-etf-area" style="height:220px;background:#0a0c14;border-radius:8px"></div>
+      </div>
+
+      <!-- Breadth donuts -->
+      <div>
+        <p style="font-size:.88rem;color:#888;margin-bottom:14px">
+          Percentage of <strong style="color:#fff">ASX 200</strong> stocks moving up or down over each time period
+        </p>
+        <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
+          {asx_donut_html}
+        </div>
+      </div>
+
+      <div style="margin-top:14px;font-size:.8rem;color:#444">
+        {len(with_data)} tickers with data &nbsp;·&nbsp; click any row to expand chart
+      </div>
     </section>
+
+    <script>
+    // ASX ETF chart
+    (function(){{
+      fetch('/api/asx-chart/STW')
+        .then(r=>r.json())
+        .then(data=>{{
+          if(data.error||!data.ohlcv) return;
+          const recent = data.ohlcv.slice(-60);
+          const chart = LightweightCharts.createChart(document.getElementById('asx-etf-area'),{{
+            layout:{{background:{{color:'#0a0c14'}},textColor:'#555'}},
+            grid:{{vertLines:{{color:'#12141e'}},horzLines:{{color:'#12141e'}}}},
+            rightPriceScale:{{borderColor:'#1a1d2e'}},
+            timeScale:{{borderColor:'#1a1d2e',timeVisible:false}},
+            crosshair:{{mode:LightweightCharts.CrosshairMode.Normal}},
+            handleScroll:false, handleScale:false,
+          }});
+          const area = chart.addAreaSeries({{
+            lineColor:'#22c55e', topColor:'#22c55e44',
+            bottomColor:'#22c55e00', lineWidth:2,
+          }});
+          area.setData(recent.map(b=>({{time:b.time,value:b.close}})));
+          chart.timeScale().fitContent();
+        }}).catch(()=>{{}});
+    }})();
+    // Breadth donuts
+    (function(){{
+      const donuts = [
+        {{ id:'donut-asx-day',   up:{ad_up_pct}, dn:{ad_dn_pct}, fl:{ad_fl_pct} }},
+        {{ id:'donut-asx-week',  up:{aw_up_pct}, dn:{aw_dn_pct}, fl:{aw_fl_pct} }},
+        {{ id:'donut-asx-month', up:{am_up_pct}, dn:{am_dn_pct}, fl:{am_fl_pct} }},
+      ];
+      donuts.forEach(d => {{
+        const ctx = document.getElementById(d.id).getContext('2d');
+        new Chart(ctx, {{
+          type: 'doughnut',
+          data: {{ datasets: [{{ data:[d.up,d.dn,d.fl],
+            backgroundColor:['#22c55e','#ef4444','#1f2235'], borderWidth:0, hoverOffset:4 }}] }},
+          options: {{
+            cutout:'70%',
+            animation:{{ animateRotate:true, duration:1200, easing:'easeInOutQuart' }},
+            plugins:{{ legend:{{display:false}},
+              tooltip:{{ callbacks:{{ label: ctx=>['Up','Down','Flat'][ctx.dataIndex]+': '+ctx.parsed+'%' }} }} }}
+          }}
+        }});
+      }});
+    }})();
+    </script>
+
     {log_section}
     <section>
       <style>
-        .asx-table {{ width:100%; border-collapse:collapse; font-size:.85rem; }}
-        .asx-table th {{ text-align:left; padding:8px 12px; color:#555;
-                        border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; }}
+        .asx-table {{ width:100%; border-collapse:collapse; font-size:.95rem; }}
+        .asx-table th {{ text-align:left; padding:10px 14px; color:#777;
+                        border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; font-size:.82rem; }}
         .asx-table th:hover {{ color:#aaa; }}
         .asx-table th.sort-asc::after  {{ content:' ▲'; font-size:.65rem; color:#60a5fa; }}
         .asx-table th.sort-desc::after {{ content:' ▼'; font-size:.65rem; color:#60a5fa; }}
-        .asx-table td {{ padding:8px 12px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .asx-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
         .asx-table .asx-row:hover td {{ background:#1f2235; }}
         .asx-table .asx-row.active td {{ background:#1a2235; }}
         .asx-drop td {{ padding:0 !important; }}
@@ -2365,9 +2689,9 @@ def asx_page():
         <thead><tr>
           <th onclick="sortAsx(this)">Ticker</th>
           <th onclick="sortAsx(this)">Price (AUD)</th>
-          <th>Market</th>
+          <th onclick="sortAsx(this)">Day %</th>
         </tr></thead>
-        <tbody id="asx-tbody">{rows_html}</tbody>
+        <tbody id="asx-tbody">{rows_html2}</tbody>
       </table>
     </section>
     <script>
@@ -2381,7 +2705,7 @@ def asx_page():
       rows.sort((a, b) => {{
         const av = a.cells[idx].textContent.trim();
         const bv = b.cells[idx].textContent.trim();
-        const an = parseFloat(av.replace('A$','')), bn = parseFloat(bv.replace('A$',''));
+        const an = parseFloat(av.replace('A$','').replace('%','')), bn = parseFloat(bv.replace('A$','').replace('%',''));
         const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
         return asc ? cmp : -cmp;
       }});
@@ -2432,6 +2756,141 @@ def asx_chart_api(ticker):
         'bars': len(ohlcv),
         'date_range': f"{dates[0]} → {dates[-1]}" if dates else '',
     })
+
+
+@app.route('/api/us-chart/<ticker>')
+def us_chart_api(ticker):
+    ticker = ticker.upper()
+    try:
+        conn = get_connection()
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT date, open, high, low, close, volume
+                FROM prices WHERE ticker = %s ORDER BY date ASC
+            """, (ticker,))
+            rows = cur.fetchall()
+        conn.close()
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+    if not rows:
+        return jsonify({'error': f'No data for {ticker}'})
+
+    dates  = [str(r[0]) for r in rows]
+    opens  = [float(r[1]) for r in rows]
+    highs  = [float(r[2]) for r in rows]
+    lows   = [float(r[3]) for r in rows]
+    closes = [float(r[4]) for r in rows]
+    vols   = [int(r[5]) if r[5] else 0 for r in rows]
+
+    close_s = pd.Series(closes)
+    ema5  = close_s.ewm(span=5,  adjust=False).mean().tolist()
+    ema26 = close_s.ewm(span=26, adjust=False).mean().tolist()
+
+    ohlcv  = [{'time': dates[i], 'open': opens[i], 'high': highs[i],
+               'low': lows[i], 'close': closes[i]} for i in range(len(dates))]
+    volume = [{'time': dates[i], 'value': vols[i],
+               'color': '#22c55e44' if closes[i] >= opens[i] else '#ef444444'}
+              for i in range(len(dates))]
+    e5  = [{'time': dates[i], 'value': ema5[i]}  for i in range(len(dates))]
+    e26 = [{'time': dates[i], 'value': ema26[i]} for i in range(len(dates))]
+
+    return jsonify({
+        'ohlcv': ohlcv, 'volume': volume, 'ema5': e5, 'ema26': e26,
+        'bars': len(ohlcv),
+        'date_range': f"{dates[0]} → {dates[-1]}" if dates else '',
+    })
+
+
+@app.route('/api/channel-lines/<ticker>/<timeframe>')
+def channel_lines_api(ticker, timeframe):
+    """Return lower/upper channel line time-series for overlay on the chart."""
+    import numpy as np
+    ticker = ticker.upper()
+    if timeframe not in PCHAN_CONFIGS:
+        return jsonify({'error': 'invalid timeframe'})
+    cfg = PCHAN_CONFIGS[timeframe]
+    try:
+        conn = get_connection()
+        daily_df = get_ticker_daily(conn, ticker)
+        conn.close()
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+    if daily_df is None or len(daily_df) < 30:
+        return jsonify({'error': 'not enough data'})
+
+    if timeframe == 'weekly':
+        df = resample_weekly(daily_df)
+    elif timeframe == 'monthly':
+        df = resample_monthly(daily_df)
+    else:
+        df = daily_df
+
+    n_bars  = cfg['bars']
+    lb      = cfg['pivot_lb']
+    use_log = cfg['log_scale']
+    max_w   = cfg['max_width']
+    MIN_R2  = 0.65
+
+    sub = df.tail(n_bars).reset_index()
+    n   = len(sub)
+    if n < max(20, n_bars // 4):
+        return jsonify({'error': 'not enough bars'})
+
+    # Weekly/monthly rows use period-start dates; daily uses actual date column
+    dates = [str(sub.iloc[i]['date'])[:10] for i in range(n)]
+
+    raw_h = sub['high'].values.astype(float)
+    raw_l = sub['low'].values.astype(float)
+
+    if use_log and (np.any(raw_l <= 0) or np.any(raw_h <= 0)):
+        return jsonify({'error': 'non-positive prices'})
+
+    wh = np.log(raw_h) if use_log else raw_h
+    wl = np.log(raw_l) if use_log else raw_l
+    x  = np.arange(n, dtype=float)
+
+    ph = find_pivot_highs(wh.tolist(), lb)
+    pl = find_pivot_lows(wl.tolist(), lb)
+    if len(ph) < 2 or len(pl) < 2:
+        return jsonify({'error': 'no channel'})
+
+    low_slope, low_intercept, r2 = fit_line(
+        [float(i) for i in pl], [float(wl[i]) for i in pl]
+    )
+    if low_slope is None or low_slope <= 0 or r2 < MIN_R2:
+        return jsonify({'error': 'no channel'})
+
+    lower_line = low_slope * x + low_intercept
+    offsets    = [float(wh[i]) - float(lower_line[i]) for i in ph]
+    if not offsets or max(offsets) <= 0:
+        return jsonify({'error': 'no channel'})
+
+    ch_offset  = float(max(offsets))
+    upper_line = lower_line + ch_offset
+
+    # Width filter — must match scanner
+    c_low_now = float(lower_line[-1])
+    if use_log:
+        width_pct = float((np.exp(ch_offset) - 1) * 100)
+    else:
+        width_pct = float(ch_offset / abs(c_low_now) * 100) if c_low_now > 0 else 0.0
+    if width_pct > max_w:
+        return jsonify({'error': 'channel too wide'})
+
+    # Convert to actual prices
+    if use_log:
+        lower_prices = [float(np.exp(v)) for v in lower_line]
+        upper_prices = [float(np.exp(v)) for v in upper_line]
+    else:
+        lower_prices = [float(v) for v in lower_line]
+        upper_prices = [float(v) for v in upper_line]
+
+    lower_series = [{'time': dates[i], 'value': round(lower_prices[i], 4)} for i in range(n)]
+    upper_series = [{'time': dates[i], 'value': round(upper_prices[i], 4)} for i in range(n)]
+
+    return jsonify({'lower': lower_series, 'upper': upper_series, 'r2': round(r2, 3)})
 
 
 # ─── ASX Picks ────────────────────────────────────────────────────────────────
@@ -2544,13 +3003,12 @@ def asx_picks_page():
             reason_html = f'<p style="color:#aaa;font-size:.83rem;margin-bottom:12px;line-height:1.5">{p["reason"]}</p>' if p['reason'] else ''
 
             if is_admin():
+                pticker = p['ticker']
                 action_html = f"""
-                <form method="POST" action="/asx/picks/sell/{p['id']}" style="display:flex;gap:8px;align-items:center">
-                  <input name="sell_price" type="number" step="0.0001" value="{p['current_price']:.4f}"
-                    style="width:150px;padding:7px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem">
-                  <button type="submit" class="btn btn-amber" style="padding:7px 16px"
-                    onclick="return confirm('Sell {p['shares']} shares of {p['ticker']}?')">Sell</button>
-                </form>"""
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn btn-amber" style="padding:7px 16px"
+                    onclick="openSellModal({p['id']},'{pticker}',{p['shares']},{p['current_price']:.4f},'/asx/picks/sell/{p['id']}')">Sell</button>
+                </div>"""
             else:
                 action_html = ''
 
@@ -2619,12 +3077,53 @@ def asx_picks_page():
           </table>
         </section>"""
 
+    sell_modal = """
+    <div id="sell-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center">
+      <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px;width:100%;max-width:500px;margin:20px">
+        <h3 id="sell-modal-title" style="margin:0 0 20px">Sell Position</h3>
+        <form id="sell-form" method="POST" enctype="multipart/form-data">
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Price *</label>
+            <input id="sell-price-input" name="sell_price" type="number" step="0.0001" required
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I sold</label>
+            <textarea name="sell_reason" rows="4" placeholder="Stop loss hit, thesis broke, took profit at target..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div style="margin-bottom:20px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Chart Screenshot (sell setup)</label>
+            <input name="sell_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-amber" style="flex:1">Confirm Sell</button>
+            <button type="button" class="btn" style="flex:1;background:#252839" onclick="closeSellModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+    function openSellModal(pickId, ticker, shares, currentPrice, action) {
+      document.getElementById('sell-modal-title').textContent = 'Sell ' + shares + ' shares of ' + ticker;
+      document.getElementById('sell-price-input').value = currentPrice;
+      document.getElementById('sell-form').action = action;
+      document.getElementById('sell-modal').style.display = 'flex';
+    }
+    function closeSellModal() {
+      document.getElementById('sell-modal').style.display = 'none';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSellModal();
+    });
+    </script>"""
+
     msg = request.args.get('msg', '')
     msg_html = f'<div style="background:#1a2e1a;border:1px solid #22c55e;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#86efac">{msg}</div>' if msg else ''
     err = request.args.get('err', '')
     err_html = f'<div class="err-box">{err}</div>' if err else ''
 
-    content = err_html + msg_html + summary + add_form + pos_html + hist_html
+    content = err_html + msg_html + summary + add_form + pos_html + hist_html + sell_modal
     return page_wrap("Jimmy's ASX Picks", 'asxpicks', content)
 
 
@@ -2662,12 +3161,265 @@ def asx_picks_image(filename):
 def asx_picks_sell(pick_id):
     if not is_admin():
         return redirect('/asx/picks')
-    sell_price = float(request.form.get('sell_price', 0))
-    ok, result = sell_asx_stock(pick_id, sell_price)
+    sell_price  = float(request.form.get('sell_price', 0))
+    sell_reason = request.form.get('sell_reason', '').strip()
+
+    sell_image = ''
+    file = request.files.get('sell_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        sell_image = f"sell_{pick_id}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, sell_image))
+
+    ok, result = sell_asx_stock(pick_id, sell_price, sell_reason, sell_image)
     if ok:
         sign = '+' if result >= 0 else ''
         return redirect(f'/asx/picks?msg=Sold+position+P%26L+{sign}A${result:.2f}')
     return redirect(f'/asx/picks?err={result}')
+
+
+# ─── Trade Journal ────────────────────────────────────────────────────────────
+
+@app.route('/journal')
+def journal_page():
+    msg = request.args.get('msg', '')
+    err = request.args.get('err', '')
+    msg_html = f'<div style="background:#1a2e1a;border:1px solid #22c55e;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#86efac">{msg}</div>' if msg else ''
+    err_html = f'<div class="err-box">{err}</div>' if err else ''
+
+    us_trades  = get_closed_trades()
+    asx_trades = get_closed_asx_trades()
+    all_trades = us_trades + asx_trades
+    all_trades.sort(key=lambda t: t['sell_date'], reverse=True)
+
+    total   = len(all_trades)
+    wins    = sum(1 for t in all_trades if t['pnl'] >= 0)
+    losses  = total - wins
+    total_pnl = sum(t['pnl'] for t in all_trades)
+    win_rate  = (wins / total * 100) if total else 0
+    pnl_color = '#22c55e' if total_pnl >= 0 else '#ef4444'
+    pnl_sign  = '+' if total_pnl >= 0 else ''
+
+    stats = f"""
+    <div class="grid4" style="margin-bottom:28px">
+      <div class="card">
+        <div class="stat-label">Closed Trades</div>
+        <div class="stat-value">{total}</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Win Rate</div>
+        <div class="stat-value" style="color:{'#22c55e' if win_rate>=50 else '#ef4444'}">{win_rate:.0f}%</div>
+        <div class="stat-sub">{wins}W / {losses}L</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Total Realised P&amp;L</div>
+        <div class="stat-value" style="color:{pnl_color}">{pnl_sign}${total_pnl:,.2f}</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Avg P&amp;L per Trade</div>
+        <div class="stat-value" style="color:{pnl_color}">{pnl_sign}${(total_pnl/total):,.2f}</div>
+      </div>
+    </div>""" if total else ''
+
+    cards = ''
+    for t in all_trades:
+        pnl_c = '#22c55e' if t['pnl'] >= 0 else '#ef4444'
+        sign  = '+' if t['pnl'] >= 0 else ''
+        market_badge = f'<span style="font-size:.72rem;padding:2px 8px;border-radius:4px;background:#1e3a5f;color:#60a5fa;font-weight:600">{t["market"]}</span>'
+
+        buy_img_html = ''
+        if t['buy_image']:
+            buy_img_html = f'<img src="/picks/image/{t["buy_image"]}" onclick="openLightbox(this.src)" style="width:100%;border-radius:6px;margin-bottom:8px;border:1px solid #2a2d3e;cursor:pointer">'
+
+        sell_img_html = ''
+        if t['sell_image']:
+            sell_img_html = f'<img src="/picks/image/{t["sell_image"]}" onclick="openLightbox(this.src)" style="width:100%;border-radius:6px;margin-bottom:8px;border:1px solid #2a2d3e;cursor:pointer">'
+
+        buy_reason_html  = f'<p style="color:#aaa;font-size:.83rem;line-height:1.5;margin:0">{t["buy_reason"]}</p>'  if t['buy_reason']  else ''
+        sell_reason_html = f'<p style="color:#aaa;font-size:.83rem;line-height:1.5;margin:0">{t["sell_reason"]}</p>' if t['sell_reason'] else ''
+        tid = t['id']
+        tmkt = t['market']
+        delete_btn = f'<form method="POST" action="/journal/delete/{tid}/{tmkt}" onsubmit="return confirm(\'Delete this trade?\')"><button type="submit" style="font-size:.75rem;padding:4px 12px;background:transparent;border:1px solid #3a2020;border-radius:5px;color:#666;cursor:pointer">Delete</button></form>' if is_admin() else ''
+
+        cards += f"""
+        <div class="card" style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:1.3rem;font-weight:700;color:#60a5fa">{t['ticker']}</span>
+              {market_badge}
+            </div>
+            <span style="font-size:1.1rem;font-weight:700;color:{pnl_c}">{sign}${t['pnl']:,.2f} ({sign}{t['pnl_pct']:.1f}%)</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:16px;font-size:.83rem">
+            <div><span style="color:#555">Bought</span><br><strong>{t['bought_date']}</strong></div>
+            <div><span style="color:#555">Sold</span><br><strong>{t['sell_date']}</strong></div>
+            <div><span style="color:#555">Buy Price</span><br><strong>${t['buy_price']:.4f}</strong></div>
+            <div><span style="color:#555">Sell Price</span><br><strong>${t['sell_price']:.4f}</strong></div>
+            <div><span style="color:#555">Shares</span><br><strong>{t['shares']:,.2f}</strong></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+            <div>
+              <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Buy Setup</div>
+              {buy_img_html}
+              {buy_reason_html}
+            </div>
+            <div>
+              <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Sell Setup</div>
+              {sell_img_html}
+              {sell_reason_html}
+            </div>
+          </div>
+          {delete_btn}
+        </div>"""
+
+    if not all_trades:
+        cards = '<p class="note">No closed trades yet. Sell a position from Jimmy\'s Picks or ASX Picks to start your journal.</p>'
+
+    lightbox = """
+    <div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out">
+      <img id="lightbox-img" style="max-width:92vw;max-height:92vh;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.8)">
+    </div>
+    <script>
+    function openLightbox(src){document.getElementById('lightbox-img').src=src;document.getElementById('lightbox').style.display='flex';}
+    function closeLightbox(){document.getElementById('lightbox').style.display='none';}
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
+    </script>"""
+
+    add_form = '' if not is_admin() else """
+    <section>
+      <h2>Add Closed Trade</h2>
+      <form method="POST" action="/journal/add" enctype="multipart/form-data">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Market *</label>
+            <select name="market" style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+              <option value="US">US</option>
+              <option value="ASX">ASX</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Ticker *</label>
+            <input name="ticker" placeholder="e.g. AAPL" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Shares *</label>
+            <input name="shares" type="number" step="0.0001" placeholder="e.g. 100" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Buy Price *</label>
+            <input name="buy_price" type="number" step="0.0001" placeholder="e.g. 150.00" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Buy Date *</label>
+            <input name="buy_date" type="date" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Price *</label>
+            <input name="sell_price" type="number" step="0.0001" placeholder="e.g. 180.00" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Date *</label>
+            <input name="sell_date" type="date" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I bought</label>
+            <textarea name="buy_reason" rows="3" placeholder="Channel forming, EMA squeeze..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I sold</label>
+            <textarea name="sell_reason" rows="3" placeholder="Stop loss hit, took profit..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Buy Chart</label>
+            <input name="buy_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Sell Chart</label>
+            <input name="sell_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-green">+ Add to Journal</button>
+      </form>
+    </section>"""
+
+    content = f"""
+    {err_html}{msg_html}
+    {add_form}
+    <section>
+      <h2>Closed Trades</h2>
+      <p style="color:#555;font-size:.88rem;margin-bottom:24px">Every closed trade — the good and the bad. Honesty builds trust.</p>
+      {stats}
+      {cards}
+    </section>
+    {lightbox}"""
+
+    return page_wrap('Trade Journal', 'journal', content)
+
+
+@app.route('/journal/add', methods=['POST'])
+def journal_add():
+    if not is_admin():
+        return redirect('/journal')
+
+    market     = request.form.get('market', 'US')
+    ticker     = request.form.get('ticker', '').strip().upper()
+    shares     = request.form.get('shares', '0')
+    buy_price  = request.form.get('buy_price', '0')
+    buy_date   = request.form.get('buy_date', '')
+    buy_reason = request.form.get('buy_reason', '').strip()
+    sell_price = request.form.get('sell_price', '0')
+    sell_date  = request.form.get('sell_date', '')
+    sell_reason = request.form.get('sell_reason', '').strip()
+
+    buy_image = ''
+    file = request.files.get('buy_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        buy_image = f"buy_{ticker}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, buy_image))
+
+    sell_image = ''
+    file = request.files.get('sell_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        sell_image = f"sell_{ticker}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, sell_image))
+
+    if market == 'ASX':
+        ok, result = add_manual_closed_asx_trade(
+            ticker, shares, buy_price, buy_date, buy_reason, buy_image,
+            sell_price, sell_date, sell_reason, sell_image)
+    else:
+        ok, result = add_manual_closed_trade(
+            ticker, shares, buy_price, buy_date, buy_reason, buy_image,
+            sell_price, sell_date, sell_reason, sell_image)
+
+    if ok:
+        sign = '+' if result >= 0 else ''
+        return redirect(f'/journal?msg={ticker}+added+to+journal.+P%26L:+{sign}${result:.2f}')
+    return redirect(f'/journal?err={result}')
+
+
+@app.route('/journal/delete/<int:pick_id>/<market>', methods=['POST'])
+def journal_delete(pick_id, market):
+    if not is_admin():
+        return redirect('/journal')
+    if market == 'ASX':
+        delete_closed_asx_trade(pick_id)
+    else:
+        delete_closed_trade(pick_id)
+    return redirect('/journal?msg=Trade+deleted')
 
 
 # ─── Fader Scanner ────────────────────────────────────────────────────────────
@@ -2856,6 +3608,1678 @@ def run_fader_route():
     return redirect('/fader')
 
 
+# ─── Wick Scanner ─────────────────────────────────────────────────────────────
+
+def _run_wick_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Wick Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_wick_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_wick_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Wick Scan'
+    threading.Thread(target=_run_wick_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-wick')
+def run_wick():
+    if not is_admin():
+        return redirect('/admin')
+    start_wick_scan()
+    return redirect('/wick')
+
+
+@app.route('/wick')
+def wick_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_wick_results()
+
+    if running and jname == 'Wick Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-wick" class="btn btn-blue">▶ Run Wick Scan</a>'
+
+    def score_color(s):
+        if s >= 8:  return '#22c55e'
+        if s >= 5:  return '#f59e0b'
+        return '#555'
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc   = r['score']
+            gc   = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs   = '+' if r['gain_pct'] >= 0 else ''
+            held = r['weeks_held']
+            rows_html += f"""
+            <tr class="wick-row" data-ticker="{r['ticker']}" data-wick-date="{r['wick_date']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">{r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['wick_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#aaa">{held}w</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:#fff;font-weight:600">${r['current_price']:,.4f}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // LightweightCharts v4 series primitive — paneViews() → renderer() → draw()
+    class VerticalLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
+      }
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+    class VerticalLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new VerticalLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class VerticalLine {
+      constructor(time, color = '#ef4444') {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new VerticalLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
+    }
+
+    document.querySelectorAll('.wick-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker   = row.dataset.ticker;
+        const wickDate = row.dataset.wickDate;
+        const existId  = 'wdrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.wick-drop').forEach(d => d.remove());
+        document.querySelectorAll('.wick-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'wick-drop';
+        drop.innerHTML = `<td colspan="8" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="ws-${ticker}">Loading...</span>
+          </div>
+          <div id="wm-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="wv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('ws-' + ticker).textContent = data.error; return; }
+            document.getElementById('ws-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('wm-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            // Find closest actual trading day in the data to the wick date
+            // (weekly wick date is a Friday that may not be in the daily series)
+            const wickMs = new Date(wickDate).getTime();
+            let snapDate = wickDate;
+            let minDiff = Infinity;
+            for (const bar of data.ohlcv) {
+              const diff = Math.abs(new Date(bar.time).getTime() - wickMs);
+              if (diff < minDiff) { minDiff = diff; snapDate = bar.time; }
+            }
+            candles.attachPrimitive(new VerticalLine(snapDate));
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: 0, to: barCount + Math.round(barCount * 0.9) });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('wv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('ws-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Weekly Wick Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Finds weekly candles with a long lower wick (2×+ body) that have closed in the
+        top 30% of range — and scores them by how many subsequent weeks have held above
+        the wick low. Higher score = stronger signal.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Wick Scan" else ''}
+
+    <section>
+      <style>
+        .wick-table {{ width:100%; border-collapse:collapse; font-size:.92rem; }}
+        .wick-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                         border-bottom:1px solid #2a2d3e; font-weight:500;
+                         cursor:pointer; user-select:none; }}
+        .wick-table th:hover {{ color:#aaa; }}
+        .wick-table th.sort-asc::after  {{ content:' ▲'; font-size:.6rem; color:#60a5fa; }}
+        .wick-table th.sort-desc::after {{ content:' ▼'; font-size:.6rem; color:#60a5fa; }}
+        .wick-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .wick-table .wick-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .wick-table .wick-row.active td {{ background:#1a2235; }}
+        .wick-drop td {{ padding:0 !important; }}
+        .wick-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                            padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
+        .wick-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
+      </style>
+
+      <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="color:#aaa;font-size:.82rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW WATCHLIST</span>
+          <button onclick="copyTVList()" id="tv-copy-btn"
+            style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:5px 14px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem;font-weight:600">
+            Copy
+          </button>
+        </div>
+        <textarea id="tv-list" readonly rows="3"
+          style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:5px;
+                 color:#c7d2fe;font-size:.8rem;padding:8px 10px;resize:vertical;
+                 font-family:monospace;box-sizing:border-box;line-height:1.6"></textarea>
+        <p style="color:#444;font-size:.72rem;margin:6px 0 0">
+          Paste directly into TradingView → Watchlist → Import. Updates when you switch Last Week / All.
+        </p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="wick-filter-btn active" id="wf-week" onclick="setWickFilter('week')">Last Week</button>
+        <button class="wick-filter-btn"         id="wf-all"  onclick="setWickFilter('all')">All Signals</button>
+        <span id="wick-count" style="color:#555;font-size:.78rem;margin-left:4px"></span>
+      </div>
+      <table class="wick-table">
+        <thead><tr>
+          <th onclick="sortWick(this)">Ticker</th>
+          <th onclick="sortWick(this)">Wick Date</th>
+          <th onclick="sortWick(this)" style="text-align:center">Score</th>
+          <th onclick="sortWick(this)">Wick ×</th>
+          <th onclick="sortWick(this)">Held</th>
+          <th onclick="sortWick(this)">Close %</th>
+          <th onclick="sortWick(this)">Current</th>
+          <th onclick="sortWick(this)">Gain</th>
+        </tr></thead>
+        <tbody id="wick-tbody">
+          {rows_html if rows_html else '<tr><td colspan="8" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    <script>
+    function sortWick(th) {{
+      const tbody = document.getElementById('wick-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.wick-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    // Find the most recent wick date across all rows
+    function getMostRecentWickDate() {{
+      let latest = '';
+      document.querySelectorAll('.wick-row').forEach(r => {{
+        const d = r.dataset.wickDate || '';
+        if (d > latest) latest = d;
+      }});
+      return latest;
+    }}
+
+    function setWickFilter(mode) {{
+      document.getElementById('wf-week').classList.toggle('active', mode === 'week');
+      document.getElementById('wf-all').classList.toggle('active',  mode === 'all');
+      const latestDate = getMostRecentWickDate();
+      let visible = 0;
+      document.querySelectorAll('.wick-row').forEach(r => {{
+        const show = (mode === 'all') || (r.dataset.wickDate === latestDate);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        // close any open drop if its row is hidden
+        if (!show) {{
+          const drop = document.getElementById('wdrop-' + r.dataset.ticker);
+          if (drop) {{ drop.remove(); r.classList.remove('active'); }}
+        }}
+      }});
+      document.getElementById('wick-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+      updateTVList();
+    }}
+
+    function updateTVList() {{
+      const tickers = [];
+      document.querySelectorAll('.wick-row').forEach(r => {{
+        if (r.style.display !== 'none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById('tv-list').value = tickers.join(',');
+    }}
+
+    function copyTVList() {{
+      const ta = document.getElementById('tv-list');
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn = document.getElementById('tv-copy-btn');
+        btn.textContent = 'Copied!';
+        btn.style.background = '#14532d';
+        btn.style.borderColor = '#22c55e';
+        btn.style.color = '#4ade80';
+        setTimeout(() => {{
+          btn.textContent = 'Copy';
+          btn.style.background = '#1e3a5f';
+          btn.style.borderColor = '#3b82f6';
+          btn.style.color = '#60a5fa';
+        }}, 2000);
+      }});
+    }}
+
+    // Default to last-week view on load
+    setWickFilter('week');
+    </script>
+    {chart_js}"""
+
+    return page_wrap('Wick Scanner', 'wick', content, auto_refresh=(running and jname == 'Wick Scan'))
+
+
+# ─── Hammer Scanner ───────────────────────────────────────────────────────────
+
+def _run_hammer_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Hammer Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_hammer_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_hammer_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Hammer Scan'
+    threading.Thread(target=_run_hammer_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-hammer')
+def run_hammer():
+    if not is_admin():
+        return redirect('/admin')
+    start_hammer_scan()
+    return redirect('/hammer')
+
+
+@app.route('/hammer')
+def hammer_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_hammer_results()
+
+    if running and jname == 'Hammer Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-hammer" class="btn btn-blue">▶ Run Hammer Scan</a>'
+
+    def score_color(s):
+        if s >= 8:  return '#22c55e'
+        if s >= 5:  return '#f59e0b'
+        return '#555'
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc   = r['score']
+            gc   = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs   = '+' if r['gain_pct'] >= 0 else ''
+            held = r['days_held']
+            bull_icon = '▲' if r.get('bullish') else '▽'
+            bull_col  = '#22c55e' if r.get('bullish') else '#ef4444'
+            vol_icon  = ' ⚡' if r.get('vol_surge') else ''
+            rows_html += f"""
+            <tr class="hammer-row" data-ticker="{r['ticker']}" data-hammer-date="{r['hammer_date']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">{r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['hammer_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#aaa">{held}d</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:{bull_col};font-weight:600">{bull_icon}{vol_icon}</td>
+              <td style="color:#fff;font-weight:600">${r['current_price']:,.4f}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // LightweightCharts v4 series primitive — paneViews() → renderer() → draw()
+    class HammerLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
+      }
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+    class HammerLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new HammerLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class HammerLine {
+      constructor(time, color = '#f59e0b') {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new HammerLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
+    }
+
+    document.querySelectorAll('.hammer-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker      = row.dataset.ticker;
+        const hammerDate  = row.dataset.hammerDate;
+        const existId     = 'hdrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.hammer-drop').forEach(d => d.remove());
+        document.querySelectorAll('.hammer-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'hammer-drop';
+        drop.innerHTML = `<td colspan="9" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="hs-${ticker}">Loading...</span>
+          </div>
+          <div id="hm-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="hv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('hs-' + ticker).textContent = data.error; return; }
+            document.getElementById('hs-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('hm-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            // Snap to the exact hammer date (daily data — should match exactly)
+            const hammerMs = new Date(hammerDate).getTime();
+            let snapDate = hammerDate;
+            let minDiff = Infinity;
+            for (const bar of data.ohlcv) {
+              const diff = Math.abs(new Date(bar.time).getTime() - hammerMs);
+              if (diff < minDiff) { minDiff = diff; snapDate = bar.time; }
+            }
+            candles.attachPrimitive(new HammerLine(snapDate));
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, barCount - 120), to: barCount + 5 });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('hv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('hs-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Daily Hammer Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Finds daily hammer candles — small body near the top of range with a long lower wick
+        (2×+ body) showing buyers rejected the lows. Scored by wick strength, close position,
+        bullish body, volume surge, and how many days the hammer low has held.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Hammer Scan" else ''}
+
+    <section>
+      <style>
+        .hammer-table {{ width:100%; border-collapse:collapse; font-size:.92rem; }}
+        .hammer-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                           border-bottom:1px solid #2a2d3e; font-weight:500;
+                           cursor:pointer; user-select:none; }}
+        .hammer-table th:hover {{ color:#aaa; }}
+        .hammer-table th.sort-asc::after  {{ content:' ▲'; font-size:.6rem; color:#60a5fa; }}
+        .hammer-table th.sort-desc::after {{ content:' ▼'; font-size:.6rem; color:#60a5fa; }}
+        .hammer-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .hammer-table .hammer-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .hammer-table .hammer-row.active td {{ background:#1a2235; }}
+        .hammer-drop td {{ padding:0 !important; }}
+        .hammer-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                              padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
+        .hammer-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
+      </style>
+
+      <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="color:#aaa;font-size:.82rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW WATCHLIST</span>
+          <button onclick="copyHammerList()" id="htv-copy-btn"
+            style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:5px 14px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem;font-weight:600">
+            Copy
+          </button>
+        </div>
+        <textarea id="htv-list" readonly rows="3"
+          style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:5px;
+                 color:#c7d2fe;font-size:.8rem;padding:8px 10px;resize:vertical;
+                 font-family:monospace;box-sizing:border-box;line-height:1.6"></textarea>
+        <p style="color:#444;font-size:.72rem;margin:6px 0 0">
+          Paste directly into TradingView → Watchlist → Import. Updates when you switch Today / All.
+        </p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="hammer-filter-btn active" id="hf-today" onclick="setHammerFilter('today')">Today</button>
+        <button class="hammer-filter-btn"         id="hf-all"   onclick="setHammerFilter('all')">All Signals</button>
+        <span id="hammer-count" style="color:#555;font-size:.78rem;margin-left:4px"></span>
+      </div>
+      <table class="hammer-table">
+        <thead><tr>
+          <th onclick="sortHammer(this)">Ticker</th>
+          <th onclick="sortHammer(this)">Date</th>
+          <th onclick="sortHammer(this)" style="text-align:center">Score</th>
+          <th onclick="sortHammer(this)">Wick ×</th>
+          <th onclick="sortHammer(this)">Held</th>
+          <th onclick="sortHammer(this)">Close %</th>
+          <th onclick="sortHammer(this)">Body</th>
+          <th onclick="sortHammer(this)">Current</th>
+          <th onclick="sortHammer(this)">Gain</th>
+        </tr></thead>
+        <tbody id="hammer-tbody">
+          {rows_html if rows_html else '<tr><td colspan="9" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    <script>
+    function sortHammer(th) {{
+      const tbody = document.getElementById('hammer-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.hammer-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    function getMostRecentHammerDate() {{
+      let latest = '';
+      document.querySelectorAll('.hammer-row').forEach(r => {{
+        const d = r.dataset.hammerDate || '';
+        if (d > latest) latest = d;
+      }});
+      return latest;
+    }}
+
+    function setHammerFilter(mode) {{
+      document.getElementById('hf-today').classList.toggle('active', mode === 'today');
+      document.getElementById('hf-all').classList.toggle('active',   mode === 'all');
+      const latestDate = getMostRecentHammerDate();
+      let visible = 0;
+      document.querySelectorAll('.hammer-row').forEach(r => {{
+        const show = (mode === 'all') || (r.dataset.hammerDate === latestDate);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        if (!show) {{
+          const drop = document.getElementById('hdrop-' + r.dataset.ticker);
+          if (drop) {{ drop.remove(); r.classList.remove('active'); }}
+        }}
+      }});
+      document.getElementById('hammer-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+      updateHammerList();
+    }}
+
+    function updateHammerList() {{
+      const tickers = [];
+      document.querySelectorAll('.hammer-row').forEach(r => {{
+        if (r.style.display !== 'none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById('htv-list').value = tickers.join(',');
+    }}
+
+    function copyHammerList() {{
+      const ta = document.getElementById('htv-list');
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn = document.getElementById('htv-copy-btn');
+        btn.textContent = 'Copied!';
+        btn.style.background = '#14532d';
+        btn.style.borderColor = '#22c55e';
+        btn.style.color = '#4ade80';
+        setTimeout(() => {{
+          btn.textContent = 'Copy';
+          btn.style.background = '#1e3a5f';
+          btn.style.borderColor = '#3b82f6';
+          btn.style.color = '#60a5fa';
+        }}, 2000);
+      }});
+    }}
+
+    setHammerFilter('today');
+    </script>
+    {chart_js}"""
+
+    return page_wrap('Hammer Scanner', 'hammer', content, auto_refresh=(running and jname == 'Hammer Scan'))
+
+
+# ─── Price Channel Scanner ────────────────────────────────────────────────────
+
+def _run_price_channel_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Price Channel Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_price_channel_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_price_channel_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Channel Scan'
+    threading.Thread(target=_run_price_channel_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-channels')
+def run_channels():
+    if not is_admin():
+        return redirect('/admin')
+    start_price_channel_scan()
+    return redirect('/channels')
+
+
+@app.route('/channels')
+def channels_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_price_channel_results()
+
+    if running and jname == 'Channel Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-channels" class="btn btn-blue">▶ Run Channel Scan</a>'
+
+    scan_info = ''
+    if last:
+        d = last['daily']['total']
+        w = last['weekly']['total']
+        m = last['monthly']['total']
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{d} daily · {w} weekly · {m} monthly signals "
+                     f"from {last['tickers_scanned']} tickers")
+
+    def score_color(s):
+        if s >= 8: return '#22c55e'
+        if s >= 5: return '#f59e0b'
+        return '#555'
+
+    def dir_badge(d):
+        if d == 'ascending':
+            return '<span style="color:#22c55e;font-size:.78rem;font-weight:700">▲ Up</span>'
+        return '<span style="color:#ef4444;font-size:.78rem;font-weight:700">▼ Dn</span>'
+
+    def build_rows(results, tf):
+        html = ''
+        for r in results:
+            sc = r['score']
+            html += f"""
+            <tr class="ch-row" data-ticker="{r['ticker']}" data-tf="{tf}">
+              <td><strong style="color:#60a5fa">{r['ticker']}</strong></td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:2px 9px;
+                             border-radius:10px;font-weight:700;font-size:.82rem">{sc}</span>
+              </td>
+              <td style="color:#aaa">{r['ch_pct']}%</td>
+              <td style="color:#aaa">{r['width_pct']}%</td>
+              <td style="color:#888">{r['r2']}</td>
+              <td style="color:#aaa">{r['low_touches']}L · {r['high_touches']}H</td>
+              <td style="color:#fff;font-weight:600">${r['lower']:,.4f}</td>
+              <td style="color:#fff;font-weight:600">${r['upper']:,.4f}</td>
+              <td style="color:#fff;font-weight:600">${r['current']:,.4f}</td>
+            </tr>"""
+        return html or f'<tr><td colspan="9" style="color:#555;padding:16px">No signals found.</td></tr>'
+
+    daily_rows   = build_rows(last['daily']['results'],   'daily')   if last else ''
+    weekly_rows  = build_rows(last['weekly']['results'],  'weekly')  if last else ''
+    monthly_rows = build_rows(last['monthly']['results'], 'monthly') if last else ''
+
+    no_results = '<tr><td colspan="9" style="color:#555;padding:16px">No scan run yet.</td></tr>'
+    if not last:
+        daily_rows = weekly_rows = monthly_rows = no_results
+
+    daily_total   = last['daily']['total']   if last else 0
+    weekly_total  = last['weekly']['total']  if last else 0
+    monthly_total = last['monthly']['total'] if last else 0
+
+    def tv_box(tf_id):
+        return f"""
+        <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:7px;padding:10px 12px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <span style="color:#aaa;font-size:.75rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW LIST</span>
+            <button onclick="chCopy('{tf_id}')" id="ch-copy-{tf_id}"
+              style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.75rem;font-weight:600">Copy</button>
+          </div>
+          <textarea id="ch-tv-{tf_id}" readonly rows="2"
+            style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:4px;
+                   color:#c7d2fe;font-size:.76rem;padding:6px 8px;resize:none;
+                   font-family:monospace;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>"""
+
+    def ch_table(tf_id, rows, total, sublabel):
+        return f"""
+        <div class="ch-tab-panel" id="ch-panel-{tf_id}">
+          <p style="color:#555;font-size:.78rem;margin-bottom:10px">{sublabel} &nbsp;·&nbsp; {total} signals</p>
+          {tv_box(tf_id)}
+          <table class="ch-table">
+            <thead><tr>
+              <th onclick="chSort(this,'{tf_id}')">Ticker</th>
+              <th onclick="chSort(this,'{tf_id}')" style="text-align:center">Score</th>
+              <th onclick="chSort(this,'{tf_id}')">In Channel%</th>
+              <th onclick="chSort(this,'{tf_id}')">Width%</th>
+              <th onclick="chSort(this,'{tf_id}')">R²</th>
+              <th onclick="chSort(this,'{tf_id}')">Touches</th>
+              <th onclick="chSort(this,'{tf_id}')">Lower</th>
+              <th onclick="chSort(this,'{tf_id}')">Upper</th>
+              <th onclick="chSort(this,'{tf_id}')">Current</th>
+            </tr></thead>
+            <tbody id="ch-tbody-{tf_id}">
+              {rows}
+            </tbody>
+          </table>
+        </div>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Price Channel Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:10px">
+        Ascending parallel price channels — signals when price is in the bottom 10% of
+        the channel width, near the lower trendline support. Three timeframes: daily
+        (short channels), weekly (medium), monthly (multi-year mega channels on log scale).
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Channel Scan" else ''}
+
+    <section>
+      <style>
+        .ch-tabs {{ display:flex; gap:0; margin-bottom:0; border-bottom:1px solid #2a2d3e; }}
+        .ch-tab  {{ padding:10px 22px; cursor:pointer; font-size:.85rem; color:#555;
+                   border:1px solid transparent; border-bottom:none; border-radius:6px 6px 0 0;
+                   background:transparent; font-weight:500; user-select:none; }}
+        .ch-tab:hover {{ color:#aaa; }}
+        .ch-tab.active {{ color:#60a5fa; border-color:#2a2d3e; background:#0d0f1a;
+                          font-weight:600; margin-bottom:-1px; }}
+        .ch-tab-panel {{ display:none; padding-top:16px; }}
+        .ch-tab-panel.active {{ display:block; }}
+        .ch-table {{ width:100%; border-collapse:collapse; font-size:.88rem; }}
+        .ch-table th {{ text-align:left; padding:9px 12px; color:#555; font-size:.76rem;
+                        border-bottom:1px solid #2a2d3e; font-weight:500;
+                        cursor:pointer; user-select:none; white-space:nowrap; }}
+        .ch-table th:hover {{ color:#aaa; }}
+        .ch-table th.sort-asc::after  {{ content:' ▲'; font-size:.55rem; color:#60a5fa; }}
+        .ch-table th.sort-desc::after {{ content:' ▼'; font-size:.55rem; color:#60a5fa; }}
+        .ch-table td {{ padding:9px 12px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .ch-table .ch-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .ch-table .ch-row.active td {{ background:#1a2235; border-left:2px solid #60a5fa; }}
+        .ch-chart-panel {{ background:#080a10; border:1px solid #1e2235; border-radius:10px;
+                           padding:16px 20px; margin-bottom:20px; display:none; }}
+        .ch-chart-panel.visible {{ display:block; }}
+        .score-pill {{ display:inline-block; padding:2px 9px; border-radius:10px;
+                       font-weight:700; font-size:.82rem; color:#fff; }}
+      </style>
+
+      <!-- Score legend -->
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+        <span style="font-size:.78rem;color:#888">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
+                       background:#22c55e;margin-right:4px;vertical-align:middle"></span>Score 8+ — strong channel
+        </span>
+        <span style="font-size:.78rem;color:#888">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;
+                       background:#f59e0b;margin-right:4px;vertical-align:middle"></span>Score 5–7 — moderate
+        </span>
+        <span style="font-size:.78rem;color:#555">
+          In Channel% = how far price is above the lower line (0% = touching the line · 10% = max signal zone)
+        </span>
+      </div>
+
+      <!-- Shared chart panel -->
+      <div class="ch-chart-panel" id="ch-chart-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="color:#fff;font-weight:700;font-size:1.05rem" id="ch-chart-title">—</span>
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="color:#555;font-size:.75rem" id="ch-chart-meta"></span>
+            <button onclick="closeChChart()"
+              style="background:transparent;border:1px solid #2a2d3e;color:#555;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.78rem">✕ Close</button>
+          </div>
+        </div>
+        <div id="ch-chart-main" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+        <div id="ch-chart-vol"  style="height:60px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="ch-tabs">
+        <div class="ch-tab active" onclick="chTab('daily')">
+          Daily <span style="font-size:.75rem;color:#555;margin-left:4px">({daily_total})</span>
+        </div>
+        <div class="ch-tab" onclick="chTab('weekly')">
+          Weekly <span style="font-size:.75rem;color:#555;margin-left:4px">({weekly_total})</span>
+        </div>
+        <div class="ch-tab" onclick="chTab('monthly')">
+          Monthly <span style="font-size:.75rem;color:#555;margin-left:4px">({monthly_total})</span>
+        </div>
+      </div>
+
+      {ch_table('daily',   daily_rows,   daily_total,   'Short channels — weeks to months')}
+      {ch_table('weekly',  weekly_rows,  weekly_total,  'Medium channels — months to ~1.5 years')}
+      {ch_table('monthly', monthly_rows, monthly_total, 'Mega channels — multi-year (log scale)')}
+    </section>
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // ── LightweightCharts v4 VerticalLine ────────────────────────────────────
+    class ChLineRenderer {{
+      constructor(t,c,chart) {{ this._t=t; this._c=c; this._chart=chart; }}
+      draw(target) {{
+        const x=this._chart.timeScale().timeToCoordinate(this._t);
+        if(x===null) return;
+        target.useBitmapCoordinateSpace(scope=>{{
+          const ctx=scope.context, xb=Math.round(x*scope.horizontalPixelRatio);
+          ctx.save(); ctx.beginPath(); ctx.moveTo(xb,0); ctx.lineTo(xb,scope.bitmapSize.height);
+          ctx.strokeStyle=this._c; ctx.lineWidth=Math.round(2*scope.horizontalPixelRatio);
+          ctx.setLineDash([6,4]); ctx.stroke(); ctx.restore();
+        }});
+      }}
+    }}
+    class ChLinePaneView {{
+      constructor(t,c,chart) {{ this._r=new ChLineRenderer(t,c,chart); }}
+      renderer() {{ return this._r; }} zOrder() {{ return 'normal'; }}
+    }}
+    class ChLine {{
+      constructor(t,c='#60a5fa') {{ this._t=t; this._c=c; this._chart=null; this._v=[]; }}
+      attached({{chart}}) {{ this._chart=chart; this._v=[new ChLinePaneView(this._t,this._c,chart)]; }}
+      detached() {{ this._v=[]; }} paneViews() {{ return this._v; }} updateAllViews() {{}}
+    }}
+
+    // ── Tab switching ────────────────────────────────────────────────────────
+    function chTab(tf) {{
+      document.querySelectorAll('.ch-tab').forEach((t,i) => {{
+        const tfs=['daily','weekly','monthly'];
+        t.classList.toggle('active', tfs[i]===tf);
+      }});
+      document.querySelectorAll('.ch-tab-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('ch-panel-'+tf);
+      if (panel) panel.classList.add('active');
+      chUpdateTV(tf);
+    }}
+
+    // ── Sorting ──────────────────────────────────────────────────────────────
+    function chSort(th, tf) {{
+      const tbody = document.getElementById('ch-tbody-'+tf);
+      if (!tbody) return;
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.ch-row'));
+      rows.sort((a,b) => {{
+        const av=a.cells[idx].textContent.trim(), bv=b.cells[idx].textContent.trim();
+        const an=parseFloat(av.replace(/[^0-9.-]/g,'')), bn=parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp=isNaN(an) ? av.localeCompare(bv) : an-bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    // ── TV watchlist ─────────────────────────────────────────────────────────
+    function chUpdateTV(tf) {{
+      const tickers=[];
+      const tbody=document.getElementById('ch-tbody-'+tf);
+      if (tbody) tbody.querySelectorAll('.ch-row').forEach(r => tickers.push(r.dataset.ticker));
+      const ta=document.getElementById('ch-tv-'+tf);
+      if (ta) ta.value = tickers.join(',');
+    }}
+
+    function chCopy(tf) {{
+      const ta=document.getElementById('ch-tv-'+tf);
+      const btn=document.getElementById('ch-copy-'+tf);
+      if (!ta) return;
+      ta.select(); ta.setSelectionRange(0,99999);
+      navigator.clipboard.writeText(ta.value).then(()=>{{
+        btn.textContent='Copied!'; btn.style.background='#14532d';
+        btn.style.borderColor='#22c55e'; btn.style.color='#4ade80';
+        setTimeout(()=>{{
+          btn.textContent='Copy'; btn.style.background='#1e3a5f';
+          btn.style.borderColor='#3b82f6'; btn.style.color='#60a5fa';
+        }},2000);
+      }});
+    }}
+
+    // ── Chart panel ──────────────────────────────────────────────────────────
+    let chMainChart=null, chVolChart=null;
+
+    function closeChChart() {{
+      document.getElementById('ch-chart-panel').classList.remove('visible');
+      document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active'));
+      if(chMainChart){{ chMainChart.remove(); chMainChart=null; }}
+      if(chVolChart){{  chVolChart.remove();  chVolChart=null; }}
+    }}
+
+    function loadChChart(ticker, tf) {{
+      document.getElementById('ch-chart-title').textContent=ticker+' ('+tf+')';
+      document.getElementById('ch-chart-meta').textContent='Loading…';
+      const panel=document.getElementById('ch-chart-panel');
+      panel.classList.add('visible');
+      panel.scrollIntoView({{behavior:'smooth',block:'nearest'}});
+      if(chMainChart){{ chMainChart.remove(); chMainChart=null; }}
+      if(chVolChart){{  chVolChart.remove();  chVolChart=null; }}
+      document.getElementById('ch-chart-main').innerHTML='';
+      document.getElementById('ch-chart-vol').innerHTML='';
+
+      // Load OHLCV + channel lines in parallel
+      Promise.all([
+        fetch('/api/us-chart/'+ticker).then(r=>r.json()),
+        fetch('/api/channel-lines/'+ticker+'/'+tf).then(r=>r.json()),
+      ]).then(([data, chLines])=>{{
+          if(data.error){{ document.getElementById('ch-chart-meta').textContent=data.error; return; }}
+          document.getElementById('ch-chart-meta').textContent=
+            data.bars+' bars · '+data.date_range
+            +(chLines.r2 ? ' · Channel R²='+chLines.r2 : '');
+          chMainChart=LightweightCharts.createChart(document.getElementById('ch-chart-main'),{{
+            layout:{{background:{{color:'#0a0c14'}},textColor:'#888'}},
+            grid:{{vertLines:{{color:'#1a1d2e'}},horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale:{{borderColor:'#2a2d3e'}},
+            timeScale:{{borderColor:'#2a2d3e',timeVisible:true}},
+            crosshair:{{mode:LightweightCharts.CrosshairMode.Normal}},
+          }});
+          const candles=chMainChart.addCandlestickSeries({{
+            upColor:'#22c55e',downColor:'#ef4444',
+            borderUpColor:'#22c55e',borderDownColor:'#ef4444',
+            wickUpColor:'#22c55e',wickDownColor:'#ef4444',
+          }});
+          candles.setData(data.ohlcv);
+          const ema5 =chMainChart.addLineSeries({{color:'#60a5fa',lineWidth:1,title:'EMA5'}});
+          const ema26=chMainChart.addLineSeries({{color:'#f59e0b',lineWidth:1,title:'EMA26'}});
+          ema5.setData(data.ema5); ema26.setData(data.ema26);
+
+          // Draw channel lines if available
+          if(chLines.lower && chLines.upper) {{
+            const lowerSeries=chMainChart.addLineSeries({{
+              color:'#22c55e', lineWidth:2, lineStyle:0,
+              title:'Lower', priceLineVisible:false, lastValueVisible:false,
+            }});
+            lowerSeries.setData(chLines.lower);
+            const upperSeries=chMainChart.addLineSeries({{
+              color:'#3b82f6', lineWidth:2, lineStyle:0,
+              title:'Upper', priceLineVisible:false, lastValueVisible:false,
+            }});
+            upperSeries.setData(chLines.upper);
+            // Signal zone: bottom 10% of channel — shade by drawing a thin band
+            // (approximate: draw a dashed line at lower + 10% of (upper-upper) offset)
+            const zoneLine=chMainChart.addLineSeries({{
+              color:'#22c55e55', lineWidth:1, lineStyle:2,
+              priceLineVisible:false, lastValueVisible:false,
+            }});
+            const zoneData=chLines.lower.map((pt,i)=>{{
+              const uv=chLines.upper[i]?chLines.upper[i].value:pt.value;
+              return {{time:pt.time, value:pt.value+(uv-pt.value)*0.10}};
+            }});
+            zoneLine.setData(zoneData);
+          }}
+
+          const bc=data.ohlcv.length;
+          chMainChart.timeScale().setVisibleLogicalRange({{from:Math.max(0,bc-120),to:bc+5}});
+          chMainChart.priceScale('right').applyOptions({{scaleMargins:{{top:0.12,bottom:0.18}}}});
+          chVolChart=LightweightCharts.createChart(document.getElementById('ch-chart-vol'),{{
+            layout:{{background:{{color:'#0a0c14'}},textColor:'#888'}},
+            grid:{{vertLines:{{color:'#1a1d2e'}},horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale:{{borderColor:'#2a2d3e'}},
+            timeScale:{{borderColor:'#2a2d3e',timeVisible:false}},
+          }});
+          const vs=chVolChart.addHistogramSeries({{priceFormat:{{type:'volume'}},priceScaleId:''}});
+          vs.priceScale().applyOptions({{scaleMargins:{{top:0.1,bottom:0}}}});
+          vs.setData(data.volume); chVolChart.timeScale().fitContent();
+          chMainChart.timeScale().subscribeVisibleLogicalRangeChange(r=>chVolChart.timeScale().setVisibleLogicalRange(r));
+          chVolChart.timeScale().subscribeVisibleLogicalRangeChange(r=>chMainChart.timeScale().setVisibleLogicalRange(r));
+        }})
+        .catch(e=>{{ document.getElementById('ch-chart-meta').textContent='Failed: '+e; }});
+    }}
+
+    // ── Row click ────────────────────────────────────────────────────────────
+    document.querySelectorAll('.ch-row').forEach(row=>{{
+      row.addEventListener('click',()=>{{
+        const isActive=row.classList.contains('active');
+        document.querySelectorAll('.ch-row.active').forEach(r=>r.classList.remove('active'));
+        if(isActive){{ closeChChart(); return; }}
+        row.classList.add('active');
+        loadChChart(row.dataset.ticker, row.dataset.tf);
+      }});
+    }});
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    chTab('daily');
+    </script>"""
+
+    return page_wrap('Channel Scanner', 'channels', content, auto_refresh=(running and jname == 'Channel Scan'))
+
+
+# ─── Jang's Wicks ─────────────────────────────────────────────────────────────
+
+@app.route('/jangs-wicks/run-daily')
+def jangs_run_daily():
+    if not current_user_id() and not is_admin():
+        return redirect('/ask/login')
+    start_hammer_scan()
+    return redirect('/jangs-wicks')
+
+
+@app.route('/jangs-wicks/run-weekly')
+def jangs_run_weekly():
+    if not current_user_id() and not is_admin():
+        return redirect('/ask/login')
+    start_wick_scan()
+    return redirect('/jangs-wicks')
+
+
+@app.route('/jangs-wicks')
+def jangs_wicks_page():
+    daily   = load_last_hammer_results()
+    weekly  = load_last_wick_results()
+    logged_in = current_user_id() or is_admin()
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    def score_color(s):
+        if s >= 8: return '#22c55e'
+        if s >= 5: return '#f59e0b'
+        return '#555'
+
+    # ── Daily hammer rows ──────────────────────────────────────────────────────
+    daily_rows = ''
+    if daily and daily.get('results'):
+        for r in daily['results']:
+            sc  = r['score']
+            gc  = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs  = '+' if r['gain_pct'] >= 0 else ''
+            bull = '▲' if r.get('bullish') else '▽'
+            bc   = '#22c55e' if r.get('bullish') else '#ef4444'
+            vol  = ' ⚡' if r.get('vol_surge') else ''
+            daily_rows += f"""
+            <tr class="jw-row" data-ticker="{r['ticker']}" data-date="{r['hammer_date']}" data-side="daily">
+              <td><strong style="color:#60a5fa">{r['ticker']}</strong></td>
+              <td style="color:#aaa;font-size:.82rem">{r['hammer_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:2px 9px;
+                             border-radius:10px;font-weight:700;font-size:.82rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:{bc};font-weight:600;font-size:.82rem">{bull}{vol}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    # ── Weekly wick rows ───────────────────────────────────────────────────────
+    weekly_rows = ''
+    if weekly and weekly.get('results'):
+        for r in weekly['results']:
+            sc  = r['score']
+            gc  = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs  = '+' if r['gain_pct'] >= 0 else ''
+            weekly_rows += f"""
+            <tr class="jw-row" data-ticker="{r['ticker']}" data-date="{r['wick_date']}" data-side="weekly">
+              <td><strong style="color:#60a5fa">{r['ticker']}</strong></td>
+              <td style="color:#aaa;font-size:.82rem">{r['wick_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:2px 9px;
+                             border-radius:10px;font-weight:700;font-size:.82rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['wick_ratio']}×</td>
+              <td style="color:#aaa">{r['weeks_held']}w</td>
+              <td style="color:#888">{r['close_pct']}%</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    daily_info  = f"{daily['scan_date']} · {daily['total']} signals"   if daily  else 'No scan yet'
+    weekly_info = f"{weekly['scan_date']} · {weekly['total']} signals"  if weekly else 'No scan yet'
+
+    content = f"""
+    <style>
+      .jw-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }}
+      @media(max-width:900px) {{ .jw-grid {{ grid-template-columns:1fr; }} }}
+      .jw-card {{ background:#0d0f1a; border:1px solid #1e2235; border-radius:10px; padding:16px; }}
+      .jw-card h3 {{ font-size:.72rem; font-weight:700; color:#777; text-transform:uppercase;
+                    letter-spacing:.08em; margin-bottom:12px; }}
+      .jw-table {{ width:100%; border-collapse:collapse; font-size:.88rem; }}
+      .jw-table th {{ text-align:left; padding:8px 10px; color:#555; font-size:.74rem;
+                     border-bottom:1px solid #2a2d3e; font-weight:500;
+                     cursor:pointer; user-select:none; white-space:nowrap; }}
+      .jw-table th:hover {{ color:#aaa; }}
+      .jw-table th.sort-asc::after  {{ content:' ▲'; font-size:.55rem; color:#60a5fa; }}
+      .jw-table th.sort-desc::after {{ content:' ▼'; font-size:.55rem; color:#60a5fa; }}
+      .jw-table td {{ padding:8px 10px; border-bottom:1px solid #151820; vertical-align:middle; }}
+      .jw-table .jw-row:hover td {{ background:#1f2235; cursor:pointer; }}
+      .jw-table .jw-row.active td {{ background:#1a2235; border-left:2px solid #f59e0b; }}
+      .jw-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                        padding:5px 13px; border-radius:6px; cursor:pointer; font-size:.78rem; }}
+      .jw-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
+      .jw-tv-box {{ background:#0d0f1a; border:1px solid #1e2235; border-radius:7px;
+                   padding:10px 12px; margin-bottom:10px; }}
+      .jw-chart-panel {{ background:#080a10; border:1px solid #1e2235; border-radius:10px;
+                         padding:16px 20px; margin-bottom:24px; display:none; }}
+      .jw-chart-panel.visible {{ display:block; }}
+      .score-legend {{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:14px; }}
+      .score-legend span {{ font-size:.75rem; color:#888; }}
+      .score-legend .dot {{ display:inline-block; width:10px; height:10px; border-radius:50%;
+                            margin-right:4px; vertical-align:middle; }}
+    </style>
+
+    <section style="margin-bottom:20px">
+      <h2 style="margin-bottom:4px">Jang's Wicks</h2>
+      <p style="font-size:.88rem;color:#555;margin-bottom:14px">
+        Daily and weekly wick signals — click any ticker to load the chart.
+      </p>
+      {'<div class="btn-row" style="margin-bottom:14px">' + (
+          '<span class="btn btn-off">⏳ ' + jname + ' running…</span>'
+          if running else
+          '<a href="/jangs-wicks/run-daily" class="btn btn-blue">▶ Run Daily Scan</a>'
+          '<a href="/jangs-wicks/run-weekly" class="btn btn-blue">▶ Run Weekly Scan</a>'
+      ) + '</div>' if logged_in else
+      '<p style="font-size:.82rem;color:#555;margin-bottom:14px"><a href="/ask/login" style="color:#60a5fa">Log in</a> to run scans.</p>'}
+      <div class="score-legend">
+        <span><span class="dot" style="background:#22c55e"></span>Score 8+ — strong signal</span>
+        <span><span class="dot" style="background:#f59e0b"></span>Score 5–7 — moderate signal</span>
+        <span><span class="dot" style="background:#555"></span>Score &lt;5 — weak signal</span>
+        <span style="color:#444">⚡ = above-average volume &nbsp;·&nbsp; ▲ = bullish close &nbsp;·&nbsp; ▽ = bearish close</span>
+      </div>
+    </section>
+
+    <!-- Chart panel (shared, full-width) -->
+    <div class="jw-chart-panel" id="jw-chart-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="color:#fff;font-weight:700;font-size:1.05rem" id="jw-chart-title">—</span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="color:#555;font-size:.75rem" id="jw-chart-meta"></span>
+          <button onclick="closeJwChart()"
+            style="background:transparent;border:1px solid #2a2d3e;color:#555;padding:4px 12px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem">✕ Close</button>
+        </div>
+      </div>
+      <div id="jw-chart-main" style="height:400px;background:#0a0c14;border-radius:6px"></div>
+      <div id="jw-chart-vol"  style="height:60px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+    </div>
+
+    <div class="jw-grid">
+
+      <!-- ── Daily Hammers ── -->
+      <div class="jw-card">
+        <h3>Daily Close Hammers</h3>
+        <p style="color:#555;font-size:.75rem;margin-bottom:10px">{daily_info}</p>
+
+        <div class="jw-tv-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <span style="color:#aaa;font-size:.75rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW LIST</span>
+            <button onclick="copyJwList('daily')" id="jw-copy-daily"
+              style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.75rem;font-weight:600">Copy</button>
+          </div>
+          <textarea id="jw-tv-daily" readonly rows="2"
+            style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:4px;
+                   color:#c7d2fe;font-size:.76rem;padding:6px 8px;resize:none;
+                   font-family:monospace;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+          <button class="jw-filter-btn active" id="jw-df-today" onclick="jwFilter('daily','today')">Today</button>
+          <button class="jw-filter-btn"         id="jw-df-all"   onclick="jwFilter('daily','all')">All</button>
+          <span id="jw-daily-count" style="color:#555;font-size:.75rem;margin-left:4px"></span>
+        </div>
+
+        <table class="jw-table" id="jw-daily-tbl">
+          <thead><tr>
+            <th onclick="jwSort(this,'daily')">Ticker</th>
+            <th onclick="jwSort(this,'daily')">Date</th>
+            <th onclick="jwSort(this,'daily')" style="text-align:center">Score</th>
+            <th onclick="jwSort(this,'daily')">Wick×</th>
+            <th onclick="jwSort(this,'daily')">Close%</th>
+            <th onclick="jwSort(this,'daily')">Body</th>
+            <th onclick="jwSort(this,'daily')">Gain</th>
+          </tr></thead>
+          <tbody id="jw-daily-tbody">
+            {daily_rows if daily_rows else '<tr><td colspan="7" style="color:#555;padding:16px">No scan results yet.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── Weekly Wicks ── -->
+      <div class="jw-card">
+        <h3>Weekly Close Wicks</h3>
+        <p style="color:#555;font-size:.75rem;margin-bottom:10px">{weekly_info}</p>
+
+        <div class="jw-tv-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+            <span style="color:#aaa;font-size:.75rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW LIST</span>
+            <button onclick="copyJwList('weekly')" id="jw-copy-weekly"
+              style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:4px 12px;
+                     border-radius:5px;cursor:pointer;font-size:.75rem;font-weight:600">Copy</button>
+          </div>
+          <textarea id="jw-tv-weekly" readonly rows="2"
+            style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:4px;
+                   color:#c7d2fe;font-size:.76rem;padding:6px 8px;resize:none;
+                   font-family:monospace;box-sizing:border-box;line-height:1.5"></textarea>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+          <button class="jw-filter-btn active" id="jw-wf-week" onclick="jwFilter('weekly','week')">Last Week</button>
+          <button class="jw-filter-btn"         id="jw-wf-all"  onclick="jwFilter('weekly','all')">All</button>
+          <span id="jw-weekly-count" style="color:#555;font-size:.75rem;margin-left:4px"></span>
+        </div>
+
+        <table class="jw-table" id="jw-weekly-tbl">
+          <thead><tr>
+            <th onclick="jwSort(this,'weekly')">Ticker</th>
+            <th onclick="jwSort(this,'weekly')">Date</th>
+            <th onclick="jwSort(this,'weekly')" style="text-align:center">Score</th>
+            <th onclick="jwSort(this,'weekly')">Wick×</th>
+            <th onclick="jwSort(this,'weekly')">Held</th>
+            <th onclick="jwSort(this,'weekly')">Close%</th>
+            <th onclick="jwSort(this,'weekly')">Gain</th>
+          </tr></thead>
+          <tbody id="jw-weekly-tbody">
+            {weekly_rows if weekly_rows else '<tr><td colspan="7" style="color:#555;padding:16px">No scan results yet.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /.jw-grid -->
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // ── LightweightCharts v4 VerticalLine primitive ──────────────────────────
+    class JwLineRenderer {{
+      constructor(time, color, chart) {{ this._time=time; this._color=color; this._chart=chart; }}
+      draw(target) {{
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {{
+          const ctx=scope.context, xb=Math.round(x*scope.horizontalPixelRatio);
+          ctx.save(); ctx.beginPath(); ctx.moveTo(xb,0); ctx.lineTo(xb,scope.bitmapSize.height);
+          ctx.strokeStyle=this._color; ctx.lineWidth=Math.round(2*scope.horizontalPixelRatio);
+          ctx.setLineDash([6,4]); ctx.stroke(); ctx.restore();
+        }});
+      }}
+    }}
+    class JwLinePaneView {{
+      constructor(t,c,chart) {{ this._r=new JwLineRenderer(t,c,chart); }}
+      renderer() {{ return this._r; }} zOrder() {{ return 'normal'; }}
+    }}
+    class JwLine {{
+      constructor(time,color='#f59e0b') {{ this._time=time; this._color=color; this._chart=null; this._views=[]; }}
+      attached({{chart}}) {{ this._chart=chart; this._views=[new JwLinePaneView(this._time,this._color,chart)]; }}
+      detached() {{ this._views=[]; }} paneViews() {{ return this._views; }} updateAllViews() {{}}
+    }}
+
+    // ── Chart state ──────────────────────────────────────────────────────────
+    let jwMainChart=null, jwVolChart=null;
+
+    function closeJwChart() {{
+      document.getElementById('jw-chart-panel').classList.remove('visible');
+      document.querySelectorAll('.jw-row.active').forEach(r => r.classList.remove('active'));
+      if (jwMainChart) {{ jwMainChart.remove(); jwMainChart=null; }}
+      if (jwVolChart)  {{ jwVolChart.remove();  jwVolChart=null; }}
+    }}
+
+    function loadJwChart(ticker, signalDate) {{
+      document.getElementById('jw-chart-title').textContent = ticker;
+      document.getElementById('jw-chart-meta').textContent  = 'Loading…';
+      const panel = document.getElementById('jw-chart-panel');
+      panel.classList.add('visible');
+      panel.scrollIntoView({{behavior:'smooth', block:'nearest'}});
+
+      if (jwMainChart) {{ jwMainChart.remove(); jwMainChart=null; }}
+      if (jwVolChart)  {{ jwVolChart.remove();  jwVolChart=null; }}
+      document.getElementById('jw-chart-main').innerHTML = '';
+      document.getElementById('jw-chart-vol').innerHTML  = '';
+
+      fetch('/api/us-chart/' + ticker)
+        .then(r => r.json())
+        .then(data => {{
+          if (data.error) {{ document.getElementById('jw-chart-meta').textContent=data.error; return; }}
+          document.getElementById('jw-chart-meta').textContent = data.bars+' bars · '+data.date_range;
+
+          jwMainChart = LightweightCharts.createChart(document.getElementById('jw-chart-main'), {{
+            layout: {{background:{{color:'#0a0c14'}}, textColor:'#888'}},
+            grid: {{vertLines:{{color:'#1a1d2e'}}, horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale: {{borderColor:'#2a2d3e'}},
+            timeScale: {{borderColor:'#2a2d3e', timeVisible:true}},
+            crosshair: {{mode:LightweightCharts.CrosshairMode.Normal}},
+          }});
+          const candles = jwMainChart.addCandlestickSeries({{
+            upColor:'#22c55e', downColor:'#ef4444',
+            borderUpColor:'#22c55e', borderDownColor:'#ef4444',
+            wickUpColor:'#22c55e', wickDownColor:'#ef4444',
+          }});
+          candles.setData(data.ohlcv);
+
+          // Snap to nearest bar to signal date
+          const sigMs = new Date(signalDate).getTime();
+          let snapDate=signalDate, minDiff=Infinity;
+          for (const bar of data.ohlcv) {{
+            const diff = Math.abs(new Date(bar.time).getTime()-sigMs);
+            if (diff<minDiff) {{ minDiff=diff; snapDate=bar.time; }}
+          }}
+          candles.attachPrimitive(new JwLine(snapDate));
+
+          const ema5  = jwMainChart.addLineSeries({{color:'#60a5fa', lineWidth:1, title:'EMA5'}});
+          const ema26 = jwMainChart.addLineSeries({{color:'#f59e0b', lineWidth:1, title:'EMA26'}});
+          ema5.setData(data.ema5); ema26.setData(data.ema26);
+
+          const bc = data.ohlcv.length;
+          jwMainChart.timeScale().setVisibleLogicalRange({{from:Math.max(0,bc-120), to:bc+5}});
+          jwMainChart.priceScale('right').applyOptions({{scaleMargins:{{top:0.12, bottom:0.18}}}});
+
+          jwVolChart = LightweightCharts.createChart(document.getElementById('jw-chart-vol'), {{
+            layout: {{background:{{color:'#0a0c14'}}, textColor:'#888'}},
+            grid: {{vertLines:{{color:'#1a1d2e'}}, horzLines:{{color:'#1a1d2e'}}}},
+            rightPriceScale: {{borderColor:'#2a2d3e'}},
+            timeScale: {{borderColor:'#2a2d3e', timeVisible:false}},
+          }});
+          const vs = jwVolChart.addHistogramSeries({{priceFormat:{{type:'volume'}}, priceScaleId:''}});
+          vs.priceScale().applyOptions({{scaleMargins:{{top:0.1, bottom:0}}}});
+          vs.setData(data.volume); jwVolChart.timeScale().fitContent();
+
+          jwMainChart.timeScale().subscribeVisibleLogicalRangeChange(r => jwVolChart.timeScale().setVisibleLogicalRange(r));
+          jwVolChart.timeScale().subscribeVisibleLogicalRangeChange(r => jwMainChart.timeScale().setVisibleLogicalRange(r));
+        }})
+        .catch(e => {{ document.getElementById('jw-chart-meta').textContent='Failed: '+e; }});
+    }}
+
+    // ── Row click ────────────────────────────────────────────────────────────
+    document.querySelectorAll('.jw-row').forEach(row => {{
+      row.addEventListener('click', () => {{
+        const isActive = row.classList.contains('active');
+        document.querySelectorAll('.jw-row.active').forEach(r => r.classList.remove('active'));
+        if (isActive) {{ closeJwChart(); return; }}
+        row.classList.add('active');
+        loadJwChart(row.dataset.ticker, row.dataset.date);
+      }});
+    }});
+
+    // ── Sorting ──────────────────────────────────────────────────────────────
+    function jwSort(th, side) {{
+      const tbodyId = side==='daily' ? 'jw-daily-tbody' : 'jw-weekly-tbody';
+      const tbody = document.getElementById(tbodyId);
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.jw-row'));
+      rows.sort((a,b) => {{
+        const av=a.cells[idx].textContent.trim(), bv=b.cells[idx].textContent.trim();
+        const an=parseFloat(av.replace(/[^0-9.-]/g,'')), bn=parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp=isNaN(an) ? av.localeCompare(bv) : an-bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    // ── Filter ───────────────────────────────────────────────────────────────
+    function getLatestDate(side) {{
+      let latest='';
+      document.querySelectorAll(`.jw-row[data-side="${{side}}"]`).forEach(r => {{
+        const d=r.dataset.date||''; if(d>latest) latest=d;
+      }});
+      return latest;
+    }}
+
+    function jwFilter(side, mode) {{
+      const isDaily = side==='daily';
+      if (isDaily) {{
+        document.getElementById('jw-df-today').classList.toggle('active', mode==='today');
+        document.getElementById('jw-df-all').classList.toggle('active',   mode==='all');
+      }} else {{
+        document.getElementById('jw-wf-week').classList.toggle('active', mode==='week');
+        document.getElementById('jw-wf-all').classList.toggle('active',  mode==='all');
+      }}
+      const latest = getLatestDate(side);
+      const countId = isDaily ? 'jw-daily-count' : 'jw-weekly-count';
+      let visible=0;
+      document.querySelectorAll(`.jw-row[data-side="${{side}}"]`).forEach(r => {{
+        const show = (mode==='all') || (r.dataset.date===latest);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        if (!show && r.classList.contains('active')) closeJwChart();
+      }});
+      document.getElementById(countId).textContent = visible+' signal'+(visible!==1?'s':'');
+      jwUpdateTVList(side);
+    }}
+
+    // ── TV list ──────────────────────────────────────────────────────────────
+    function jwUpdateTVList(side) {{
+      const tickers=[];
+      document.querySelectorAll(`.jw-row[data-side="${{side}}"]`).forEach(r => {{
+        if (r.style.display!=='none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById(side==='daily' ? 'jw-tv-daily' : 'jw-tv-weekly').value = tickers.join(',');
+    }}
+
+    function copyJwList(side) {{
+      const taId = side==='daily' ? 'jw-tv-daily' : 'jw-tv-weekly';
+      const btnId = side==='daily' ? 'jw-copy-daily' : 'jw-copy-weekly';
+      const ta = document.getElementById(taId);
+      ta.select(); ta.setSelectionRange(0,99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn=document.getElementById(btnId);
+        btn.textContent='Copied!'; btn.style.background='#14532d';
+        btn.style.borderColor='#22c55e'; btn.style.color='#4ade80';
+        setTimeout(()=>{{
+          btn.textContent='Copy'; btn.style.background='#1e3a5f';
+          btn.style.borderColor='#3b82f6'; btn.style.color='#60a5fa';
+        }},2000);
+      }});
+    }}
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    jwFilter('daily',  'today');
+    jwFilter('weekly', 'week');
+    </script>"""
+
+    return page_wrap("Jang's Wicks", 'jangs-wicks', content, auto_refresh=(running and jname in ('Hammer Scan','Wick Scan')))
+
+
+# ─── EFI Scanner ──────────────────────────────────────────────────────────────
+
+def _run_efi_scan_job():
+    global _job_running, _job_name
+    def log(msg):
+        with open(LOG_FILE, 'a') as f:
+            f.write(msg)
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== EFI Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_efi_scan(log_callback=log)
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nFATAL ERROR: {e}\n")
+    finally:
+        _job_running = False
+        _job_name    = None
+
+
+def start_efi_scan():
+    global _job_running, _job_name
+    if _job_running:
+        return
+    _job_running = True
+    _job_name    = 'EFI Scan'
+    import threading
+    threading.Thread(target=_run_efi_scan_job, daemon=True).start()
+
+
+@app.route('/efi')
+def efi_page():
+    running = _job_running and _job_name == 'EFI Scan'
+    data    = load_last_efi_results()
+
+    fi_color_map = {
+        'maroon': ('#7f1d1d', '#fca5a5'),
+        'orange': ('#78350f', '#fcd34d'),
+        'lime':   ('#14532d', '#86efac'),
+        'teal':   ('#134e4a', '#5eead4'),
+    }
+
+    table = ''
+    if data and data.get('results'):
+        rows = ''
+        for r in data['results']:
+            color, tc = fi_color_map.get(r['fi_color'], ('#1e2130', '#888'))
+            rows += f"""<tr style="border-bottom:1px solid #151820">
+              <td style="padding:9px 14px;font-weight:700">{r['ticker']}</td>
+              <td style="padding:9px 10px;color:#aaa">${r['price']:,.2f}</td>
+              <td style="padding:9px 10px;color:#22c55e">{r['norm_price']:+.4f}</td>
+              <td style="padding:9px 10px;color:#f87171">{r['histogram']:+.4f}</td>
+              <td style="padding:9px 10px;background:{color};color:{tc};text-align:center;font-size:.78rem;font-weight:700">{r['fi_color']}</td>
+            </tr>"""
+        scan_date = data.get('scan_date', '')
+        table = f"""
+        <p style="color:#555;font-size:.8rem;margin-bottom:10px">Last scan: {scan_date} — {data['total']} setups</p>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:.84rem">
+            <thead>
+              <tr style="border-bottom:2px solid #2a2d3e">
+                <th style="text-align:left;padding:9px 14px;color:#555;font-weight:500">Ticker</th>
+                <th style="text-align:left;padding:9px 10px;color:#555;font-weight:500">Price</th>
+                <th style="text-align:left;padding:9px 10px;color:#555;font-weight:500">Norm Price</th>
+                <th style="text-align:left;padding:9px 10px;color:#555;font-weight:500">Histogram</th>
+                <th style="text-align:center;padding:9px 10px;color:#555;font-weight:500">FI Color</th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </table>
+        </div>"""
+
+    if running:
+        log_content = ''
+        try:
+            with open(LOG_FILE) as f:
+                log_content = f.read()
+        except Exception:
+            pass
+        run_btn = '<span class="btn" style="background:#1e2130;color:#555;cursor:not-allowed">⏳ Scanning...</span>'
+        matrix_log = f'<pre style="background:#0a0c12;color:#00ff41;padding:16px;border-radius:8px;font-size:.72rem;max-height:300px;overflow-y:auto;margin-top:16px;font-family:monospace">{log_content}</pre>'
+    else:
+        run_btn    = '<a href="/run-efi" class="btn btn-blue">▶ Run EFI Scan</a>' if is_admin() else ''
+        matrix_log = ''
+
+    content = f"""
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div>
+        <h2 style="margin:0">EFI Scanner</h2>
+        <p style="color:#666;font-size:.83rem;margin:4px 0 0">
+          Channel printing + Normalized price &gt; 0 + Histogram &lt; 0 — pullback in trend setup
+        </p>
+      </div>
+      {run_btn}
+    </div>
+    {matrix_log}
+    {table if table else '<p class="note">No scan run yet. Click Run EFI Scan above.</p>'}
+    """
+    return page_wrap('EFI Scan', 'efi', content, auto_refresh=running)
+
+
+@app.route('/run-efi')
+def run_efi_route():
+    if not is_admin():
+        return redirect('/efi')
+    start_efi_scan()
+    return redirect('/efi')
+
+
 # ─── Indexes & ETFs ───────────────────────────────────────────────────────────
 
 @app.route('/indexes')
@@ -2884,6 +5308,12 @@ def indexes_page():
     index_rows  = ''.join(heatmap_row(t, n, perf[t]) for t, n in INDEX_ETFS)
     macro_rows  = ''.join(heatmap_row(t, n, perf[t]) for t, n in MACRO_INSTRUMENTS)
 
+    debug_bar = ''
+    if perf.get('_error'):
+        debug_bar = f'<div style="background:#7f1d1d;color:#fca5a5;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:.83rem">DB Error: {perf["_error"]}</div>'
+    elif perf['_rows_found'] == 0:
+        debug_bar = '<div style="background:#78350f;color:#fcd34d;padding:10px 16px;border-radius:6px;margin-bottom:16px;font-size:.83rem">No data found in DB for these tickers — run db_daily_update.py to populate.</div>'
+
     heatmap_table = lambda rows: f"""
         <table style="width:100%;border-collapse:collapse;font-size:.83rem">
           <thead>
@@ -2901,28 +5331,13 @@ def indexes_page():
 
     content = f"""
     <style>
-      .tf-btn {{
-        padding: 7px 20px; border-radius: 6px; font-size: .85rem; font-weight: 600;
-        cursor: pointer; border: none; background: #252839; color: #aaa;
-        transition: background .15s, color .15s;
-      }}
-      .tf-btn.active {{ background: #3b82f6; color: #fff; }}
-      .tf-btn:hover:not(.active) {{ background: #2e3250; color: #ddd; }}
       .ix-section {{ margin-bottom: 32px; }}
       .ix-section h2 {{ font-size: .78rem; font-weight: 600; color: #777;
                        text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }}
-      .ix-grid {{
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-        gap: 12px;
-      }}
-      .ix-cell {{
-        background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 8px;
-        overflow: hidden; height: 240px;
-      }}
     </style>
 
-    <!-- ── Performance Heatmap ─────────────────────────────────────────── -->
+    {debug_bar}
+
     <div class="ix-section">
       <h2>Dollar, Commodities &amp; Rates</h2>
       <div style="background:#1a1d2e;border:1px solid #2a2d3e;border-radius:8px;overflow:hidden">
@@ -2943,122 +5358,820 @@ def indexes_page():
         {heatmap_table(index_rows)}
       </div>
     </div>
+    """
+    return page_wrap('Indexes & ETFs', 'indexes', content)
 
-    <!-- ── TradingView Charts ──────────────────────────────────────────── -->
-    <div style="margin-bottom:24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:.78rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-right:4px">Chart Timeframe</span>
-      <button onclick="switchTF('1D')" id="btn-1D" class="tf-btn active">1 Day</button>
-      <button onclick="switchTF('1W')" id="btn-1W" class="tf-btn">1 Week</button>
-      <button onclick="switchTF('1M')" id="btn-1M" class="tf-btn">1 Month</button>
-      <button onclick="switchTF('3M')" id="btn-3M" class="tf-btn">3 Month</button>
+
+def us_index_page(title, active_key, tickers, etf_ticker=''):
+    """Generic page builder for US index tabs (Dow/Nasdaq/S&P/Russell)."""
+    sparklines = get_us_sparklines_batch(tickers)
+    latest     = get_us_latest_prices(tickers)
+    with_data  = get_us_tickers_with_data(tickers)
+
+    # ── Breadth calculation from sparklines ──────────────────────────────────
+    def breadth(n):
+        up = down = flat = no_data = 0
+        for t in tickers:
+            c = sparklines.get(t, [])
+            if len(c) > n:
+                if   c[-1] > c[-1-n]: up   += 1
+                elif c[-1] < c[-1-n]: down += 1
+                else:                 flat += 1
+            else:
+                no_data += 1
+        total = up + down + flat
+        up_pct   = round(up   / total * 100, 1) if total else 0
+        down_pct = round(down / total * 100, 1) if total else 0
+        flat_pct = round(100 - up_pct - down_pct, 1)
+        return up, down, flat, up_pct, down_pct, flat_pct, total
+
+    d_up,  d_dn,  d_fl,  d_up_pct,  d_dn_pct,  d_fl_pct,  d_tot  = breadth(1)
+    w_up,  w_dn,  w_fl,  w_up_pct,  w_dn_pct,  w_fl_pct,  w_tot  = breadth(5)
+    m_up,  m_dn,  m_fl,  m_up_pct,  m_dn_pct,  m_fl_pct,  m_tot  = breadth(21)
+
+    rows_html = ''
+    for ticker in tickers:
+        closes  = sparklines.get(ticker, [])
+        price   = latest.get(ticker)
+        svg     = sparkline_svg(closes) if ticker in with_data else ''
+        price_s = f'${price:,.2f}' if price else '—'
+        day_chg = ''
+        if len(closes) >= 2:
+            pct = (closes[-1] - closes[-2]) / closes[-2] * 100
+            col = '#22c55e' if pct >= 0 else '#ef4444'
+            day_chg = f'<span style="color:{col};font-size:.78rem">{"+" if pct>=0 else ""}{pct:.2f}%</span>'
+        rows_html += f"""
+        <tr class="ux-row" data-ticker="{ticker}" style="cursor:{'pointer' if ticker in with_data else 'default'}">
+          <td>
+            <div style="display:flex;align-items:center;gap:12px">
+              <strong style="color:#60a5fa;min-width:68px;font-size:1rem">{ticker}</strong>
+              {svg}
+            </div>
+          </td>
+          <td style="font-weight:700;color:#fff;font-size:1rem">{price_s}</td>
+          <td style="font-size:.95rem;font-weight:600">{day_chg}</td>
+        </tr>"""
+
+    chart_js = """
+    <script>
+    document.querySelectorAll('.ux-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker = row.dataset.ticker;
+        const existId = 'udrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.ux-drop').forEach(d => d.remove());
+        document.querySelectorAll('.ux-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'ux-drop';
+        drop.innerHTML = `<td colspan="3" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker} <span style="color:#555;font-size:.78rem">NYSE/NASDAQ</span></span>
+            <span style="color:#555;font-size:.75rem" id="us-${ticker}">Loading...</span>
+          </div>
+          <div id="um-${ticker}" style="height:340px;background:#0a0c14;border-radius:6px"></div>
+          <div id="uv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('us-' + ticker).textContent = data.error; return; }
+            document.getElementById('us-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('um-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: 0, to: barCount + Math.round(barCount * 0.9) });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('uv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('us-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    # ── Build donut cards HTML ────────────────────────────────────────────────
+    donut_html = ''
+    for period, up_pct, dn_pct, fl_pct, up, dn in [
+        ('Day',   d_up_pct, d_dn_pct, d_fl_pct, d_up, d_dn),
+        ('Week',  w_up_pct, w_dn_pct, w_fl_pct, w_up, w_dn),
+        ('Month', m_up_pct, m_dn_pct, m_fl_pct, m_up, m_dn),
+    ]:
+        pid = period.lower()
+        center_style = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:800;color:#fff;white-space:nowrap'
+        donut_html += (
+            f'<div style="text-align:center">'
+            f'<div style="font-size:.82rem;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{period}</div>'
+            f'<div style="position:relative;width:150px;height:150px">'
+            f'<canvas id="donut-{pid}" width="150" height="150"></canvas>'
+            f'<div style="{center_style}">{up_pct}%</div>'
+            f'</div>'
+            f'<div style="font-size:.88rem;margin-top:10px;font-weight:600">'
+            f'<span style="color:#22c55e">&#9650; {up} up</span>'
+            f'<span style="color:#555;margin:0 8px">/</span>'
+            f'<span style="color:#ef4444">&#9660; {dn} down</span>'
+            f'</div></div>'
+        )
+
+    etf_section = ''
+    if etf_ticker:
+        etf_section = f"""
+        <div id="etf-chart-wrap">
+          <div style="font-size:.78rem;color:#888;margin-bottom:8px;font-weight:600">
+            {etf_ticker} &nbsp;<span style="color:#555;font-weight:400">— 60 Day</span>
+          </div>
+          <div id="etf-area" style="height:220px;background:#0a0c14;border-radius:8px"></div>
+        </div>
+        <script>
+        (function(){{
+          fetch('/api/us-chart/{etf_ticker}')
+            .then(r=>r.json())
+            .then(data=>{{
+              if(data.error||!data.ohlcv) return;
+              const recent = data.ohlcv.slice(-60);
+              const LWC = LightweightCharts;
+              const chart = LWC.createChart(document.getElementById('etf-area'),{{
+                layout:{{background:{{color:'#0a0c14'}},textColor:'#555'}},
+                grid:{{vertLines:{{color:'#12141e'}},horzLines:{{color:'#12141e'}}}},
+                rightPriceScale:{{borderColor:'#1a1d2e'}},
+                timeScale:{{borderColor:'#1a1d2e',timeVisible:false}},
+                crosshair:{{mode:LightweightCharts.CrosshairMode.Normal}},
+                handleScroll:false, handleScale:false,
+              }});
+              const area = chart.addAreaSeries({{
+                lineColor:'#3b82f6', topColor:'#3b82f644',
+                bottomColor:'#3b82f600', lineWidth:2,
+              }});
+              area.setData(recent.map(b=>({{time:b.time,value:b.close}})));
+              chart.timeScale().fitContent();
+            }}).catch(()=>{{}});
+        }})();
+        </script>"""
+
+    content = f"""
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
+    <!-- Dashboard header -->
+    <section style="margin-bottom:20px">
+
+      {etf_section}
+
+      <!-- Breadth donuts -->
+      <div style="margin-top:18px">
+        <p style="font-size:.88rem;color:#888;margin-bottom:14px">
+          Percentage of <strong style="color:#fff">{title}</strong> stocks moving up or down over each time period
+        </p>
+        <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
+          {donut_html}
+        </div>
+      </div>
+
+      <div style="margin-top:14px;font-size:.8rem;color:#444">
+        {len(with_data)} of {len(tickers)} tickers with data &nbsp;·&nbsp; click any row to expand chart
+      </div>
+    </section>
+
+    <script>
+    (function(){{
+      const donuts = [
+        {{ id:'donut-day',   up:{d_up_pct}, dn:{d_dn_pct}, fl:{d_fl_pct} }},
+        {{ id:'donut-week',  up:{w_up_pct}, dn:{w_dn_pct}, fl:{w_fl_pct} }},
+        {{ id:'donut-month', up:{m_up_pct}, dn:{m_dn_pct}, fl:{m_fl_pct} }},
+      ];
+      donuts.forEach(d => {{
+        const ctx = document.getElementById(d.id).getContext('2d');
+        new Chart(ctx, {{
+          type: 'doughnut',
+          data: {{
+            datasets: [{{
+              data: [d.up, d.dn, d.fl],
+              backgroundColor: ['#22c55e','#ef4444','#1f2235'],
+              borderWidth: 0,
+              hoverOffset: 4,
+            }}]
+          }},
+          options: {{
+            cutout: '70%',
+            animation: {{ animateRotate: true, duration: 1200, easing: 'easeInOutQuart' }},
+            plugins: {{
+              legend: {{ display: false }},
+              tooltip: {{
+                callbacks: {{
+                  label: ctx => ['Up','Down','Flat'][ctx.dataIndex] + ': ' + ctx.parsed + '%'
+                }}
+              }}
+            }}
+          }}
+        }});
+      }});
+    }})();
+    </script>
+    <section>
+      <style>
+        .ux-table {{ width:100%; border-collapse:collapse; font-size:.95rem; }}
+        .ux-table th {{ text-align:left; padding:10px 14px; color:#777;
+                       border-bottom:1px solid #2a2d3e; font-weight:500; cursor:pointer; user-select:none; font-size:.82rem; }}
+        .ux-table th:hover {{ color:#aaa; }}
+        .ux-table th.sort-asc::after  {{ content:' ▲'; font-size:.65rem; color:#60a5fa; }}
+        .ux-table th.sort-desc::after {{ content:' ▼'; font-size:.65rem; color:#60a5fa; }}
+        .ux-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .ux-table .ux-row:hover td {{ background:#1f2235; }}
+        .ux-table .ux-row.active td {{ background:#1a2235; }}
+        .ux-drop td {{ padding:0 !important; }}
+      </style>
+      <table class="ux-table">
+        <thead><tr>
+          <th onclick="sortUx(this)">Ticker</th>
+          <th onclick="sortUx(this)">Price (USD)</th>
+          <th onclick="sortUx(this)">Day %</th>
+        </tr></thead>
+        <tbody id="ux-tbody">{rows_html}</tbody>
+      </table>
+    </section>
+    <script>
+    function sortUx(th) {{
+      const tbody = document.getElementById('ux-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.ux-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace('$','').replace(',','')), bn = parseFloat(bv.replace('$','').replace(',',''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+    </script>
+    {chart_js}"""
+
+    return page_wrap(title, active_key, content)
+
+
+@app.route('/dow')
+def dow_page():
+    return us_index_page('Dow Jones 30', 'dow', DOW_30, etf_ticker='DIA')
+
+
+@app.route('/nasdaq')
+def nasdaq_page():
+    return us_index_page('Nasdaq 100', 'nasdaq', NASDAQ_100, etf_ticker='QQQ')
+
+
+@app.route('/sp500')
+def sp500_page():
+    return us_index_page('S&P 500', 'sp500', SP500_TICKERS, etf_ticker='SPY')
+
+
+@app.route('/russell')
+def russell_page():
+    known = set(DOW_30) | set(NASDAQ_100) | set(SP500_TICKERS)
+    all_us = get_us_all_tickers_with_data()
+    russell_tickers = sorted(t for t in all_us if t not in known)
+    return us_index_page('Russell / Small Caps', 'russell', russell_tickers, etf_ticker='IWM')
+
+
+# ─── How It Works ─────────────────────────────────────────────────────────────
+
+VIDEO_URL_FILE = os.path.join(BASE_DIR, 'how_it_works_video.txt')
+
+def get_video_url():
+    if os.path.exists(VIDEO_URL_FILE):
+        with open(VIDEO_URL_FILE) as f:
+            return f.read().strip()
+    return ''
+
+def save_video_url(url):
+    with open(VIDEO_URL_FILE, 'w') as f:
+        f.write(url.strip())
+
+
+@app.route('/how-it-works', methods=['GET', 'POST'])
+def how_it_works():
+    admin = is_admin()
+    if request.method == 'POST' and admin:
+        save_video_url(request.form.get('video_url', ''))
+        return redirect('/how-it-works')
+
+    video_url = get_video_url()
+
+    # Convert Loom share URL to embed URL if needed
+    if 'loom.com/share/' in video_url:
+        video_url = video_url.replace('loom.com/share/', 'loom.com/embed/')
+
+    if video_url:
+        video_html = f"""
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin-bottom:40px;border:1px solid #2a2d3e">
+          <iframe src="{video_url}" frameborder="0" allowfullscreen
+            style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe>
+        </div>"""
+    else:
+        video_html = f"""
+        <div style="background:#13151f;border:2px dashed #2a2d3e;border-radius:12px;padding:60px 24px;text-align:center;margin-bottom:40px">
+          <div style="font-size:2.5rem;margin-bottom:12px">🎬</div>
+          <div style="color:#555;font-size:.9rem">Video coming soon</div>
+          {'<p style="color:#444;font-size:.8rem;margin-top:8px">Paste your Loom URL in the form below to add it.</p>' if admin else ''}
+        </div>"""
+
+    steps = [
+        ('🔍', 'Scanner Finds the Setup',
+         'Our scanner watches thousands of stocks every day looking for one specific pattern — price compressing into a tight channel. Most stocks are ignored. We only want the ones coiling up.',
+         '#818cf8'),
+        ('📊', 'Channel Printing',
+         'When a stock\'s price squeezes into a narrow range and the moving averages compress together, that\'s called a channel printing. It\'s the market holding its breath before a move.',
+         '#60a5fa'),
+        ('⚡', 'Signal Triggers',
+         'Once the channel is confirmed, we wait for the momentum indicators to align — the Fader line turning green and the Force Index pulling back. When all conditions line up together, that\'s our entry signal.',
+         '#22c55e'),
+        ('🎯', 'Entry at the 25% Level',
+         'We enter at the 25% level of the stock\'s price range — a proven support zone. Stop below the range low, target at the 75% level. Clean risk/reward every time.',
+         '#f59e0b'),
+    ]
+
+    step_cards = ''
+    for icon, title, desc, color in steps:
+        step_cards += f"""
+        <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px 24px">
+          <div style="font-size:2rem;margin-bottom:12px">{icon}</div>
+          <div style="font-size:1rem;font-weight:700;color:{color};margin-bottom:10px">{title}</div>
+          <div style="color:#999;font-size:.87rem;line-height:1.7">{desc}</div>
+        </div>"""
+
+    admin_form = ''
+    if admin:
+        admin_form = f"""
+        <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:10px;padding:20px 24px;margin-top:40px">
+          <div style="font-size:.75rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">Admin — Update Video</div>
+          <form method="POST" style="display:flex;gap:10px;align-items:center">
+            <input name="video_url" value="{get_video_url()}" placeholder="Paste Loom share URL here..."
+              style="flex:1;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                     color:#e0e0e0;padding:9px 12px;font-size:.85rem">
+            <button type="submit" class="btn btn-blue" style="white-space:nowrap">Save Video</button>
+          </form>
+        </div>"""
+
+    content = f"""
+    <style>
+      .step-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:40px; }}
+    </style>
+
+    <!-- Hero -->
+    <div style="text-align:center;margin-bottom:40px;padding:20px 0">
+      <h1 style="font-size:2rem;font-weight:800;margin-bottom:12px">How Jimmy Trades</h1>
+      <p style="color:#888;font-size:1rem;max-width:560px;margin:0 auto;line-height:1.7">
+        A simple, repeatable system for finding stocks before they move.
+        No guessing. No noise. Just one pattern, executed consistently.
+      </p>
     </div>
 
-    <div class="ix-section">
-      <h2>Major Indexes</h2>
-      <div class="ix-grid" id="grid-indexes"></div>
+    <!-- Video -->
+    {video_html}
+
+    <!-- Steps -->
+    <h2 style="font-size:.8rem;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">The System — 4 Steps</h2>
+    <div class="step-grid">
+      {step_cards}
     </div>
 
-    <div class="ix-section">
-      <h2>Dollar &amp; Commodities</h2>
-      <div class="ix-grid" id="grid-macro"></div>
+    <!-- CTA -->
+    <div style="background:linear-gradient(135deg,#1a1d2e,#13151f);border:1px solid #2a2d3e;border-radius:14px;padding:40px 32px;text-align:center;margin-bottom:24px">
+      <div style="font-size:1.4rem;font-weight:800;margin-bottom:10px">See It In Action</div>
+      <p style="color:#888;font-size:.9rem;max-width:480px;margin:0 auto 24px">
+        Follow the live $100,000 paper trading account. Every buy and sell is posted in real time so you can see exactly how the system performs.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="/picks" class="btn btn-green" style="font-size:.95rem;padding:11px 28px">View US Picks →</a>
+        <a href="/asx/picks" class="btn btn-blue" style="font-size:.95rem;padding:11px 28px">View ASX Picks →</a>
+      </div>
     </div>
 
-    <div class="ix-section">
-      <h2>US Sector ETFs</h2>
-      <div class="ix-grid" id="grid-sectors"></div>
+    {admin_form}
+    """
+
+    return page_wrap('How It Works', 'howitworks', content)
+
+
+# ─── Dividend Picks ───────────────────────────────────────────────────────────
+
+@app.route('/dividend')
+def dividend_page():
+    stocks = get_all_dividend_stocks()
+    admin  = is_admin()
+
+    # Get latest prices from DB — check both US (prices) and ASX (asx_prices) tables
+    tickers = [s['ticker'] for s in stocks]
+    prices  = {}
+    if tickers:
+        try:
+            conn = get_connection()
+            fmt  = ','.join(['%s'] * len(tickers))
+            with conn.cursor() as cur:
+                # US prices table
+                cur.execute(f"""
+                    SELECT p.ticker, p.close
+                    FROM prices p
+                    INNER JOIN (
+                        SELECT ticker, MAX(date) AS md FROM prices
+                        WHERE ticker IN ({fmt}) GROUP BY ticker
+                    ) latest ON p.ticker=latest.ticker AND p.date=latest.md
+                """, tickers)
+                for t, c in cur.fetchall():
+                    prices[t] = float(c)
+                # ASX prices table (fills in any not found above)
+                cur.execute(f"""
+                    SELECT p.ticker, p.close
+                    FROM asx_prices p
+                    INNER JOIN (
+                        SELECT ticker, MAX(date) AS md FROM asx_prices
+                        WHERE ticker IN ({fmt}) GROUP BY ticker
+                    ) latest ON p.ticker=latest.ticker AND p.date=latest.md
+                """, tickers)
+                for t, c in cur.fetchall():
+                    if t not in prices:
+                        prices[t] = float(c)
+            conn.close()
+        except Exception:
+            pass
+
+    # ── Stock list rows ────────────────────────────────────────────────────────
+    list_rows = ''
+    for s in stocks:
+        price    = prices.get(s['ticker'])
+        price_td = f'${price:,.2f}' if price else '—'
+        yld      = f"{s['dividend_yield']:.2f}%" if s['dividend_yield'] else '—'
+        yrs      = str(s['years_div_growth']) if s['years_div_growth'] else '—'
+        target   = f"${s['target_price']:,.2f}" if s['target_price'] else '—'
+        sector   = s['sector'] or ''
+        edit_btn = f'<a href="/dividend/edit/{s["id"]}" style="color:#60a5fa;font-size:.75rem;margin-left:8px">edit</a>' if admin else ''
+        sticker  = s['ticker']
+        del_btn  = f'<a href="/dividend/delete/{s["id"]}" onclick="return confirm(\'Remove {sticker}?\')" style="color:#ef4444;font-size:.75rem;margin-left:6px">×</a>' if admin else ''
+
+        list_rows += f"""
+        <tr class="div-row" data-id="{s['id']}" onclick="showThesis({s['id']})">
+          <td style="padding:12px 14px;font-weight:700;color:#e0e0e0;white-space:nowrap">
+            {s['ticker']}{edit_btn}{del_btn}
+          </td>
+          <td style="padding:12px 8px;color:#aaa;font-size:.82rem">{s['company']}</td>
+          <td style="padding:12px 8px;color:#888;font-size:.78rem">{sector}</td>
+          <td style="padding:12px 8px;color:#22c55e;font-weight:600;text-align:right">{yld}</td>
+          <td style="padding:12px 8px;color:#60a5fa;text-align:right">{price_td}</td>
+          <td style="padding:12px 8px;color:#f59e0b;text-align:right">{target}</td>
+          <td style="padding:12px 8px;color:#888;text-align:center;font-size:.8rem">{yrs} yrs</td>
+        </tr>"""
+
+    if not list_rows:
+        list_rows = '<tr><td colspan="7" style="padding:24px;text-align:center;color:#555">No stocks added yet.</td></tr>'
+
+    # ── Thesis panels (hidden, shown on click) ─────────────────────────────────
+    thesis_panels = ''
+    for s in stocks:
+        points = [
+            ('Business Moat',        s['thesis_moat'],     '#818cf8'),
+            ('Dividend Track Record', s['thesis_dividend'], '#22c55e'),
+            ('Payout Sustainability', s['thesis_sustain'],  '#f59e0b'),
+            ('Price Trend',           s['thesis_trend'],    '#60a5fa'),
+            ('Why Now',               s['thesis_why_now'],  '#f472b6'),
+        ]
+        pts_html = ''
+        for title, body, color in points:
+            txt = body if body else '<span style="color:#555;font-style:italic">Not yet written.</span>'
+            pts_html += f"""
+            <div style="margin-bottom:18px">
+              <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;color:{color};text-transform:uppercase;margin-bottom:4px">{title}</div>
+              <div style="color:#ccc;font-size:.88rem;line-height:1.6">{txt}</div>
+            </div>"""
+
+        price    = prices.get(s['ticker'])
+        yld      = f"{s['dividend_yield']:.2f}%" if s['dividend_yield'] else '—'
+        pr       = f"{s['payout_ratio']:.0f}%" if s['payout_ratio'] else '—'
+        yrs      = f"{s['years_div_growth']} years" if s['years_div_growth'] else '—'
+        price_td = f'${price:,.2f}' if price else '—'
+        target   = f"${s['target_price']:,.2f}" if s['target_price'] else '—'
+        edit_lnk  = f'<a href="/dividend/edit/{s["id"]}" class="btn btn-blue" style="font-size:.78rem;padding:5px 14px">Edit Thesis</a>' if admin else ''
+        chart_img = f'<img src="/dividend/image/{s["image_path"]}" onclick="openLightbox(this.src)" style="width:100%;border-radius:8px;margin-bottom:18px;border:1px solid #2a2d3e;cursor:zoom-in">' if s.get('image_path') else ''
+
+        thesis_panels += f"""
+        <div id="thesis-{s['id']}" class="thesis-panel" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+            <div>
+              <div style="font-size:1.4rem;font-weight:800;color:#e0e0e0">{s['ticker']}</div>
+              <div style="color:#888;font-size:.85rem">{s['company']}</div>
+              <div style="color:#555;font-size:.75rem;margin-top:2px">{s['sector']}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:1.1rem;font-weight:700;color:#60a5fa">{price_td}</div>
+              <div style="color:#22c55e;font-size:.85rem;font-weight:600">Yield {yld}</div>
+              <div style="color:#aaa;font-size:.75rem">Target {target}</div>
+            </div>
+          </div>
+          {chart_img}
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+            <div class="card" style="padding:10px 14px;text-align:center">
+              <div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em">Div Yield</div>
+              <div style="font-size:1.1rem;font-weight:700;color:#22c55e">{yld}</div>
+            </div>
+            <div class="card" style="padding:10px 14px;text-align:center">
+              <div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em">Payout Ratio</div>
+              <div style="font-size:1.1rem;font-weight:700;color:#f59e0b">{pr}</div>
+            </div>
+            <div class="card" style="padding:10px 14px;text-align:center">
+              <div style="font-size:.68rem;color:#555;text-transform:uppercase;letter-spacing:.06em">Div Growth</div>
+              <div style="font-size:1.1rem;font-weight:700;color:#818cf8">{yrs}</div>
+            </div>
+          </div>
+          <h3 style="font-size:.9rem;color:#555;margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em">Jimmy's Thesis</h3>
+          {pts_html}
+          <div style="margin-top:16px">{edit_lnk}</div>
+        </div>"""
+
+    add_btn = '<a href="/dividend/add" class="btn btn-green" style="margin-bottom:16px">+ Add Stock</a>' if admin else ''
+
+    content = f"""
+    <style>
+      .div-row {{ cursor:pointer; border-bottom:1px solid #151820; transition:background .15s; }}
+      .div-row:hover td {{ background:#1a1d2e; }}
+      .div-row.active td {{ background:#1f2235; }}
+      .thesis-panel {{ background:#13151f; border:1px solid #2a2d3e; border-radius:10px; padding:22px; }}
+    </style>
+
+    <div style="display:flex;gap:20px;align-items:flex-start">
+
+      <!-- Left: stock list -->
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h2 style="margin:0">Long-Term Dividend Picks</h2>
+          {add_btn}
+        </div>
+        <p style="color:#666;font-size:.83rem;margin-bottom:16px">
+          Stocks selected for long-term holding (10–20 years). Click any row to read the thesis.
+        </p>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:.84rem">
+            <thead>
+              <tr style="border-bottom:2px solid #2a2d3e">
+                <th style="text-align:left;padding:10px 14px;color:#555;font-weight:500">Ticker</th>
+                <th style="text-align:left;padding:10px 8px;color:#555;font-weight:500">Company</th>
+                <th style="text-align:left;padding:10px 8px;color:#555;font-weight:500">Sector</th>
+                <th style="text-align:right;padding:10px 8px;color:#555;font-weight:500">Yield</th>
+                <th style="text-align:right;padding:10px 8px;color:#555;font-weight:500">Price</th>
+                <th style="text-align:right;padding:10px 8px;color:#555;font-weight:500">Target</th>
+                <th style="text-align:center;padding:10px 8px;color:#555;font-weight:500">Div Growth</th>
+              </tr>
+            </thead>
+            <tbody>{list_rows}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Lightbox overlay -->
+      <div id="div-lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;cursor:zoom-out;align-items:center;justify-content:center">
+        <img id="div-lightbox-img" src="" style="max-width:92vw;max-height:92vh;border-radius:8px;box-shadow:0 0 60px rgba(0,0,0,.8)">
+      </div>
+
+      <!-- Right: thesis panel -->
+      <div style="width:380px;flex-shrink:0;position:sticky;top:80px">
+        <div id="thesis-placeholder" style="background:#13151f;border:1px solid #1e2130;border-radius:10px;padding:40px 24px;text-align:center;color:#444">
+          <div style="font-size:2rem;margin-bottom:10px">📋</div>
+          <div>Click a stock to read the thesis</div>
+        </div>
+        {thesis_panels}
+      </div>
+
     </div>
 
     <script>
-      const GROUPS = {{
-        'indexes': [
-          {{ symbol: 'AMEX:SPY',      name: 'S&P 500 (SPY)'       }},
-          {{ symbol: 'NASDAQ:QQQ',    name: 'Nasdaq 100 (QQQ)'    }},
-          {{ symbol: 'AMEX:DIA',      name: 'Dow Jones (DIA)'     }},
-          {{ symbol: 'AMEX:IWM',      name: 'Russell 2000 (IWM)'  }},
-          {{ symbol: 'CBOE:VIX',      name: 'VIX'                 }},
-        ],
-        'macro': [
-          {{ symbol: 'TVC:DXY',    name: 'US Dollar (DXY)'  }},
-          {{ symbol: 'TVC:GOLD',   name: 'Gold'             }},
-          {{ symbol: 'TVC:SILVER', name: 'Silver'           }},
-          {{ symbol: 'TVC:COPPER', name: 'Copper'           }},
-          {{ symbol: 'TVC:USOIL',  name: 'Crude Oil'        }},
-          {{ symbol: 'TVC:US10Y',  name: 'US 10Y Yield'     }},
-        ],
-        'sectors': [
-          {{ symbol: 'AMEX:XLK',      name: 'Technology (XLK)'          }},
-          {{ symbol: 'AMEX:XLF',      name: 'Financials (XLF)'          }},
-          {{ symbol: 'AMEX:XLE',      name: 'Energy (XLE)'              }},
-          {{ symbol: 'AMEX:XLV',      name: 'Healthcare (XLV)'          }},
-          {{ symbol: 'AMEX:XLI',      name: 'Industrials (XLI)'         }},
-          {{ symbol: 'AMEX:XLY',      name: 'Cons. Discretionary (XLY)' }},
-          {{ symbol: 'AMEX:XLC',      name: 'Communications (XLC)'      }},
-          {{ symbol: 'AMEX:XLP',      name: 'Cons. Staples (XLP)'       }},
-          {{ symbol: 'AMEX:XLRE',     name: 'Real Estate (XLRE)'        }},
-          {{ symbol: 'AMEX:XLU',      name: 'Utilities (XLU)'           }},
-          {{ symbol: 'AMEX:XLB',      name: 'Materials (XLB)'           }},
-          {{ symbol: 'AMEX:XBI',      name: 'Biotech (XBI)'             }},
-          {{ symbol: 'AMEX:SMH',      name: 'Semiconductors (SMH)'      }},
-          {{ symbol: 'AMEX:GDX',      name: 'Gold Miners (GDX)'         }},
-        ]
-      }};
-
-      function loadWidget(cell, symbol, dateRange) {{
-        cell.innerHTML = '';
-        const wrapper = document.createElement('div');
-        wrapper.className = 'tradingview-widget-container';
-        wrapper.style.height = '100%';
-        const inner = document.createElement('div');
-        inner.className = 'tradingview-widget-container__widget';
-        inner.style.height = '100%';
-        wrapper.appendChild(inner);
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-        script.async = true;
-        script.textContent = JSON.stringify({{
-          symbol:                symbol,
-          width:                 '100%',
-          height:                '100%',
-          locale:                'en',
-          dateRange:             dateRange,
-          colorTheme:            'dark',
-          trendLineColor:        'rgba(41,98,255,1)',
-          underLineColor:        'rgba(41,98,255,0.15)',
-          underLineBottomColor:  'rgba(41,98,255,0)',
-          isTransparent:         true,
-          autosize:              true,
-          largeChartUrl:         ''
-        }});
-        wrapper.appendChild(script);
-        cell.appendChild(wrapper);
+      function showThesis(id) {{
+        document.querySelectorAll('.thesis-panel').forEach(p => p.style.display = 'none');
+        document.querySelectorAll('.div-row').forEach(r => r.classList.remove('active'));
+        document.getElementById('thesis-placeholder').style.display = 'none';
+        document.getElementById('thesis-' + id).style.display = 'block';
+        document.querySelector('.div-row[data-id="' + id + '"]').classList.add('active');
       }}
-
-      function switchTF(tf) {{
-        document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + tf).classList.add('active');
-        for (const [groupId, instruments] of Object.entries(GROUPS)) {{
-          const grid = document.getElementById('grid-' + groupId);
-          const cells = grid.querySelectorAll('.ix-cell');
-          instruments.forEach((inst, i) => {{
-            if (cells[i]) loadWidget(cells[i], inst.symbol, tf);
-          }});
-        }}
+      function openLightbox(src) {{
+        var lb = document.getElementById('div-lightbox');
+        document.getElementById('div-lightbox-img').src = src;
+        lb.style.display = 'flex';
       }}
-
-      // Build cells once on load, then fill widgets
-      for (const [groupId, instruments] of Object.entries(GROUPS)) {{
-        const grid = document.getElementById('grid-' + groupId);
-        instruments.forEach(inst => {{
-          const cell = document.createElement('div');
-          cell.className = 'ix-cell';
-          grid.appendChild(cell);
-        }});
+      function closeLightbox() {{
+        document.getElementById('div-lightbox').style.display = 'none';
       }}
-      switchTF('1D');
+      document.addEventListener('keydown', function(e) {{
+        if (e.key === 'Escape') closeLightbox();
+      }});
     </script>
     """
-    return page_wrap('Indexes & ETFs', 'indexes', content)
+
+    return page_wrap('Dividend Picks', 'dividend', content)
+
+
+def _handle_dividend_image():
+    """Save uploaded chart image, return filename or None."""
+    file = request.files.get('chart_image')
+    if file and file.filename:
+        ext      = os.path.splitext(file.filename)[1].lower()
+        filename = f"div_{uuid.uuid4().hex}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, filename))
+        return filename
+    return None
+
+
+@app.route('/dividend/add', methods=['GET', 'POST'])
+def dividend_add():
+    if not is_admin():
+        return redirect('/dividend')
+    error = ''
+    if request.method == 'POST':
+        image_path = _handle_dividend_image()
+        ok, err = upsert_dividend_stock(
+            ticker=request.form.get('ticker','').strip(),
+            company=request.form.get('company','').strip(),
+            sector=request.form.get('sector','').strip(),
+            dividend_yield=request.form.get('dividend_yield') or None,
+            payout_ratio=request.form.get('payout_ratio') or None,
+            years_div_growth=request.form.get('years_div_growth') or None,
+            target_price=request.form.get('target_price') or None,
+            thesis_moat=request.form.get('thesis_moat','').strip(),
+            thesis_dividend=request.form.get('thesis_dividend','').strip(),
+            thesis_sustain=request.form.get('thesis_sustain','').strip(),
+            thesis_trend=request.form.get('thesis_trend','').strip(),
+            thesis_why_now=request.form.get('thesis_why_now','').strip(),
+            image_path=image_path,
+            display_order=int(request.form.get('display_order') or 0),
+        )
+        if ok:
+            return redirect('/dividend')
+        error = err
+    return page_wrap('Add Dividend Stock', 'dividend', _dividend_form(error=error))
+
+
+@app.route('/dividend/edit/<int:stock_id>', methods=['GET', 'POST'])
+def dividend_edit(stock_id):
+    if not is_admin():
+        return redirect('/dividend')
+    stock = get_dividend_stock(stock_id)
+    if not stock:
+        return redirect('/dividend')
+    error = ''
+    if request.method == 'POST':
+        image_path = _handle_dividend_image()
+        ok, err = upsert_dividend_stock(
+            ticker=request.form.get('ticker','').strip(),
+            company=request.form.get('company','').strip(),
+            sector=request.form.get('sector','').strip(),
+            dividend_yield=request.form.get('dividend_yield') or None,
+            payout_ratio=request.form.get('payout_ratio') or None,
+            years_div_growth=request.form.get('years_div_growth') or None,
+            target_price=request.form.get('target_price') or None,
+            thesis_moat=request.form.get('thesis_moat','').strip(),
+            thesis_dividend=request.form.get('thesis_dividend','').strip(),
+            thesis_sustain=request.form.get('thesis_sustain','').strip(),
+            thesis_trend=request.form.get('thesis_trend','').strip(),
+            thesis_why_now=request.form.get('thesis_why_now','').strip(),
+            image_path=image_path,
+            display_order=int(request.form.get('display_order') or 0),
+            stock_id=stock_id,
+        )
+        if ok:
+            return redirect('/dividend')
+        error = err
+    return page_wrap('Edit Dividend Stock', 'dividend', _dividend_form(stock=stock, error=error))
+
+
+@app.route('/dividend/delete/<int:stock_id>')
+def dividend_delete(stock_id):
+    if not is_admin():
+        return redirect('/dividend')
+    delete_dividend_stock(stock_id)
+    return redirect('/dividend')
+
+
+@app.route('/dividend/image/<filename>')
+def dividend_image(filename):
+    return send_from_directory(UPLOADS_DIR, filename)
+
+
+def _dividend_form(stock=None, error=''):
+    s = stock or {}
+    def v(k, default=''): return s.get(k, default) or default
+    def textarea(name, label, color, placeholder):
+        return f"""
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:.75rem;font-weight:700;color:{color};
+                        text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">{label}</label>
+          <textarea name="{name}" rows="4" placeholder="{placeholder}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:10px 12px;font-size:.85rem;resize:vertical;box-sizing:border-box"
+          >{v(name)}</textarea>
+        </div>"""
+
+    err_html = f'<div style="color:#ef4444;margin-bottom:12px">{error}</div>' if error else ''
+    title    = 'Edit Stock' if stock else 'Add Stock'
+
+    return f"""
+    <h2>{title}</h2>
+    {err_html}
+    <form method="POST" enctype="multipart/form-data" style="max-width:700px">
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:16px">
+        <div>
+          <label style="color:#888;font-size:.78rem">Ticker</label>
+          <input name="ticker" value="{v('ticker')}" required
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.9rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Company Name</label>
+          <input name="company" value="{v('company')}" required
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.9rem;box-sizing:border-box">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+        <div>
+          <label style="color:#888;font-size:.78rem">Sector</label>
+          <input name="sector" value="{v('sector')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Div Yield %</label>
+          <input name="dividend_yield" type="number" step="0.01" value="{v('dividend_yield')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Payout Ratio %</label>
+          <input name="payout_ratio" type="number" step="0.1" value="{v('payout_ratio')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Years Div Growth</label>
+          <input name="years_div_growth" type="number" value="{v('years_div_growth')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="color:#888;font-size:.78rem">Target Price</label>
+          <input name="target_price" type="number" step="0.01" value="{v('target_price')}"
+            style="width:100%;background:#0f1117;border:1px solid #2a2d3e;border-radius:6px;
+                   color:#e0e0e0;padding:9px 12px;font-size:.85rem;box-sizing:border-box">
+        </div>
+      </div>
+
+      <h3 style="color:#555;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">
+        Jimmy's 5-Point Thesis
+      </h3>
+      {textarea('thesis_moat',     'Business Moat',         '#818cf8', 'Does it have pricing power? Will it still exist in 20 years?')}
+      {textarea('thesis_dividend', 'Dividend Track Record',  '#22c55e', 'How many years of consecutive dividend growth?')}
+      {textarea('thesis_sustain',  'Payout Sustainability',  '#f59e0b', 'Payout ratio healthy? Free cash flow covers it?')}
+      {textarea('thesis_trend',    'Price Trend',            '#60a5fa', 'Is the stock price trending up over 10 years?')}
+      {textarea('thesis_why_now',  'Why Now',                '#f472b6', 'Is it at a good entry point? Why buy at this price?')}
+
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:.75rem;font-weight:700;color:#aaa;
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Chart Image</label>
+        {'<img src="/dividend/image/' + v('image_path') + '" style="width:100%;border-radius:6px;margin-bottom:8px;border:1px solid #2a2d3e">' if v('image_path') else ''}
+        <input type="file" name="chart_image" accept="image/*"
+          style="color:#aaa;font-size:.83rem">
+        <div style="color:#555;font-size:.75rem;margin-top:4px">Upload a screenshot of your chart (PNG, JPG). Leave blank to keep existing image.</div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button type="submit" class="btn btn-green">Save Stock</button>
+        <a href="/dividend" class="btn" style="background:#2a2d3e;color:#aaa">Cancel</a>
+      </div>
+    </form>
+    """
 
 
 # ─── Admin Analytics ──────────────────────────────────────────────────────────
@@ -3124,6 +6237,206 @@ def admin_analytics():
     """
 
     return page_wrap('Analytics', 'analytics', content)
+
+
+# ─── Admin Hub ────────────────────────────────────────────────────────────────
+
+@app.route('/admin')
+def admin_hub():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    stats           = get_db_stats()
+    last_refresh    = get_last_refresh_date()
+    refreshed_today = already_refreshed_today()
+    s               = get_user_stats()
+
+    # ── Button states ─────────────────────────────────────────────────────────
+    def job_btn(label, href, style='btn-blue', confirm=None):
+        if running:
+            return f'<span class="btn btn-off">{label}</span>'
+        c = f' onclick="return confirm(\'{confirm}\')"' if confirm else ''
+        return f'<a href="{href}" class="btn {style}"{c}>{label}</a>'
+
+    refresh_btn  = job_btn('⟳ Update US & ASX Prices', '/run-refresh', 'btn-green')
+    daily_btn    = job_btn('Run Daily Update', '/run-daily')
+    initial_btn  = job_btn('Run Initial Download', '/run-initial', 'btn-amber',
+                           'This downloads 5 years for all tickers. Takes 1–2 hours. Continue?')
+    asx_dl_btn   = job_btn('Download / Update ASX Data', '/asx/download')
+    channel_btn  = job_btn('▶ Run Channel Scan', '/run-scan')
+    fader_btn    = job_btn('▶ Run Fader Scan', '/run-fader')
+    efi_btn      = job_btn('▶ Run EFI Scan', '/run-efi')
+    range_btn    = job_btn('▶ Run Range Scan', '/range/run')
+    wick_btn     = job_btn('▶ Run Wick Scan', '/run-wick')
+    hammer_btn   = job_btn('▶ Run Hammer Scan', '/run-hammer')
+    pchan_btn    = job_btn('▶ Run Channel Scan', '/run-channels')
+
+    refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
+
+    # ── Job status bar ────────────────────────────────────────────────────────
+    if running:
+        status_bar = f'<div style="background:#78350f;color:#fcd34d;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">⚙ {jname} is running… <a href="/log-view" style="color:#fcd34d;margin-left:12px">View log →</a></div>'
+    else:
+        status_bar = '<div style="background:#052e16;color:#86efac;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">● All jobs idle</div>'
+
+    # ── Last scan summaries ───────────────────────────────────────────────────
+    ch_last   = load_last_results()
+    fd_last   = load_last_fader_results()
+    ef_last   = load_last_efi_results()
+    wick_last   = load_last_wick_results()
+    hammer_last = load_last_hammer_results()
+    pchan_last  = load_last_price_channel_results()
+
+    def scan_summary(last, results_url):
+        if not last:
+            return '<span style="color:#555;font-size:.8rem">No scan run yet</span>'
+        d = last.get('scan_date','?')
+        t = last.get('total', last.get('count', '?'))
+        return f'<span style="color:#aaa;font-size:.8rem">Last: {d} — {t} results &nbsp;<a href="{results_url}">View →</a></span>'
+
+    # ── User analytics rows ───────────────────────────────────────────────────
+    user_rows = ''
+    for u in s['users']:
+        q_color = '#60a5fa' if u['q_count'] > 0 else '#555'
+        user_rows += f"""<tr>
+          <td style="color:#aaa;font-size:.78rem">{u['id']}</td>
+          <td><strong>{u['username']}</strong></td>
+          <td style="color:#777;font-size:.83rem">{u['email']}</td>
+          <td style="color:#aaa;font-size:.83rem">{u['created_date']}</td>
+          <td style="color:{q_color};font-weight:700;text-align:center">{u['q_count']}</td>
+          <td style="color:#777;font-size:.83rem">{u['last_question']}</td>
+        </tr>"""
+
+    # ── Log preview ───────────────────────────────────────────────────────────
+    log_text = get_log()
+    log_tail  = '\n'.join(log_text.splitlines()[-30:])
+
+    content = f"""
+    <style>
+      .admin-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }}
+      .admin-grid3 {{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:20px; }}
+      .tool-card {{ background:#1a1d2e; border:1px solid #2a2d3e; border-radius:8px; padding:20px; }}
+      .tool-card h3 {{ font-size:.72rem; font-weight:600; color:#777; text-transform:uppercase;
+                       letter-spacing:.06em; margin-bottom:14px; }}
+      .a-table {{ width:100%; border-collapse:collapse; font-size:.85rem; }}
+      .a-table th {{ text-align:left; padding:9px 12px; color:#555; border-bottom:1px solid #2a2d3e; font-weight:500; }}
+      .a-table td {{ padding:9px 12px; border-bottom:1px solid #151820; }}
+      .a-table tr:hover td {{ background:#1f2235; }}
+    </style>
+
+    {status_bar}
+
+    <!-- DB stats -->
+    <div class="admin-grid3" style="margin-bottom:20px">
+      <div class="card">
+        <div class="stat-label">Tickers in DB</div>
+        <div class="stat-value">{stats['tickers']:,}</div>
+        <div class="stat-sub">{stats['rows']} total rows</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Latest Data</div>
+        <div class="stat-value" style="font-size:1.2rem">{stats['latest']}</div>
+        <div class="stat-sub">{refresh_note}</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Registered Users</div>
+        <div class="stat-value">{s['total_users']}</div>
+        <div class="stat-sub">{s['new_this_week']} new this week · {s['pending']} pending questions</div>
+      </div>
+    </div>
+
+    <!-- Price data + ASX -->
+    <div class="admin-grid">
+      <div class="tool-card">
+        <h3>Price Data — US &amp; ASX</h3>
+        <div class="btn-row" style="margin-bottom:10px">
+          {refresh_btn}
+        </div>
+        <div class="btn-row" style="margin-bottom:10px">
+          {daily_btn}
+          {asx_dl_btn}
+        </div>
+        <div class="btn-row">
+          {initial_btn}
+        </div>
+        <p class="note" style="margin-top:10px">Initial download takes 1–2 hours for all tickers.</p>
+      </div>
+
+      <!-- Scanners -->
+      <div class="tool-card">
+        <h3>Scanners</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{channel_btn}</div>
+            {scan_summary(ch_last, '/results')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{fader_btn}</div>
+            {scan_summary(fd_last, '/fader')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{efi_btn}</div>
+            {scan_summary(ef_last, '/efi')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{range_btn}</div>
+            {scan_summary(None, '/range')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{wick_btn}</div>
+            {scan_summary(wick_last, '/wick')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{hammer_btn}</div>
+            {scan_summary(hammer_last, '/hammer')}
+          </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{pchan_btn}</div>
+            {scan_summary(pchan_last, '/channels')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanner result links -->
+    <section style="margin-bottom:20px">
+      <h2>Scanner Results &amp; Tools</h2>
+      <div class="btn-row">
+        <a href="/results" class="btn btn-blue" style="font-size:.82rem">Channel Results</a>
+        <a href="/fader"   class="btn btn-blue" style="font-size:.82rem">Fader Results</a>
+        <a href="/efi"     class="btn btn-blue" style="font-size:.82rem">EFI Results</a>
+        <a href="/range"   class="btn btn-blue" style="font-size:.82rem">Range Levels</a>
+        <a href="/scan"    class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
+        <a href="/wick"     class="btn btn-blue" style="font-size:.82rem">Wick Scanner</a>
+        <a href="/hammer"   class="btn btn-blue" style="font-size:.82rem">Hammer Scanner</a>
+        <a href="/channels" class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
+        <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
+        <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
+      </div>
+    </section>
+
+    <!-- Log tail -->
+    <section style="margin-bottom:20px">
+      <h2>Log <span style="color:#555;font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem">(last 30 lines · <a href="/log-view">full log →</a>)</span></h2>
+      <pre style="max-height:220px">{log_tail.replace('<','&lt;')}</pre>
+    </section>
+
+    <!-- Users -->
+    <section>
+      <h2>Registered Users ({s['total_users']}) &nbsp;
+        <span style="color:{'#f59e0b' if s['pending']>0 else '#555'};font-weight:400;text-transform:none;letter-spacing:0;font-size:.78rem">
+          {f'{s["pending"]} pending questions — <a href="/ask">answer →</a>' if s['pending'] else 'No pending questions'}
+        </span>
+      </h2>
+      {'<table class="a-table"><thead><tr><th>#</th><th>Username</th><th>Email</th><th>Joined</th><th style="text-align:center">Questions</th><th>Last Question</th></tr></thead><tbody>' + user_rows + '</tbody></table>' if user_rows else '<p class="note">No users registered yet.</p>'}
+    </section>
+    """
+
+    return page_wrap('Admin', 'admin', content, auto_refresh=running)
 
 
 if __name__ == '__main__':
