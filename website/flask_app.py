@@ -789,6 +789,7 @@ def nav_html(active=''):
         {lnk('/dividend','Dividend Picks','dividend')}
         {lnk('/journal','Trade Journal','journal')}
         {lnk("/jangs-wicks","Jang's Wicks",'jangs-wicks')}
+        {lnk('/semiconductors','Semiconductors','semiconductors')}
         {lnk('/ask','Ask Jimmy','ask')}
         {admin_lnk}
       </nav>
@@ -5170,6 +5171,277 @@ def jangs_wicks_page():
     </script>"""
 
     return page_wrap("Jang's Wicks", 'jangs-wicks', content, auto_refresh=(running and jname in ('Hammer Scan','Wick Scan')))
+
+
+# ─── Semiconductors ───────────────────────────────────────────────────────────
+
+SEMIS = [
+    # Large cap / equipment
+    'NVDA', 'AMD', 'INTC', 'AVGO', 'QCOM', 'AMAT', 'LRCX', 'KLAC',
+    'ASML', 'MU',  'TXN',  'ADI',  'MCHP', 'MRVL', 'ON',   'MPWR',
+    # Mid cap
+    'SWKS', 'ENTG', 'AMKR', 'NXPI', 'WOLF', 'ACLS', 'ONTO', 'CRUS',
+    'SLAB', 'AMBA', 'ALGM', 'DIOD', 'LSCC', 'RMBS', 'UCTT', 'COHU',
+    # Small cap / user picks
+    'NVST', 'INDI', 'SMTC', 'GCTS', 'QRVO', 'AOSL', 'CEVA', 'MRAM',
+    'AIP',  'QUIK', 'PLAB',
+]
+
+SEMI_NAMES = {
+    'NVDA': 'NVIDIA',           'AMD':  'Advanced Micro Devices',
+    'INTC': 'Intel',            'AVGO': 'Broadcom',
+    'QCOM': 'Qualcomm',         'AMAT': 'Applied Materials',
+    'LRCX': 'Lam Research',     'KLAC': 'KLA Corp',
+    'ASML': 'ASML',             'MU':   'Micron Technology',
+    'TXN':  'Texas Instruments','ADI':  'Analog Devices',
+    'MCHP': 'Microchip Tech',   'MRVL': 'Marvell Technology',
+    'ON':   'ON Semiconductor', 'MPWR': 'Monolithic Power',
+    'SWKS': 'Skyworks',         'ENTG': 'Entegris',
+    'AMKR': 'Amkor Technology', 'NXPI': 'NXP Semiconductors',
+    'WOLF': 'Wolfspeed',        'ACLS': 'Axcelis Technologies',
+    'ONTO': 'Onto Innovation',  'CRUS': 'Cirrus Logic',
+    'SLAB': 'Silicon Labs',     'AMBA': 'Ambarella',
+    'ALGM': 'Allegro MicroSystems','DIOD':'Diodes Inc',
+    'LSCC': 'Lattice Semi',     'RMBS': 'Rambus',
+    'UCTT': 'Ultra Clean',      'COHU': 'Cohu',
+    'NVST': 'Envista Holdings', 'INDI': 'Indie Semiconductor',
+    'SMTC': 'Semtech',          'GCTS': 'GCT Semiconductor',
+    'QRVO': 'Qorvo',            'AOSL': 'Alpha & Omega Semi',
+    'CEVA': 'CEVA Inc',         'MRAM': 'Everspin Technologies',
+    'AIP':  'Arteris',          'QUIK': 'QuickLogic',
+    'PLAB': 'Photronics',
+}
+
+
+def _get_semi_prices():
+    """Return {ticker: (current_price, prev_price, volume)} for all SEMIS."""
+    import pymysql
+    conn = pymysql.connect(
+        host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_NAME, port=DB_PORT, charset='utf8mb4'
+    )
+    result = {}
+    try:
+        fmt = ','.join(['%s'] * len(SEMIS))
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT ticker, date, close, volume FROM prices
+                WHERE ticker IN ({fmt})
+                AND date >= DATE_SUB(CURDATE(), INTERVAL 10 DAY)
+                ORDER BY ticker, date DESC
+            """, SEMIS)
+            rows = cur.fetchall()
+        grouped = {}
+        for ticker, date, close, vol in rows:
+            grouped.setdefault(ticker, []).append((float(close), int(vol or 0)))
+        for ticker, vals in grouped.items():
+            cur_p  = vals[0][0]
+            prev_p = vals[1][0] if len(vals) > 1 else cur_p
+            cur_v  = vals[0][1]
+            result[ticker] = (cur_p, prev_p, cur_v)
+    finally:
+        conn.close()
+    return result
+
+
+@app.route('/semiconductors')
+def semiconductors_page():
+    prices = _get_semi_prices()
+
+    rows_html = ''
+    for ticker in SEMIS:
+        if ticker not in prices:
+            continue
+        cur_p, prev_p, vol = prices[ticker]
+        chg     = (cur_p - prev_p) / prev_p * 100 if prev_p else 0
+        chg_col = '#22c55e' if chg >= 0 else '#ef4444'
+        chg_pfx = '+' if chg >= 0 else ''
+        vol_fmt = f'{vol/1_000_000:.1f}M' if vol >= 1_000_000 else f'{vol/1_000:.0f}K'
+        name    = SEMI_NAMES.get(ticker, '')
+        rows_html += f"""
+        <tr class="semi-row" data-ticker="{ticker}">
+          <td><strong style="color:#60a5fa;font-size:.95rem">{ticker}</strong></td>
+          <td style="color:#888;font-size:.82rem">{name}</td>
+          <td style="color:#fff;font-weight:600">${cur_p:,.2f}</td>
+          <td style="color:{chg_col};font-weight:700">{chg_pfx}{chg:.2f}%</td>
+          <td style="color:#555;font-size:.82rem">{vol_fmt}</td>
+        </tr>"""
+
+    tv_list = ','.join(t for t in SEMIS if t in prices)
+
+    content = f"""
+    <style>
+      .semi-table {{ width:100%; border-collapse:collapse; font-size:.9rem; }}
+      .semi-table th {{ text-align:left; padding:9px 14px; color:#555; font-size:.76rem;
+                       border-bottom:1px solid #2a2d3e; font-weight:500;
+                       cursor:pointer; user-select:none; white-space:nowrap; }}
+      .semi-table th:hover {{ color:#aaa; }}
+      .semi-table th.sort-asc::after  {{ content:' ▲'; font-size:.55rem; color:#60a5fa; }}
+      .semi-table th.sort-desc::after {{ content:' ▼'; font-size:.55rem; color:#60a5fa; }}
+      .semi-table td {{ padding:9px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+      .semi-table .semi-row:hover td {{ background:#1f2235; cursor:pointer; }}
+      .semi-table .semi-row.active td {{ background:#1a2235; border-left:2px solid #60a5fa; }}
+      .semi-drop td {{ padding:0 !important; border-bottom:2px solid #2a2d3e !important; }}
+    </style>
+
+    <section style="margin-bottom:20px">
+      <h2 style="margin-bottom:4px">Semiconductors</h2>
+      <p style="font-size:.88rem;color:#555;margin-bottom:16px">
+        {len([t for t in SEMIS if t in prices])} stocks — click any row to load the chart.
+      </p>
+    </section>
+
+    <section>
+      <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:12px 14px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="color:#aaa;font-size:.75rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW WATCHLIST</span>
+          <button onclick="semiCopy()" id="semi-copy-btn"
+            style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:4px 12px;
+                   border-radius:5px;cursor:pointer;font-size:.75rem;font-weight:600">Copy</button>
+        </div>
+        <textarea id="semi-tv-list" readonly rows="2"
+          style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:4px;
+                 color:#c7d2fe;font-size:.76rem;padding:6px 8px;resize:none;
+                 font-family:monospace;box-sizing:border-box;line-height:1.5">{tv_list}</textarea>
+      </div>
+
+      <table class="semi-table">
+        <thead><tr>
+          <th onclick="semiSort(this)">Ticker</th>
+          <th onclick="semiSort(this)">Company</th>
+          <th onclick="semiSort(this)">Price</th>
+          <th onclick="semiSort(this)">Day %</th>
+          <th onclick="semiSort(this)">Volume</th>
+        </tr></thead>
+        <tbody id="semi-tbody">
+          {rows_html if rows_html else '<tr><td colspan="5" style="color:#555;padding:20px">No price data found.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // ── LightweightCharts v4 primitives ──────────────────────────────────────
+    class SLRenderer {{
+      constructor(t,c,chart) {{ this._t=t; this._c=c; this._chart=chart; }}
+      draw(target) {{
+        const x=this._chart.timeScale().timeToCoordinate(this._t);
+        if(x===null) return;
+        target.useBitmapCoordinateSpace(scope=>{{
+          const ctx=scope.context, xb=Math.round(x*scope.horizontalPixelRatio);
+          ctx.save(); ctx.beginPath(); ctx.moveTo(xb,0); ctx.lineTo(xb,scope.bitmapSize.height);
+          ctx.strokeStyle=this._c; ctx.lineWidth=Math.round(2*scope.horizontalPixelRatio);
+          ctx.setLineDash([6,4]); ctx.stroke(); ctx.restore();
+        }});
+      }}
+    }}
+    class SLPaneView {{
+      constructor(t,c,chart) {{ this._r=new SLRenderer(t,c,chart); }}
+      renderer() {{ return this._r; }} zOrder() {{ return 'normal'; }}
+    }}
+    class SemiLine {{
+      constructor(t,c='#60a5fa') {{ this._t=t; this._c=c; this._chart=null; this._v=[]; }}
+      attached({{chart}}) {{ this._chart=chart; this._v=[new SLPaneView(this._t,this._c,chart)]; }}
+      detached() {{ this._v=[]; }} paneViews() {{ return this._v; }} updateAllViews() {{}}
+    }}
+
+    // ── Row click — inline drop-down chart ───────────────────────────────────
+    document.querySelectorAll('.semi-row').forEach(row => {{
+      row.addEventListener('click', () => {{
+        const ticker  = row.dataset.ticker;
+        const dropId  = 'sdrop-' + ticker;
+        const exist   = document.getElementById(dropId);
+        if (exist) {{ exist.remove(); row.classList.remove('active'); return; }}
+        document.querySelectorAll('.semi-drop').forEach(d => d.remove());
+        document.querySelectorAll('.semi-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+
+        const drop = document.createElement('tr');
+        drop.id = dropId; drop.className = 'semi-drop';
+        drop.innerHTML = `<td colspan="5" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${{ticker}}</span>
+            <span style="color:#555;font-size:.75rem" id="smeta-${{ticker}}">Loading…</span>
+          </div>
+          <div id="smain-${{ticker}}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="svol-${{ticker}}"  style="height:60px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {{
+            if (data.error) {{ document.getElementById('smeta-'+ticker).textContent=data.error; return; }}
+            document.getElementById('smeta-'+ticker).textContent=data.bars+' bars · '+data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('smain-'+ticker), {{
+              layout:{{background:{{color:'#0a0c14'}},textColor:'#888'}},
+              grid:{{vertLines:{{color:'#1a1d2e'}},horzLines:{{color:'#1a1d2e'}}}},
+              rightPriceScale:{{borderColor:'#2a2d3e'}},
+              timeScale:{{borderColor:'#2a2d3e',timeVisible:true}},
+              crosshair:{{mode:LightweightCharts.CrosshairMode.Normal}},
+            }});
+            const candles = chart.addCandlestickSeries({{
+              upColor:'#22c55e',downColor:'#ef4444',
+              borderUpColor:'#22c55e',borderDownColor:'#ef4444',
+              wickUpColor:'#22c55e',wickDownColor:'#ef4444',
+            }});
+            candles.setData(data.ohlcv);
+            const ema5  = chart.addLineSeries({{color:'#60a5fa',lineWidth:1,title:'EMA5'}});
+            const ema26 = chart.addLineSeries({{color:'#f59e0b',lineWidth:1,title:'EMA26'}});
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const bc = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({{from:Math.max(0,bc-120),to:bc+5}});
+            chart.priceScale('right').applyOptions({{scaleMargins:{{top:0.12,bottom:0.18}}}});
+            const vc = LightweightCharts.createChart(document.getElementById('svol-'+ticker), {{
+              layout:{{background:{{color:'#0a0c14'}},textColor:'#888'}},
+              grid:{{vertLines:{{color:'#1a1d2e'}},horzLines:{{color:'#1a1d2e'}}}},
+              rightPriceScale:{{borderColor:'#2a2d3e'}},
+              timeScale:{{borderColor:'#2a2d3e',timeVisible:false}},
+            }});
+            const vs = vc.addHistogramSeries({{priceFormat:{{type:'volume'}},priceScaleId:''}});
+            vs.priceScale().applyOptions({{scaleMargins:{{top:0.1,bottom:0}}}});
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r=>vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r=>chart.timeScale().setVisibleLogicalRange(r));
+          }})
+          .catch(e => {{ document.getElementById('smeta-'+ticker).textContent='Failed: '+e; }});
+      }});
+    }});
+
+    // ── Sorting ──────────────────────────────────────────────────────────────
+    function semiSort(th) {{
+      const tbody = document.getElementById('semi-tbody');
+      const idx   = th.cellIndex;
+      const asc   = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.semi-row'));
+      rows.sort((a,b) => {{
+        const av=a.cells[idx].textContent.trim(), bv=b.cells[idx].textContent.trim();
+        const an=parseFloat(av.replace(/[^0-9.-]/g,'')), bn=parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp=isNaN(an) ? av.localeCompare(bv) : an-bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    // ── Copy TradingView list ─────────────────────────────────────────────────
+    function semiCopy() {{
+      const ta  = document.getElementById('semi-tv-list');
+      const btn = document.getElementById('semi-copy-btn');
+      ta.select(); ta.setSelectionRange(0,99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        btn.textContent='Copied!'; btn.style.background='#14532d';
+        btn.style.borderColor='#22c55e'; btn.style.color='#4ade80';
+        setTimeout(()=>{{
+          btn.textContent='Copy'; btn.style.background='#1e3a5f';
+          btn.style.borderColor='#3b82f6'; btn.style.color='#60a5fa';
+        }},2000);
+      }});
+    }}
+    </script>"""
+
+    return page_wrap('Semiconductors', 'semiconductors', content)
 
 
 # ─── EFI Scanner ──────────────────────────────────────────────────────────────
