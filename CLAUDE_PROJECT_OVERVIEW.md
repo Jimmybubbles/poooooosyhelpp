@@ -15,26 +15,29 @@ The admin dashboard lets him trigger scans, view results, and manage the portfol
 ## Key Directories
 
 ```
-watchlist_Scanner/          ← Main Flask app (everything lives here)
-  flask_app.py              ← ~5500+ lines, ALL routes, HTML, and logic in one file
-  db_config.py              ← MySQL credentials (DB_HOST, DB_USER, etc.)
-  db_daily_update.py        ← yfinance → MySQL price sync
-  db_channel_scanner.py     ← Channel/EMA compression scanner
-  db_fader_scanner.py       ← Dollar range zone + fader indicator scanner
-  db_efi_scanner.py         ← Elder Force Index scanner
-  db_wick_scanner.py        ← Weekly hammer/wick scanner (existing)
-  db_hammer_scanner.py      ← Daily hammer candlestick scanner (new)
-  db_picks.py               ← Jimmy's Picks portfolio: buys, sells, history
-  db_ask.py                 ← Member Q&A system
-  EFI_Indicator.py          ← Elder Force Index + Bollinger Bands
-  ROCWMA_Indicator.py       ← Rate-of-Change WMA indicator
-  PriceRangeZones.py        ← Dollar range level detection
-  fader.py                  ← JMA + WMA chain (Jurik Moving Average)
-  CSV/5000.csv              ← Master ticker list (~5000 US stocks)
-  last_*_results.json       ← Cached scan outputs (one per scanner)
-  scan_log.txt              ← Running job log
-  buylist/                  ← Historical scan result files
-  templates/                ← Chart HTML templates (LightweightCharts)
+website/                        ← deploy this folder to PythonAnywhere
+  flask_app.py                  ← ~6700 lines, ALL routes, HTML, and logic in one file
+  db_config.py                  ← MySQL credentials (gitignored — never commit)
+  db_daily_update.py            ← yfinance → MySQL price sync (scheduled task)
+  db_channel_scanner.py         ← EMA compression scanner (daily + weekly)
+  db_price_channel_scanner.py   ← Ascending parallel price channel scanner
+  db_fader_scanner.py           ← Dollar range zone + fader indicator scanner
+  db_efi_scanner.py             ← Elder Force Index scanner
+  db_wick_scanner.py            ← Weekly long lower wick scanner
+  db_hammer_scanner.py          ← Daily hammer candlestick scanner
+  db_picks.py                   ← Jimmy's Picks portfolio: buys, sells, history
+  db_ask.py                     ← Member Q&A system (register, login, ask, answer)
+  db_dividend.py                ← Dividend watchlist with per-stock thesis notes
+  db_asx.py                     ← ASX 200 price data + ASX picks portfolio
+  db_asx_update.py              ← ASX price update script
+  CSV/5000.csv                  ← US ticker master list (~3,400 active tickers)
+  last_*_results.json           ← Cached scan outputs (one file per scanner)
+  last_run.log                  ← Running job log (overwritten each run)
+  skip_tickers.txt              ← Auto-maintained list of delisted/no-data tickers
+  templates/                    ← LightweightCharts HTML templates
+
+scanners/                       ← original standalone scripts (archive / dev reference)
+archive/                        ← older experimental code
 ```
 
 ---
@@ -46,7 +49,8 @@ MySQL on PythonAnywhere.
 Main table: `prices(ticker, date, open, high, low, close, volume)` — unique on (ticker, date).
 All scanners read from this table. `db_daily_update.py` keeps it current via yfinance.
 
-Other tables: `picks`, `trades`, `ask_users`, `ask_questions`, `asx_prices`.
+Other tables: `jimmy_picks`, `jimmy_trades`, `asx_picks`, `asx_trades`,
+`ask_users`, `ask_questions`, `dividend_stocks`.
 
 ---
 
@@ -65,54 +69,71 @@ Every scanner follows the same pattern:
 
 | Scanner | File | Timeframe | Signal |
 |---------|------|-----------|--------|
-| Channel | db_channel_scanner.py | Daily | EMA compression (price in tight range) |
-| Fader | db_fader_scanner.py | Daily | Price at 25% of dollar range zone, fader rising |
-| EFI | db_efi_scanner.py | Daily | Elder Force Index — oversold/momentum |
-| Wick | db_wick_scanner.py | Weekly | Long lower wick (2×+ body), close in top 30%, scores weeks held |
-| Hammer | db_hammer_scanner.py | Daily | Long lower wick (2×+ body), close in top 50%, bullish body, vol surge bonus |
-
-### Hammer Scanner Criteria (daily candles, last 15 trading days)
-- Lower wick >= 2× body
-- Upper wick <= 30% of lower wick
-- Close in top 50% of total range
-- Body >= 3% of range (not a doji)
-
-Scoring bonuses: wick 3×=+1, 4×+=+2 | close_pct >= 65%=+1 | bullish body=+1 | volume surge 20% above avg=+1 | days held (max 10)=+1 each
+| Channel | db_channel_scanner.py | Daily + Weekly | EMA(5)/EMA(26) compressed inside ATR(50)×0.4 |
+| Price Channel | db_price_channel_scanner.py | Daily / Weekly / Monthly | Ascending parallel channel, price near lower line |
+| Fader | db_fader_scanner.py | Daily | Channel + fader rising + price at 25% of dollar range |
+| EFI | db_efi_scanner.py | Daily | Channel + Elder Force Index pulling back below zero |
+| Wick | db_wick_scanner.py | Weekly | Long lower wick (2×+ body), close top 30%, scores weeks held |
+| Hammer | db_hammer_scanner.py | Daily | Long lower wick (2×+ body), close top 50%, bullish body, vol surge bonus |
+| Marubozu | db_marubozu_scanner.py | Daily | Body >= 75% of range, wicks <= 10%, bullish — clean momentum candle |
 
 ---
 
 ## Flask App Structure (flask_app.py)
 
-- Lines ~1–100: imports, config, Flask app init, helper functions
-- Lines ~100–1600: channel scanner page, price data routes, ASX routes
-- Lines ~1600–3500: picks/portfolio, Jimmy's Picks, range scanner
-- Lines ~3500–3870: Fader scanner
-- Lines ~3870–4100: Wick scanner
-- Lines ~4100–4500: Hammer scanner (NEW)
-- Lines ~4500–5000: EFI scanner
-- Lines ~5000–5600: Admin dashboard
+The whole app is one big file (~6700 lines). All CSS, HTML, and route logic live
+together — no Jinja templates for the main pages (except `templates/` for a couple
+of standalone chart pages). Use the `# ─── Section ─────` markers to navigate.
+
+- Lines ~1–80:    imports, PythonAnywhere WSGI note, app init
+- Lines ~80–800:  global helpers — job system, DB stats, sparklines, sector ETFs
+- Lines ~800–820: `page_wrap()` — the HTML shell every page returns
+- Lines ~820–1600: dashboard (`/`), chart pages, chart data API
+- Lines ~1600–2700: Jimmy's Picks portfolio, ASX portfolio, Q&A, dividend tab
+- Lines ~2700–3500: range scanner, channel scanner results
+- Lines ~3500–4200: Fader scanner
+- Lines ~4200–4600: Wick scanner
+- Lines ~4600–5100: Hammer scanner
+- Lines ~5100–5700: EFI scanner, price channel scanner
+- Lines ~5700–6700: Admin dashboard
 
 ### Key Helper Functions
-- `page_wrap(title, active, content, auto_refresh=False)` — wraps content in site shell with nav
+- `page_wrap(title, active, content, auto_refresh=False)` — returns a full HTML page with nav and CSS
 - `is_admin()` — checks session for admin role
-- `get_log()` — reads scan_log.txt
-- `_job_running`, `_job_name`, `_job_lock` — global job state (only one scan at a time)
-- `scan_summary(last, results_url)` — renders last scan info for admin dashboard
+- `get_log()` — reads last_run.log
+- `start_script_job(script_path, label)` — launches a Python script as a daemon thread; only one job runs at a time
+- `start_scan_job()` / `start_<name>_scan_job()` — same pattern for in-process scans
+- `_job_running`, `_job_name`, `_job_lock` — global one-job-at-a-time state
+- `scan_summary(last, results_url)` — renders last scan info card for admin dashboard
+- `sparkline_svg(closes)` — tiny inline SVG line chart from a price list
 
 ### URL Structure
 | URL | What it does |
 |-----|-------------|
-| `/` | Home / picks |
-| `/admin` | Admin dashboard |
-| `/results` | Channel scanner results |
+| `/` | Dashboard — portfolio summary, DB stats, sector heatmap |
+| `/admin` | Admin dashboard — scan buttons, job status |
+| `/results` | Channel scanner results table |
+| `/channels` | Price channel scanner results |
 | `/fader` | Fader scanner results |
 | `/efi` | EFI scanner results |
 | `/range` | Range level scanner |
 | `/wick` | Wick scanner results |
-| `/hammer` | Hammer scanner results (NEW) |
-| `/run-wick` | Trigger wick scan (admin only) |
-| `/run-hammer` | Trigger hammer scan (admin only) |
-| `/api/us-chart/<ticker>` | JSON OHLCV + EMA5 + EMA26 for chart |
+| `/hammer` | Hammer scanner results |
+| `/picks` | Jimmy's Picks portfolio |
+| `/asx-picks` | ASX picks portfolio |
+| `/ask` | Member Q&A |
+| `/dividend` | Dividend watchlist |
+| `/chart/<ticker>` | Full-page TradingView chart |
+| `/api/us-chart/<ticker>` | JSON: OHLCV + EMA5 + EMA26 (used by inline charts) |
+| `/api/channel-lines/<ticker>/<tf>` | JSON: channel trendline data for overlay |
+| `/api/asx-chart/<ticker>` | JSON: ASX OHLCV + EMA5 + EMA26 |
+| `/run-scan` | Trigger channel scan (admin) |
+| `/run-fader` | Trigger fader scan (admin) |
+| `/run-efi` | Trigger EFI scan (admin) |
+| `/run-wick` | Trigger wick scan (admin) |
+| `/run-hammer` | Trigger hammer scan (admin) |
+| `/run-channels` | Trigger price channel scan (admin) |
+| `/status` | JSON job status (used by UI polling) |
 
 ---
 

@@ -1,7 +1,13 @@
+# Core web framework
+flask
+pymysql
+
+# Data processing
 pandas
 numpy
+
+# Stock data feed
 yfinance
-stock_indicators
-pytz
-talib
-requests
+
+# Password hashing (used by db_ask.py for member accounts)
+werkzeug

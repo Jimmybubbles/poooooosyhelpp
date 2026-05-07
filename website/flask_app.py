@@ -35,6 +35,7 @@ from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_wick_scanner import run_wick_scan, load_last_wick_results
 from db_hammer_scanner import run_hammer_scan, load_last_hammer_results
+from db_marubozu_scanner import run_marubozu_scan, load_last_marubozu_results
 from db_price_channel_scanner import (
     run_price_channel_scan, load_last_price_channel_results,
     get_ticker_daily, resample_weekly, resample_monthly,
@@ -362,6 +363,12 @@ def get_log():
 # ─── Background job ───────────────────────────────────────────────────────────
 
 def _run_script(script_path, label):
+    """
+    Run an external Python script as a subprocess, streaming stdout to LOG_FILE.
+
+    Used for long-running jobs (daily update, initial download) that are separate
+    .py files rather than in-process functions. Clears _job_running when done.
+    """
     global _job_running, _job_name
     with open(LOG_FILE, 'w') as f:
         f.write(f"=== {label} ===\nStarted: {datetime.now()}\n\n")
@@ -408,6 +415,14 @@ def _run_scan_job():
 
 
 def start_script_job(script_path, label):
+    """
+    Launch a background script job if no job is already running.
+
+    Uses a threading.Lock so two admin button clicks can't start two jobs.
+    Returns False (and does nothing) if a job is already in progress.
+    PythonAnywhere's free tier is single-threaded in the web worker, but the
+    daemon thread still runs — the lock prevents double-starts, not parallelism.
+    """
     global _job_running, _job_name
     with _job_lock:
         if _job_running:
@@ -799,6 +814,16 @@ def nav_html(active=''):
 
 
 def page_wrap(title, active, content, auto_refresh=False):
+    """
+    Return a complete HTML page string.
+
+    Every route builds an HTML string for `content` and passes it here.
+    We do not use Jinja templates for main pages — keeping everything in one
+    Python file makes PythonAnywhere deployment a single file upload.
+
+    active: nav link key (e.g. 'picks', 'admin', 'results') — highlighted in nav.
+    auto_refresh: set True on log/status pages that should poll while a job runs.
+    """
     refresh = '<meta http-equiv="refresh" content="5">' if auto_refresh else ''
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -2761,6 +2786,13 @@ def asx_chart_api(ticker):
 
 @app.route('/api/us-chart/<ticker>')
 def us_chart_api(ticker):
+    """
+    JSON endpoint consumed by the inline LightweightCharts candlestick charts.
+
+    Returns full OHLCV history from the prices table plus EMA5 and EMA26
+    calculated in pandas (not stored in DB — computed fresh each request).
+    Volume bars are coloured green/red based on whether that bar closed up or down.
+    """
     ticker = ticker.upper()
     try:
         conn = get_connection()
@@ -4324,6 +4356,365 @@ def hammer_page():
     {chart_js}"""
 
     return page_wrap('Hammer Scanner', 'hammer', content, auto_refresh=(running and jname == 'Hammer Scan'))
+
+
+# ─── Marubozu Scanner ────────────────────────────────────────────────────────
+
+def _run_marubozu_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Marubozu Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_marubozu_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_marubozu_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Marubozu Scan'
+    threading.Thread(target=_run_marubozu_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-marubozu')
+def run_marubozu():
+    if not is_admin():
+        return redirect('/admin')
+    start_marubozu_scan()
+    return redirect('/marubozu')
+
+
+@app.route('/marubozu')
+def marubozu_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_marubozu_results()
+
+    if running and jname == 'Marubozu Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-marubozu" class="btn btn-blue">▶ Run Marubozu Scan</a>'
+
+    def score_color(s):
+        if s >= 7:  return '#22c55e'
+        if s >= 4:  return '#f59e0b'
+        return '#555'
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc  = r['score']
+            gc  = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs  = '+' if r['gain_pct'] >= 0 else ''
+            vol_icon = ' ⚡' if r.get('vol_surge') else ''
+            rows_html += f"""
+            <tr class="maru-row" data-ticker="{r['ticker']}" data-maru-date="{r['marubozu_date']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">{r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['marubozu_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td style="color:#fff;font-weight:600">{r['body_pct']}%</td>
+              <td style="color:#888">{r['upper_wick_pct']}%</td>
+              <td style="color:#888">{r['lower_wick_pct']}%</td>
+              <td style="color:#aaa">{r['days_held']}d</td>
+              <td style="color:#555">{vol_icon if vol_icon else '—'}</td>
+              <td style="color:#fff;font-weight:600">${r['current_price']:,.4f}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // LightweightCharts v4 vertical line primitive — paneViews() → renderer() → draw()
+    class MaruLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
+      }
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+    class MaruLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new MaruLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class MaruLine {
+      constructor(time, color = '#22c55e') {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new MaruLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
+    }
+
+    document.querySelectorAll('.maru-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker   = row.dataset.ticker;
+        const maruDate = row.dataset.maruDate;
+        const existId  = 'mdrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.maru-drop').forEach(d => d.remove());
+        document.querySelectorAll('.maru-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'maru-drop';
+        drop.innerHTML = `<td colspan="10" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="ms-${ticker}">Loading...</span>
+          </div>
+          <div id="mm-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="mv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('ms-' + ticker).textContent = data.error; return; }
+            document.getElementById('ms-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('mm-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            // Snap the marker to the closest bar to the Marubozu date
+            const maruMs = new Date(maruDate).getTime();
+            let snapDate = maruDate;
+            let minDiff = Infinity;
+            for (const bar of data.ohlcv) {
+              const diff = Math.abs(new Date(bar.time).getTime() - maruMs);
+              if (diff < minDiff) { minDiff = diff; snapDate = bar.time; }
+            }
+            candles.attachPrimitive(new MaruLine(snapDate));
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, barCount - 120), to: barCount + 5 });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('mv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('ms-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Daily Marubozu Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Finds bullish Marubozu candles — the body fills 75%+ of the total range with
+        minimal upper and lower wicks. Shows strong, clean buying pressure across the
+        entire session. Scored by how complete the body is, whether wicks are near zero,
+        volume confirmation, and how many days the price has held above the Marubozu open.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Marubozu Scan" else ''}
+
+    <section>
+      <style>
+        .maru-table {{ width:100%; border-collapse:collapse; font-size:.92rem; }}
+        .maru-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                         border-bottom:1px solid #2a2d3e; font-weight:500;
+                         cursor:pointer; user-select:none; }}
+        .maru-table th:hover {{ color:#aaa; }}
+        .maru-table th.sort-asc::after  {{ content:' ▲'; font-size:.6rem; color:#60a5fa; }}
+        .maru-table th.sort-desc::after {{ content:' ▼'; font-size:.6rem; color:#60a5fa; }}
+        .maru-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .maru-table .maru-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .maru-table .maru-row.active td {{ background:#1a2235; }}
+        .maru-drop td {{ padding:0 !important; }}
+        .maru-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                            padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
+        .maru-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
+      </style>
+
+      <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="color:#aaa;font-size:.82rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW WATCHLIST</span>
+          <button onclick="copyMaruList()" id="mtv-copy-btn"
+            style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:5px 14px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem;font-weight:600">
+            Copy
+          </button>
+        </div>
+        <textarea id="mtv-list" readonly rows="3"
+          style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:5px;
+                 color:#c7d2fe;font-size:.8rem;padding:8px 10px;resize:vertical;
+                 font-family:monospace;box-sizing:border-box;line-height:1.6"></textarea>
+        <p style="color:#444;font-size:.72rem;margin:6px 0 0">
+          Paste directly into TradingView → Watchlist → Import. Updates when you switch Today / All.
+        </p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="maru-filter-btn active" id="mf-today" onclick="setMaruFilter('today')">Today</button>
+        <button class="maru-filter-btn"        id="mf-all"   onclick="setMaruFilter('all')">All Signals</button>
+        <span id="maru-count" style="color:#555;font-size:.78rem;margin-left:4px"></span>
+      </div>
+
+      <table class="maru-table">
+        <thead><tr>
+          <th onclick="sortMaru(this)">Ticker</th>
+          <th onclick="sortMaru(this)">Date</th>
+          <th onclick="sortMaru(this)" style="text-align:center">Score</th>
+          <th onclick="sortMaru(this)">Body %</th>
+          <th onclick="sortMaru(this)">Upper Wick</th>
+          <th onclick="sortMaru(this)">Lower Wick</th>
+          <th onclick="sortMaru(this)">Held</th>
+          <th onclick="sortMaru(this)">Vol</th>
+          <th onclick="sortMaru(this)">Current</th>
+          <th onclick="sortMaru(this)">Gain</th>
+        </tr></thead>
+        <tbody id="maru-tbody">
+          {rows_html if rows_html else '<tr><td colspan="10" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    <script>
+    function sortMaru(th) {{
+      const tbody = document.getElementById('maru-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.maru-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    function getMostRecentMaruDate() {{
+      let latest = '';
+      document.querySelectorAll('.maru-row').forEach(r => {{
+        const d = r.dataset.maruDate || '';
+        if (d > latest) latest = d;
+      }});
+      return latest;
+    }}
+
+    function setMaruFilter(mode) {{
+      document.getElementById('mf-today').classList.toggle('active', mode === 'today');
+      document.getElementById('mf-all').classList.toggle('active',   mode === 'all');
+      const latestDate = getMostRecentMaruDate();
+      let visible = 0;
+      document.querySelectorAll('.maru-row').forEach(r => {{
+        const show = (mode === 'all') || (r.dataset.maruDate === latestDate);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        if (!show) {{
+          const drop = document.getElementById('mdrop-' + r.dataset.ticker);
+          if (drop) {{ drop.remove(); r.classList.remove('active'); }}
+        }}
+      }});
+      document.getElementById('maru-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+      updateMaruList();
+    }}
+
+    function updateMaruList() {{
+      const tickers = [];
+      document.querySelectorAll('.maru-row').forEach(r => {{
+        if (r.style.display !== 'none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById('mtv-list').value = tickers.join(',');
+    }}
+
+    function copyMaruList() {{
+      const ta = document.getElementById('mtv-list');
+      ta.select(); ta.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn = document.getElementById('mtv-copy-btn');
+        btn.textContent = 'Copied!';
+        btn.style.background = '#14532d';
+        btn.style.borderColor = '#22c55e';
+        btn.style.color = '#4ade80';
+        setTimeout(() => {{
+          btn.textContent = 'Copy';
+          btn.style.background = '#1e3a5f';
+          btn.style.borderColor = '#3b82f6';
+          btn.style.color = '#60a5fa';
+        }}, 2000);
+      }});
+    }}
+
+    setMaruFilter('today');
+    </script>
+    {chart_js}"""
+
+    return page_wrap('Marubozu Scanner', 'marubozu', content, auto_refresh=(running and jname == 'Marubozu Scan'))
 
 
 # ─── Price Channel Scanner ────────────────────────────────────────────────────
@@ -6545,6 +6936,7 @@ def admin_hub():
     range_btn    = job_btn('▶ Run Range Scan', '/range/run')
     wick_btn     = job_btn('▶ Run Wick Scan', '/run-wick')
     hammer_btn   = job_btn('▶ Run Hammer Scan', '/run-hammer')
+    marubozu_btn = job_btn('▶ Run Marubozu Scan', '/run-marubozu')
     pchan_btn    = job_btn('▶ Run Channel Scan', '/run-channels')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
@@ -6560,8 +6952,9 @@ def admin_hub():
     fd_last   = load_last_fader_results()
     ef_last   = load_last_efi_results()
     wick_last   = load_last_wick_results()
-    hammer_last = load_last_hammer_results()
-    pchan_last  = load_last_price_channel_results()
+    hammer_last   = load_last_hammer_results()
+    marubozu_last = load_last_marubozu_results()
+    pchan_last    = load_last_price_channel_results()
 
     def scan_summary(last, results_url):
         if not last:
@@ -6667,6 +7060,10 @@ def admin_hub():
             {scan_summary(hammer_last, '/hammer')}
           </div>
           <div>
+            <div class="btn-row" style="margin-bottom:6px">{marubozu_btn}</div>
+            {scan_summary(marubozu_last, '/marubozu')}
+          </div>
+          <div>
             <div class="btn-row" style="margin-bottom:6px">{pchan_btn}</div>
             {scan_summary(pchan_last, '/channels')}
           </div>
@@ -6685,6 +7082,7 @@ def admin_hub():
         <a href="/scan"    class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
         <a href="/wick"     class="btn btn-blue" style="font-size:.82rem">Wick Scanner</a>
         <a href="/hammer"   class="btn btn-blue" style="font-size:.82rem">Hammer Scanner</a>
+        <a href="/marubozu" class="btn btn-blue" style="font-size:.82rem">Marubozu Scanner</a>
         <a href="/channels" class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
