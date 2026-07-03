@@ -15,10 +15,13 @@ import uuid
 import threading
 import subprocess
 import json
+import hmac
+import hashlib
 import pandas as pd
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.dirname(BASE_DIR)
 sys.path.insert(0, BASE_DIR)
 
 # Find the real Python executable (sys.executable is uwsgi inside the web app)
@@ -29,7 +32,8 @@ if not os.path.exists(PYTHON):
 from flask import Flask, redirect, jsonify, request, Response, send_from_directory
 import pymysql
 
-from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT, ADMIN_PASSWORD, SECRET_KEY
+from db_config import (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT, ADMIN_PASSWORD,
+                       JANG_PASSWORD, SECRET_KEY, GITHUB_WEBHOOK_SECRET, WSGI_RELOAD_FILE)
 from db_channel_scanner import run_scan, load_last_results, get_connection, get_ticker_data
 from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
@@ -1450,7 +1454,7 @@ def chart_data(ticker):
 def login():
     error = ''
     if request.method == 'POST':
-        if request.form.get('password') == ADMIN_PASSWORD:
+        if request.form.get('password') in (ADMIN_PASSWORD, JANG_PASSWORD):
             session['admin'] = True
             return redirect('/')
         error = 'Wrong password.'
@@ -1473,6 +1477,33 @@ def login():
 def logout():
     session.pop('admin', None)
     return redirect('/')
+
+
+@app.route('/deploy-webhook', methods=['POST'])
+def deploy_webhook():
+    """GitHub push webhook: git pull the repo, then touch the WSGI file to reload."""
+    signature = request.headers.get('X-Hub-Signature-256', '')
+    expected = 'sha256=' + hmac.new(GITHUB_WEBHOOK_SECRET.encode(), request.data, hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(signature, expected):
+        return 'Invalid signature', 403
+
+    log_path = os.path.join(BASE_DIR, 'deploy_log.txt')
+    result = subprocess.run(['git', 'pull', 'origin', 'main'], cwd=REPO_DIR,
+                             capture_output=True, text=True, timeout=60)
+    with open(log_path, 'w') as f:
+        f.write(f"{datetime.now()}\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}\n")
+
+    if result.returncode != 0:
+        return 'git pull failed', 500
+
+    try:
+        os.utime(WSGI_RELOAD_FILE, None)
+    except Exception as e:
+        with open(log_path, 'a') as f:
+            f.write(f"\nReload touch failed: {e}\n")
+        return 'pulled but reload failed', 500
+
+    return 'OK', 200
 
 
 # ─── Data actions ─────────────────────────────────────────────────────────────
