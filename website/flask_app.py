@@ -40,6 +40,7 @@ from db_efi_scanner import run_efi_scan, load_last_efi_results
 from db_wick_scanner import run_wick_scan, load_last_wick_results
 from db_hammer_scanner import run_hammer_scan, load_last_hammer_results
 from db_marubozu_scanner import run_marubozu_scan, load_last_marubozu_results
+from db_extreme_scanner import run_extreme_scan, load_last_extreme_results
 from db_price_channel_scanner import (
     run_price_channel_scan, load_last_price_channel_results,
     get_ticker_daily, resample_weekly, resample_monthly,
@@ -4748,6 +4749,377 @@ def marubozu_page():
     return page_wrap('Marubozu Scanner', 'marubozu', content, auto_refresh=(running and jname == 'Marubozu Scan'))
 
 
+# ─── Extreme Scanner (TD Buy/Sell + ADX Momentum Warning) ────────────────────
+
+def _run_extreme_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Extreme Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_extreme_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_extreme_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Extreme Scan'
+    threading.Thread(target=_run_extreme_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-extreme')
+def run_extreme():
+    if not is_admin():
+        return redirect('/admin')
+    start_extreme_scan()
+    return redirect('/extreme')
+
+
+@app.route('/extreme')
+def extreme_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_extreme_results()
+
+    if running and jname == 'Extreme Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-extreme" class="btn btn-blue">▶ Run Extreme Scan</a>'
+
+    def score_color(s):
+        if s >= 7:  return '#22c55e'
+        if s >= 4:  return '#f59e0b'
+        return '#555'
+
+    dir_color = {'bullish': '#22c55e', 'bearish': '#ef4444', 'mixed': '#a78bfa'}
+    dir_icon  = {'bullish': '▲', 'bearish': '▽', 'mixed': '◆'}
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc  = r['score']
+            gc  = '#22c55e' if r['gain_pct'] >= 0 else '#ef4444'
+            gs  = '+' if r['gain_pct'] >= 0 else ''
+            dcl = dir_color.get(r['direction'], '#888')
+            dic = dir_icon.get(r['direction'], '')
+            sig_badges = ' '.join(
+                f'<span style="background:#1a1d2e;border:1px solid #2a2d3e;color:#ccc;'
+                f'padding:2px 8px;border-radius:10px;font-size:.72rem;margin-right:3px;'
+                f'white-space:nowrap">{s}</span>'
+                for s in r['signals']
+            )
+            adx_sig_txt = f"{r['adx_signal']:+.1f}" if r['adx_signal'] is not None else '—'
+            rows_html += f"""
+            <tr class="extreme-row" data-ticker="{r['ticker']}" data-signal-date="{r['signal_date']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">{r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['signal_date']}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td>{sig_badges}</td>
+              <td style="color:{dcl};font-weight:600">{dic} {r['direction']}</td>
+              <td style="color:#fff;font-weight:600">{r['td_buy_count']}</td>
+              <td style="color:#fff;font-weight:600">{r['td_sell_count']}</td>
+              <td style="color:#888">{adx_sig_txt}</td>
+              <td style="color:#fff;font-weight:600">${r['current_price']:,.4f}</td>
+              <td style="color:{gc};font-weight:700">{gs}{r['gain_pct']:.2f}%</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // LightweightCharts v4 vertical line primitive — paneViews() → renderer() → draw()
+    class ExtremeLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
+      }
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+    class ExtremeLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new ExtremeLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class ExtremeLine {
+      constructor(time, color = '#a78bfa') {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new ExtremeLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
+    }
+
+    document.querySelectorAll('.extreme-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker     = row.dataset.ticker;
+        const signalDate = row.dataset.signalDate;
+        const existId    = 'edrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.extreme-drop').forEach(d => d.remove());
+        document.querySelectorAll('.extreme-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'extreme-drop';
+        drop.innerHTML = `<td colspan="10" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="es-${ticker}">Loading...</span>
+          </div>
+          <div id="em-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="ev-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('es-' + ticker).textContent = data.error; return; }
+            document.getElementById('es-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('em-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            // Snap the marker to the closest bar to the signal date
+            const sigMs = new Date(signalDate).getTime();
+            let snapDate = signalDate;
+            let minDiff = Infinity;
+            for (const bar of data.ohlcv) {
+              const diff = Math.abs(new Date(bar.time).getTime() - sigMs);
+              if (diff < minDiff) { minDiff = diff; snapDate = bar.time; }
+            }
+            candles.attachPrimitive(new ExtremeLine(snapDate));
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, barCount - 120), to: barCount + 5 });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('ev-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('es-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Daily Extreme Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Combines two exhaustion/momentum signals — a TD Sequential-style setup counter
+        (fires at 8 and 9 consecutive closes below/above the close 4 bars back) and an
+        ADX Momentum Change Warning (flags an established trend's momentum rolling over).
+        Either one triggers a row; both are always shown together for context, with a
+        bonus score when they agree on direction the same day.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Extreme Scan" else ''}
+
+    <section>
+      <style>
+        .extreme-table {{ width:100%; border-collapse:collapse; font-size:.92rem; }}
+        .extreme-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                             border-bottom:1px solid #2a2d3e; font-weight:500;
+                             cursor:pointer; user-select:none; }}
+        .extreme-table th:hover {{ color:#aaa; }}
+        .extreme-table th.sort-asc::after  {{ content:' ▲'; font-size:.6rem; color:#60a5fa; }}
+        .extreme-table th.sort-desc::after {{ content:' ▼'; font-size:.6rem; color:#60a5fa; }}
+        .extreme-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .extreme-table .extreme-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .extreme-table .extreme-row.active td {{ background:#1a2235; }}
+        .extreme-drop td {{ padding:0 !important; }}
+        .extreme-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                               padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
+        .extreme-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
+      </style>
+
+      <div style="background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="color:#aaa;font-size:.82rem;font-weight:600;letter-spacing:.04em">TRADINGVIEW WATCHLIST</span>
+          <button onclick="copyExtremeList()" id="etv-copy-btn"
+            style="background:#1e3a5f;border:1px solid #3b82f6;color:#60a5fa;padding:5px 14px;
+                   border-radius:5px;cursor:pointer;font-size:.78rem;font-weight:600">
+            Copy
+          </button>
+        </div>
+        <textarea id="etv-list" readonly rows="3"
+          style="width:100%;background:#080a10;border:1px solid #1a1d2e;border-radius:5px;
+                 color:#c7d2fe;font-size:.8rem;padding:8px 10px;resize:vertical;
+                 font-family:monospace;box-sizing:border-box;line-height:1.6"></textarea>
+        <p style="color:#444;font-size:.72rem;margin:6px 0 0">
+          Paste directly into TradingView → Watchlist → Import. Updates when you switch Today / All.
+        </p>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="extreme-filter-btn active" id="ef-today" onclick="setExtremeFilter('today')">Today</button>
+        <button class="extreme-filter-btn"         id="ef-all"   onclick="setExtremeFilter('all')">All Signals</button>
+        <span id="extreme-count" style="color:#555;font-size:.78rem;margin-left:4px"></span>
+      </div>
+      <table class="extreme-table">
+        <thead><tr>
+          <th onclick="sortExtreme(this)">Ticker</th>
+          <th onclick="sortExtreme(this)">Date</th>
+          <th onclick="sortExtreme(this)" style="text-align:center">Score</th>
+          <th>Signals</th>
+          <th onclick="sortExtreme(this)">Direction</th>
+          <th onclick="sortExtreme(this)">TD Buy</th>
+          <th onclick="sortExtreme(this)">TD Sell</th>
+          <th onclick="sortExtreme(this)">ADX Sig</th>
+          <th onclick="sortExtreme(this)">Current</th>
+          <th onclick="sortExtreme(this)">Gain</th>
+        </tr></thead>
+        <tbody id="extreme-tbody">
+          {rows_html if rows_html else '<tr><td colspan="10" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    <script>
+    function sortExtreme(th) {{
+      const tbody = document.getElementById('extreme-tbody');
+      const idx = th.cellIndex;
+      const asc = th.classList.contains('sort-desc');
+      th.closest('thead').querySelectorAll('th').forEach(h => h.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      const rows = Array.from(tbody.querySelectorAll('.extreme-row'));
+      rows.sort((a, b) => {{
+        const av = a.cells[idx].textContent.trim();
+        const bv = b.cells[idx].textContent.trim();
+        const an = parseFloat(av.replace(/[^0-9.-]/g,'')), bn = parseFloat(bv.replace(/[^0-9.-]/g,''));
+        const cmp = isNaN(an) ? av.localeCompare(bv) : an - bn;
+        return asc ? cmp : -cmp;
+      }});
+      rows.forEach(r => tbody.appendChild(r));
+    }}
+
+    function getMostRecentExtremeDate() {{
+      let latest = '';
+      document.querySelectorAll('.extreme-row').forEach(r => {{
+        const d = r.dataset.signalDate || '';
+        if (d > latest) latest = d;
+      }});
+      return latest;
+    }}
+
+    function setExtremeFilter(mode) {{
+      document.getElementById('ef-today').classList.toggle('active', mode === 'today');
+      document.getElementById('ef-all').classList.toggle('active',   mode === 'all');
+      const latestDate = getMostRecentExtremeDate();
+      let visible = 0;
+      document.querySelectorAll('.extreme-row').forEach(r => {{
+        const show = (mode === 'all') || (r.dataset.signalDate === latestDate);
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        if (!show) {{
+          const drop = document.getElementById('edrop-' + r.dataset.ticker);
+          if (drop) {{ drop.remove(); r.classList.remove('active'); }}
+        }}
+      }});
+      document.getElementById('extreme-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+      updateExtremeList();
+    }}
+
+    function updateExtremeList() {{
+      const tickers = [];
+      document.querySelectorAll('.extreme-row').forEach(r => {{
+        if (r.style.display !== 'none') tickers.push(r.dataset.ticker);
+      }});
+      document.getElementById('etv-list').value = tickers.join(',');
+    }}
+
+    function copyExtremeList() {{
+      const ta = document.getElementById('etv-list');
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(ta.value).then(() => {{
+        const btn = document.getElementById('etv-copy-btn');
+        btn.textContent = 'Copied!';
+        btn.style.background = '#14532d';
+        btn.style.borderColor = '#22c55e';
+        btn.style.color = '#4ade80';
+        setTimeout(() => {{
+          btn.textContent = 'Copy';
+          btn.style.background = '#1e3a5f';
+          btn.style.borderColor = '#3b82f6';
+          btn.style.color = '#60a5fa';
+        }}, 2000);
+      }});
+    }}
+
+    setExtremeFilter('today');
+    </script>
+    {chart_js}"""
+
+    return page_wrap('Extreme Scanner', 'extreme', content, auto_refresh=(running and jname == 'Extreme Scan'))
+
+
 # ─── Price Channel Scanner ────────────────────────────────────────────────────
 
 def _run_price_channel_scan_job():
@@ -6968,6 +7340,7 @@ def admin_hub():
     wick_btn     = job_btn('▶ Run Wick Scan', '/run-wick')
     hammer_btn   = job_btn('▶ Run Hammer Scan', '/run-hammer')
     marubozu_btn = job_btn('▶ Run Marubozu Scan', '/run-marubozu')
+    extreme_btn  = job_btn('▶ Run Extreme Scan', '/run-extreme')
     pchan_btn    = job_btn('▶ Run Channel Scan', '/run-channels')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
@@ -6985,6 +7358,7 @@ def admin_hub():
     wick_last   = load_last_wick_results()
     hammer_last   = load_last_hammer_results()
     marubozu_last = load_last_marubozu_results()
+    extreme_last  = load_last_extreme_results()
     pchan_last    = load_last_price_channel_results()
 
     def scan_summary(last, results_url):
@@ -7095,6 +7469,10 @@ def admin_hub():
             {scan_summary(marubozu_last, '/marubozu')}
           </div>
           <div>
+            <div class="btn-row" style="margin-bottom:6px">{extreme_btn}</div>
+            {scan_summary(extreme_last, '/extreme')}
+          </div>
+          <div>
             <div class="btn-row" style="margin-bottom:6px">{pchan_btn}</div>
             {scan_summary(pchan_last, '/channels')}
           </div>
@@ -7114,6 +7492,7 @@ def admin_hub():
         <a href="/wick"     class="btn btn-blue" style="font-size:.82rem">Wick Scanner</a>
         <a href="/hammer"   class="btn btn-blue" style="font-size:.82rem">Hammer Scanner</a>
         <a href="/marubozu" class="btn btn-blue" style="font-size:.82rem">Marubozu Scanner</a>
+        <a href="/extreme"  class="btn btn-blue" style="font-size:.82rem">Extreme Scanner</a>
         <a href="/channels" class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
