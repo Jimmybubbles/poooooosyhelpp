@@ -32,6 +32,19 @@ Thumbs.db
 website/db_config.py
 db_config.py
 
+# Runtime/server-side state — must be manually placed on PythonAnywhere,
+# never committed. These mutate on every scan/update run, so if they were
+# ever tracked, the next `git pull` would refuse (local changes would be
+# overwritten) the same way the untracked-file conflict did for
+# EFI_Indicator.py during the 2026-07-04 migration.
+website/CSV/5000.csv
+website/last_run.log
+website/last_refresh_date.txt
+website/last_*_results.json
+website/skip_tickers.txt
+website/deploy_log.txt
+website/uploads/
+
 # PythonAnywhere notes
 scanners/pythonAnywhere.md
 scanners/CSV/github.txt
