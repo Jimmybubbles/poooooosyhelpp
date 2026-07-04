@@ -33,7 +33,8 @@ from flask import Flask, redirect, jsonify, request, Response, send_from_directo
 import pymysql
 
 from db_config import (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT, ADMIN_PASSWORD,
-                       JANG_PASSWORD, SECRET_KEY, GITHUB_WEBHOOK_SECRET, WSGI_RELOAD_FILE)
+                       JANG_PASSWORD, HODAN_PASSWORD, SECRET_KEY, GITHUB_WEBHOOK_SECRET,
+                       WSGI_RELOAD_FILE)
 from db_channel_scanner import run_scan, load_last_results, get_connection, get_ticker_data
 from db_fader_scanner import run_fader_scan, load_last_fader_results
 from db_efi_scanner import run_efi_scan, load_last_efi_results
@@ -1455,7 +1456,7 @@ def chart_data(ticker):
 def login():
     error = ''
     if request.method == 'POST':
-        if request.form.get('password') in (ADMIN_PASSWORD, JANG_PASSWORD):
+        if request.form.get('password') in (ADMIN_PASSWORD, JANG_PASSWORD, HODAN_PASSWORD):
             session['admin'] = True
             return redirect('/')
         error = 'Wrong password.'
