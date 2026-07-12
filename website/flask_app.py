@@ -17,6 +17,7 @@ import subprocess
 import json
 import hmac
 import hashlib
+import math
 import pandas as pd
 from datetime import datetime
 
@@ -6727,6 +6728,133 @@ def russell_page():
     return us_index_page('Russell / Small Caps', 'russell', russell_tickers, etf_ticker='IWM')
 
 
+# ─── Options 101 Demo (Black-Scholes) ──────────────────────────────────────────
+# Educational-only: a dummy NFLX options chain + a simulated 2-week call trade,
+# priced with textbook Black-Scholes over real NFLX closing prices. Not real
+# options market data — there's no options feed in this app.
+
+def _norm_cdf(x):
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
+
+def _norm_pdf(x):
+    return math.exp(-0.5 * x * x) / math.sqrt(2.0 * math.pi)
+
+
+def bs_price_greeks(spot, strike, t_years, vol, r, kind='call'):
+    """Black-Scholes price + delta/gamma/theta/vega for a European option (no dividend)."""
+    if t_years <= 0 or vol <= 0:
+        intrinsic = max(spot - strike, 0.0) if kind == 'call' else max(strike - spot, 0.0)
+        delta = (1.0 if spot > strike else 0.0) if kind == 'call' else (-1.0 if spot < strike else 0.0)
+        return {'price': intrinsic, 'delta': delta, 'gamma': 0.0, 'theta': 0.0, 'vega': 0.0}
+
+    sqrt_t = math.sqrt(t_years)
+    d1 = (math.log(spot / strike) + (r + 0.5 * vol * vol) * t_years) / (vol * sqrt_t)
+    d2 = d1 - vol * sqrt_t
+
+    if kind == 'call':
+        price = spot * _norm_cdf(d1) - strike * math.exp(-r * t_years) * _norm_cdf(d2)
+        delta = _norm_cdf(d1)
+        theta = (-(spot * _norm_pdf(d1) * vol) / (2 * sqrt_t)
+                 - r * strike * math.exp(-r * t_years) * _norm_cdf(d2)) / 365.0
+    else:
+        price = strike * math.exp(-r * t_years) * _norm_cdf(-d2) - spot * _norm_cdf(-d1)
+        delta = _norm_cdf(d1) - 1.0
+        theta = (-(spot * _norm_pdf(d1) * vol) / (2 * sqrt_t)
+                 + r * strike * math.exp(-r * t_years) * _norm_cdf(-d2)) / 365.0
+
+    gamma = _norm_pdf(d1) / (spot * vol * sqrt_t)
+    vega = spot * _norm_pdf(d1) * sqrt_t / 100.0
+
+    return {'price': price, 'delta': delta, 'gamma': gamma, 'theta': theta, 'vega': vega}
+
+
+OPTIONS_DEMO_TICKER        = 'NFLX'
+OPTIONS_DEMO_IV            = 0.40    # flat assumed implied volatility (kept simple on purpose)
+OPTIONS_DEMO_R             = 0.045   # assumed risk-free rate
+OPTIONS_DEMO_HOLD_DAYS     = 10      # ~2 trading weeks
+OPTIONS_DEMO_DTE_AT_ENTRY  = 45      # calendar days to expiration when the trade opens
+
+
+def build_options_demo():
+    conn = get_connection()
+    df = get_ticker_data(conn, OPTIONS_DEMO_TICKER)
+    conn.close()
+
+    if df is None or len(df) < OPTIONS_DEMO_HOLD_DAYS + 15:
+        return {'error': f'Not enough price history for {OPTIONS_DEMO_TICKER}'}
+
+    chart_df = df.tail(40)
+    walk_df  = df.tail(OPTIONS_DEMO_HOLD_DAYS)
+
+    entry_ts    = walk_df.index[0]
+    exit_ts     = walk_df.index[-1]
+    entry_spot  = float(walk_df.iloc[0]['close'])
+    expiry_date = entry_ts + pd.Timedelta(days=OPTIONS_DEMO_DTE_AT_ENTRY)
+    strike      = round(entry_spot / 5.0) * 5.0
+
+    entry_greeks = bs_price_greeks(entry_spot, strike, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0,
+                                    OPTIONS_DEMO_IV, OPTIONS_DEMO_R, 'call')
+    entry_premium = entry_greeks['price']
+
+    def to_time(ts):
+        return ts.strftime('%Y-%m-%d')
+
+    ohlcv = [
+        {'time': to_time(ts), 'open': float(r['open']), 'high': float(r['high']),
+         'low': float(r['low']), 'close': float(r['close'])}
+        for ts, r in chart_df.iterrows()
+    ]
+
+    # Static chain snapshot at entry date — 9 strikes around ATM
+    chain = []
+    for offset in range(-4, 5):
+        k = strike + offset * 10.0
+        c = bs_price_greeks(entry_spot, k, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0, OPTIONS_DEMO_IV, OPTIONS_DEMO_R, 'call')
+        p = bs_price_greeks(entry_spot, k, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0, OPTIONS_DEMO_IV, OPTIONS_DEMO_R, 'put')
+        chain.append({
+            'strike': k,
+            'call_price': round(c['price'], 2), 'call_delta': round(c['delta'], 3),
+            'put_price': round(p['price'], 2), 'put_delta': round(p['delta'], 3),
+            'is_strike': abs(k - strike) < 0.01,
+        })
+
+    # Day-by-day walkthrough over the 2-week hold, real closes + decaying real DTE
+    walkthrough = []
+    for ts, row in walk_df.iterrows():
+        spot = float(row['close'])
+        dte_days = max((expiry_date - ts).days, 0)
+        g = bs_price_greeks(spot, strike, dte_days / 365.0, OPTIONS_DEMO_IV, OPTIONS_DEMO_R, 'call')
+        intrinsic = max(spot - strike, 0.0)
+        extrinsic = g['price'] - intrinsic
+        pnl = (g['price'] - entry_premium) * 100.0
+        pnl_pct = (g['price'] / entry_premium - 1.0) * 100.0 if entry_premium else 0.0
+        walkthrough.append({
+            'date': to_time(ts), 'spot': round(spot, 2), 'dte': dte_days,
+            'price': round(g['price'], 2), 'delta': round(g['delta'], 3), 'theta': round(g['theta'], 3),
+            'intrinsic': round(intrinsic, 2), 'extrinsic': round(extrinsic, 2),
+            'pnl': round(pnl, 2), 'pnl_pct': round(pnl_pct, 1),
+        })
+
+    return {
+        'ticker': OPTIONS_DEMO_TICKER,
+        'entry_date': to_time(entry_ts), 'exit_date': to_time(exit_ts),
+        'expiry_date': expiry_date.strftime('%Y-%m-%d'),
+        'strike': strike, 'iv': OPTIONS_DEMO_IV, 'r': OPTIONS_DEMO_R,
+        'entry_spot': round(entry_spot, 2), 'entry_premium': round(entry_premium, 2),
+        'contract_cost': round(entry_premium * 100.0, 2),
+        'ohlcv': ohlcv, 'chain': chain, 'walkthrough': walkthrough,
+    }
+
+
+@app.route('/api/options-demo')
+def api_options_demo():
+    try:
+        return jsonify(build_options_demo())
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
 # ─── How It Works ─────────────────────────────────────────────────────────────
 
 VIDEO_URL_FILE = os.path.join(BASE_DIR, 'how_it_works_video.txt')
@@ -6806,6 +6934,145 @@ def how_it_works():
           </form>
         </div>"""
 
+    options_101_html = """
+    <style>
+      .opt-card { background:#13151f;border:1px solid #2a2d3e;border-radius:10px;padding:18px 20px;font-size:.85rem;color:#aaa;line-height:1.6 }
+      .opt-card b { color:#e0e0e0 }
+      .opt-table { width:100%;border-collapse:collapse;font-size:.82rem;min-width:640px }
+      .opt-table th { text-align:center;padding:8px 10px;color:#555;border-bottom:1px solid #2a2d3e;font-weight:500;white-space:nowrap }
+      .opt-table td { text-align:center;padding:7px 10px;border-bottom:1px solid #151820;white-space:nowrap }
+      .opt-table tr:hover td { background:#1f2235 }
+      .opt-table tr.atm-row td { background:#1a2233 }
+    </style>
+
+    <div style="margin-top:56px;padding-top:40px;border-top:1px solid #2a2d3e">
+      <h2 style="font-size:.8rem;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">🎓 Options 101 — A Real NFLX Example</h2>
+      <p style="color:#888;font-size:.9rem;max-width:640px;margin-bottom:24px;line-height:1.7">
+        Options aren't part of the Jimmy's Picks system, but here's how one actually works.
+        Below is a real NFLX price chart, a dummy options chain, and a full day-by-day
+        walkthrough of one hypothetical call option trade held for 2 weeks — priced with the
+        Black-Scholes model, same math real options desks use.
+      </p>
+
+      <div class="step-grid" style="margin-bottom:28px">
+        <div class="opt-card"><b>Call Option</b><br>The right (not the obligation) to BUY 100 shares at a fixed "strike" price, any time before expiration. Buy calls when you expect the stock to go UP.</div>
+        <div class="opt-card"><b>Put Option</b><br>The right to SELL 100 shares at a fixed strike. Buy puts when you expect the stock to go DOWN.</div>
+        <div class="opt-card"><b>Premium</b><br>What you pay to buy the option, quoted per share. 1 contract = 100 shares, so a $12.50 premium costs $1,250 total.</div>
+        <div class="opt-card"><b>Theta (Time Decay)</b><br>Options lose value every day just from time passing, even if the stock doesn't move. That's the cost of the leverage you're buying.</div>
+      </div>
+
+      <div id="options-status" style="color:#555;font-size:.8rem;margin-bottom:12px">Loading NFLX options demo…</div>
+      <div id="options-summary" style="font-size:.95rem;color:#e0e0e0;margin-bottom:14px;line-height:1.8"></div>
+
+      <div id="options-chart" style="width:100%;height:360px;background:#0a0c14;border-radius:6px;margin-bottom:32px"></div>
+
+      <h3 style="font-size:.78rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Dummy NFLX Options Chain (priced at trade entry)</h3>
+      <p style="color:#666;font-size:.8rem;margin-bottom:12px">Priced with Black-Scholes using a flat 40% implied volatility for simplicity — real chains have a volatility "skew" that varies by strike. The highlighted row is the strike used in the trade below.</p>
+      <div id="options-chain-table" style="overflow-x:auto;margin-bottom:32px"></div>
+
+      <h3 style="font-size:.78rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">The Trade — Day by Day Over 2 Weeks</h3>
+      <div id="options-walkthrough-table" style="overflow-x:auto;margin-bottom:8px"></div>
+      <p style="color:#666;font-size:.78rem;margin-bottom:12px">P&amp;L per contract (100 shares). Green = profit, red = loss vs. the entry premium.</p>
+      <div id="options-pnl-chart" style="width:100%;height:200px;background:#0a0c14;border-radius:6px;margin-bottom:16px"></div>
+      <p style="color:#666;font-size:.8rem;max-width:640px;margin-bottom:40px;line-height:1.7">
+        Notice the option's dollar swings are much bigger, in percentage terms, than the stock's —
+        that's leverage. It cuts both ways: a small move in your favor is amplified, but so is
+        theta bleeding value away every single day you hold, win or lose.
+      </p>
+    </div>
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    fetch('/api/options-demo')
+      .then(r => r.json())
+      .then(data => {
+        const statusEl = document.getElementById('options-status');
+        if (data.error) { statusEl.textContent = 'Could not load demo: ' + data.error; return; }
+        statusEl.style.display = 'none';
+
+        document.getElementById('options-summary').innerHTML =
+          'On <strong>' + data.entry_date + '</strong>, with NFLX trading at <strong>$' + data.entry_spot.toFixed(2) + '</strong>, ' +
+          'you buy <strong>1 NFLX $' + data.strike.toFixed(0) + ' Call</strong> expiring ' + data.expiry_date +
+          ' (' + Math.round((new Date(data.expiry_date) - new Date(data.entry_date)) / 86400000) + ' days out) for ' +
+          '<strong>$' + data.entry_premium.toFixed(2) + '</strong> per share &mdash; ' +
+          '<strong style="color:#f59e0b">$' + data.contract_cost.toFixed(2) + '</strong> total for the contract.';
+
+        // Price chart
+        const chart = LightweightCharts.createChart(document.getElementById('options-chart'), {
+          layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+          grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+          rightPriceScale: { borderColor: '#2a2d3e' },
+          timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+          crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+        });
+        const candles = chart.addCandlestickSeries({
+          upColor: '#22c55e', downColor: '#ef4444',
+          borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+          wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+        });
+        candles.setData(data.ohlcv);
+        candles.createPriceLine({
+          price: data.strike, color: '#f59e0b', lineWidth: 1,
+          lineStyle: LightweightCharts.LineStyle.Dashed, title: 'Strike $' + data.strike.toFixed(0),
+        });
+        candles.setMarkers([
+          { time: data.entry_date, position: 'belowBar', color: '#22c55e', shape: 'arrowUp', text: 'Buy Call' },
+          { time: data.exit_date,  position: 'aboveBar', color: '#f59e0b', shape: 'arrowDown', text: 'Exit' },
+        ]);
+        chart.timeScale().fitContent();
+
+        // Options chain table
+        let chainHtml = '<table class="opt-table"><tr>' +
+          '<th>Call Price</th><th>Call Δ</th><th>Strike</th><th>Put Δ</th><th>Put Price</th></tr>';
+        data.chain.forEach(row => {
+          chainHtml += '<tr class="' + (row.is_strike ? 'atm-row' : '') + '">' +
+            '<td style="color:#22c55e">$' + row.call_price.toFixed(2) + '</td>' +
+            '<td style="color:#666">' + row.call_delta.toFixed(3) + '</td>' +
+            '<td style="font-weight:700">' + (row.is_strike ? '→ ' : '') + '$' + row.strike.toFixed(0) + '</td>' +
+            '<td style="color:#666">' + row.put_delta.toFixed(3) + '</td>' +
+            '<td style="color:#ef4444">$' + row.put_price.toFixed(2) + '</td>' +
+            '</tr>';
+        });
+        chainHtml += '</table>';
+        document.getElementById('options-chain-table').innerHTML = chainHtml;
+
+        // Walkthrough table
+        let wtHtml = '<table class="opt-table"><tr>' +
+          '<th>Date</th><th>NFLX Spot</th><th>Days to Exp</th><th>Option Price</th><th>Delta</th><th>Theta/day</th><th>P&amp;L</th><th>P&amp;L %</th></tr>';
+        data.walkthrough.forEach((row, i) => {
+          const pnlColor = row.pnl >= 0 ? '#22c55e' : '#ef4444';
+          const pnlSign = row.pnl >= 0 ? '+' : '';
+          wtHtml += '<tr>' +
+            '<td>' + row.date + (i === 0 ? ' (entry)' : (i === data.walkthrough.length - 1 ? ' (exit)' : '')) + '</td>' +
+            '<td>$' + row.spot.toFixed(2) + '</td>' +
+            '<td style="color:#666">' + row.dte + '</td>' +
+            '<td>$' + row.price.toFixed(2) + '</td>' +
+            '<td style="color:#666">' + row.delta.toFixed(3) + '</td>' +
+            '<td style="color:#666">' + row.theta.toFixed(3) + '</td>' +
+            '<td style="color:' + pnlColor + ';font-weight:600">' + pnlSign + '$' + row.pnl.toFixed(2) + '</td>' +
+            '<td style="color:' + pnlColor + '">' + pnlSign + row.pnl_pct.toFixed(1) + '%</td>' +
+            '</tr>';
+        });
+        wtHtml += '</table>';
+        document.getElementById('options-walkthrough-table').innerHTML = wtHtml;
+
+        // P&L chart
+        const pnlChart = LightweightCharts.createChart(document.getElementById('options-pnl-chart'), {
+          layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+          grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+          rightPriceScale: { borderColor: '#2a2d3e' },
+          timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+        });
+        const pnlSeries = pnlChart.addHistogramSeries({ priceFormat: { type: 'price', precision: 0 } });
+        pnlSeries.setData(data.walkthrough.map(row => ({
+          time: row.date, value: row.pnl, color: row.pnl >= 0 ? '#22c55e88' : '#ef444488',
+        })));
+        pnlChart.timeScale().fitContent();
+      })
+      .catch(e => { document.getElementById('options-status').textContent = 'Failed to load: ' + e; });
+    </script>
+    """
+
     content = f"""
     <style>
       .step-grid {{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:40px; }}
@@ -6840,6 +7107,8 @@ def how_it_works():
         <a href="/asx/picks" class="btn btn-blue" style="font-size:.95rem;padding:11px 28px">View ASX Picks →</a>
       </div>
     </div>
+
+    {options_101_html}
 
     {admin_form}
     """
