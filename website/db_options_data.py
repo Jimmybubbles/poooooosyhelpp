@@ -2,8 +2,10 @@
 Real Options Chain Data — Database operations
 ================================================
 Pulls real live options chains (yfinance) for tickers actually used on the
-options pages (open Options Picks positions + active Options Trackers) and
-keeps a rolling 10-day window of daily snapshots. yfinance only exposes
+options pages (open Options Picks positions + active Options Trackers),
+plus a curated watchlist of the most actively-traded options underlyings
+(so you can browse real chains on popular names before opening a position).
+Keeps a rolling 10-day window of daily snapshots. yfinance only exposes
 today's live chain — there's no historical options data to backfill, so
 this log only starts accumulating from the day it's first run.
 
@@ -24,6 +26,18 @@ from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
 
 SNAPSHOT_RETENTION_DAYS = 10
 STRIKES_PER_SIDE = 6  # nearest N strikes to spot, each of calls/puts
+DEFAULT_WATCHLIST_DTE_DAYS = 14  # target expiry for watchlist tickers with no open position
+
+# Most actively-traded options underlyings — dominated by index ETFs and
+# mega-cap tech, fairly stable over time. Given real options data here (not
+# tied to any specific open position), so it always has a fresh chain.
+TOP_OPTIONS_TICKERS = [
+    'SPY', 'QQQ', 'IWM', 'DIA', 'XLF', 'XLE', 'XLK', 'SMH', 'ARKK', 'EEM',
+    'AAPL', 'TSLA', 'NVDA', 'AMZN', 'MSFT', 'META', 'GOOGL', 'AMD', 'NFLX', 'AVGO',
+    'PLTR', 'SOFI', 'F', 'BAC', 'NIO', 'RIVN', 'INTC', 'PYPL', 'DIS', 'BA',
+    'COIN', 'MARA', 'RIOT', 'CCL', 'UBER', 'LYFT', 'SNAP', 'PFE', 'T', 'XOM',
+    'WMT', 'GME', 'AMC', 'MU', 'CVNA', 'C', 'WFC', 'KO', 'PLUG', 'JPM',
+]
 
 
 def get_connection():
@@ -59,13 +73,22 @@ def init_tables():
 
 
 def get_relevant_tickers_and_expiries(conn):
-    """(ticker, expiry_date) pairs from open Options Picks positions + Options Trackers."""
+    """(ticker, expiry_date) pairs from open Options Picks positions + Options Trackers,
+    plus the curated top-50 watchlist (with a default ~2-week target expiry) for any
+    watchlist ticker that doesn't already have a specific position/tracker driving it."""
     pairs = set()
     with conn.cursor() as cur:
         cur.execute("SELECT DISTINCT ticker, expiry_date FROM options_picks WHERE status = 'open'")
         pairs.update(cur.fetchall())
         cur.execute("SELECT DISTINCT ticker, expiry_date FROM options_trackers")
         pairs.update(cur.fetchall())
+
+    existing_tickers = {p[0] for p in pairs}
+    default_expiry = date.today() + timedelta(days=DEFAULT_WATCHLIST_DTE_DAYS)
+    for ticker in TOP_OPTIONS_TICKERS:
+        if ticker not in existing_tickers:
+            pairs.add((ticker, default_expiry))
+
     return list(pairs)
 
 
