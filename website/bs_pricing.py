@@ -52,6 +52,25 @@ def assumed_iv_for_price(price):
     return 0.60
 
 
+SKEW_K = 2.5          # how fast IV rises per unit of moneyness distance
+MAX_EFFECTIVE_IV = 2.0  # hard cap so extremely deep strikes don't blow up
+
+
+def effective_iv(base_iv, spot, strike):
+    """
+    Approximate volatility skew. A flat IV badly underprices strikes far from
+    the money — real option chains price deep OTM/ITM strikes at meaningfully
+    higher implied vol than an at-the-money base assumption (this is why a
+    strike 25% out of the money still trades for a few cents days before
+    expiry instead of pricing to ~$0 under a flat-vol model). This is a rough
+    linear approximation of that skew, not a real chain's actual curve.
+    """
+    if not spot:
+        return base_iv
+    moneyness = abs(strike - spot) / spot
+    return min(base_iv + SKEW_K * moneyness, MAX_EFFECTIVE_IV)
+
+
 def strike_increment_for_price(price):
     """Real chains list tighter strike spacing on cheaper stocks."""
     if price < 10:

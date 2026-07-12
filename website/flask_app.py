@@ -63,11 +63,14 @@ from db_asx import (init_tables as init_asx_tables, ASX_200,
                     get_asx_portfolio_value, buy_asx_stock, sell_asx_stock,
                     get_asx_daily_changes, get_closed_asx_trades,
                     add_manual_closed_asx_trade, delete_closed_asx_trade)
-from bs_pricing import bs_price_greeks, assumed_iv_for_price, strike_increment_for_price
+from bs_pricing import bs_price_greeks, assumed_iv_for_price, strike_increment_for_price, effective_iv
 from db_options_picks import (init_tables as init_options_tables,
                               get_options_account, get_options_positions,
                               get_options_portfolio_value, get_options_history,
                               buy_option, sell_option)
+from db_options_tracker import (init_tables as init_tracker_tables,
+                                create_tracker, get_trackers, delete_tracker,
+                                build_tracker_rows)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -88,6 +91,7 @@ try:
     init_asx_tables()
     init_dividend_tables()
     init_options_tables()
+    init_tracker_tables()
 except Exception:
     pass
 
@@ -813,6 +817,7 @@ def nav_html(active=''):
         {lnk('/russell','Russell / Small Caps','russell')}
         {lnk('/picks',"Jimmy's Picks",'picks')}
         {lnk('/options-picks','Options Picks','optionspicks')}
+        {lnk('/options-tracker','Options Tracker','optionstracker')}
         {lnk('/asx','ASX 200','asx')}
         {lnk('/asx/picks','ASX Picks','asxpicks')}
         {lnk('/dividend','Dividend Picks','dividend')}
@@ -2229,7 +2234,7 @@ def options_picks_buy():
 
     try:
         strike_val = float(strike)
-        assumed_iv = float(iv_input) / 100.0 if iv_input else assumed_iv_for_price(strike_val)
+        assumed_iv = float(iv_input) / 100.0 if iv_input else None  # None = derive from spot price
         ok, result = buy_option(ticker, option_type, strike_val, expiry_date,
                                  contracts, entry_premium, assumed_iv, reason)
     except (ValueError, TypeError) as e:
@@ -2255,6 +2260,131 @@ def options_picks_sell(pick_id):
         return redirect(f'/options-picks?msg=Position+closed.+P%26L:+{sign}${result:.2f}')
     else:
         return redirect(f'/options-picks?err={result}')
+
+
+# ─── Options Tracker (cheapest OTM put/call, day-by-day to expiry) ────────────
+
+def _tracker_table_html(tracker):
+    rows = build_tracker_rows(tracker)
+    row_html = ''
+    for r in rows:
+        hl = 'background:#3a2a10' if r['is_today'] else ''
+        close_str = f"${r['close']:.2f}" if r['close'] is not None else '—'
+        put_str   = f"${r['put_price']:.2f}"  if r['put_price']  is not None else '—'
+        call_str  = f"${r['call_price']:.2f}" if r['call_price'] is not None else '—'
+        row_html += f"""<tr style="{hl}">
+          <td style="color:#aaa">{r['date']}</td>
+          <td style="background:#1f1320;color:#f9a8d4">${fmt_num(tracker['put_strike'])}</td>
+          <td style="background:#1f1320;color:#f9a8d4;font-weight:600">{put_str}</td>
+          <td style="background:#000;color:#fff;font-weight:700">{close_str}</td>
+          <td style="background:#0d1f14;color:#4ade80">${fmt_num(tracker['call_strike'])}</td>
+          <td style="background:#0d1f14;color:#4ade80;font-weight:600">{call_str}</td>
+        </tr>"""
+
+    del_btn = ''
+    if is_admin():
+        del_btn = f"""
+        <form method="POST" action="/options-tracker/delete/{tracker['id']}" style="display:inline"
+          onsubmit="return confirm('Delete this tracker?')">
+          <button type="submit" class="btn" style="background:#3a1414;color:#f87171;padding:5px 12px;font-size:.78rem">Delete</button>
+        </form>"""
+
+    return f"""
+    <div class="card" style="margin-bottom:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        <div>
+          <span style="font-size:1.15rem;font-weight:700;color:#60a5fa">{tracker['ticker']}</span>
+          <span style="color:#555;font-size:.82rem;margin-left:10px">
+            opened {tracker['created_date']} &middot; expires {tracker['expiry_date']} &middot; {(tracker['assumed_iv']*100):.0f}% assumed IV
+          </span>
+        </div>
+        {del_btn}
+      </div>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem;min-width:560px">
+        <tr>
+          <th style="padding:8px 10px;border-bottom:1px solid #2a2d3e"></th>
+          <th colspan="2" style="background:#3b0f2e;color:#f9a8d4;padding:8px 10px;text-align:center">Put Option</th>
+          <th style="background:#000;color:#fff;padding:8px 10px;text-align:center">{tracker['ticker']} Close</th>
+          <th colspan="2" style="background:#062e17;color:#4ade80;padding:8px 10px;text-align:center">Call Option</th>
+        </tr>
+        <tr>
+          <th style="padding:6px 10px;color:#555;font-weight:500;text-align:left">Date</th>
+          <th style="padding:6px 10px;color:#f9a8d4;font-weight:500">Strike</th>
+          <th style="padding:6px 10px;color:#f9a8d4;font-weight:500">Price</th>
+          <th style="padding:6px 10px;color:#888;font-weight:500"></th>
+          <th style="padding:6px 10px;color:#4ade80;font-weight:500">Strike</th>
+          <th style="padding:6px 10px;color:#4ade80;font-weight:500">Price</th>
+        </tr>
+        {row_html}
+      </table>
+      </div>
+    </div>"""
+
+
+@app.route('/options-tracker')
+def options_tracker_page():
+    trackers = get_trackers()
+
+    note = """
+    <p class="note" style="margin-bottom:20px">
+      Tracks the cheapest deep out-of-the-money put and call for a chosen ticker/expiry, day by
+      day. Prices are computed with Black-Scholes against the real closing price each trading day
+      &mdash; not real options market data. See <a href="/how-it-works" style="color:#60a5fa">Options 101</a>
+      for how the pricing works.
+    </p>"""
+
+    add_form = '' if not is_admin() else """
+    <section>
+      <h2>New Tracker</h2>
+      <form method="POST" action="/options-tracker/create">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:12px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Ticker *</label>
+            <input name="ticker" placeholder="e.g. NFLX" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Expiry Date *</label>
+            <input name="expiry_date" type="date" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-green">+ Create Tracker</button>
+      </form>
+    </section>"""
+
+    msg = request.args.get('msg', '')
+    msg_html = f'<div style="background:#1a2e1a;border:1px solid #22c55e;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#86efac">{msg}</div>' if msg else ''
+    err = request.args.get('err', '')
+    err_html = f'<div class="err-box">{err}</div>' if err else ''
+
+    tables_html = ''.join(_tracker_table_html(t) for t in trackers) if trackers else \
+        '<p class="note">No trackers yet.</p>'
+
+    content = err_html + msg_html + note + add_form + f'<section><h2>Trackers</h2>{tables_html}</section>'
+    return page_wrap('Options Tracker', 'optionstracker', content)
+
+
+@app.route('/options-tracker/create', methods=['POST'])
+def options_tracker_create():
+    if not is_admin():
+        return redirect('/options-tracker')
+
+    ticker      = request.form.get('ticker', '').strip()
+    expiry_date = request.form.get('expiry_date', '').strip()
+
+    ok, result = create_tracker(ticker, expiry_date)
+    if ok:
+        return redirect(f'/options-tracker?msg=Tracker+created+for+{ticker.upper()}')
+    else:
+        return redirect(f'/options-tracker?err={result}')
+
+
+@app.route('/options-tracker/delete/<int:tracker_id>', methods=['POST'])
+def options_tracker_delete(tracker_id):
+    if not is_admin():
+        return redirect('/options-tracker')
+    delete_tracker(tracker_id)
+    return redirect('/options-tracker?msg=Tracker+deleted')
 
 
 # ─── Ask Jimmy ────────────────────────────────────────────────────────────────
@@ -7068,7 +7198,7 @@ def build_options_demo_for_ticker(conn, ticker):
     strike      = max(round(entry_spot / increment) * increment, increment)
 
     entry_greeks = bs_price_greeks(entry_spot, strike, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0,
-                                    iv, OPTIONS_DEMO_R, 'call')
+                                    effective_iv(iv, entry_spot, strike), OPTIONS_DEMO_R, 'call')
     entry_premium = entry_greeks['price']
 
     def to_time(ts):
@@ -7084,8 +7214,9 @@ def build_options_demo_for_ticker(conn, ticker):
     chain = []
     for offset in range(-4, 5):
         k = max(strike + offset * increment, increment)
-        c = bs_price_greeks(entry_spot, k, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0, iv, OPTIONS_DEMO_R, 'call')
-        p = bs_price_greeks(entry_spot, k, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0, iv, OPTIONS_DEMO_R, 'put')
+        k_iv = effective_iv(iv, entry_spot, k)
+        c = bs_price_greeks(entry_spot, k, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0, k_iv, OPTIONS_DEMO_R, 'call')
+        p = bs_price_greeks(entry_spot, k, OPTIONS_DEMO_DTE_AT_ENTRY / 365.0, k_iv, OPTIONS_DEMO_R, 'put')
         chain.append({
             'strike': round(k, 2),
             'call_price': round(c['price'], 2), 'call_delta': round(c['delta'], 3),
@@ -7098,7 +7229,7 @@ def build_options_demo_for_ticker(conn, ticker):
     for ts, row in walk_df.iterrows():
         spot = float(row['close'])
         dte_days = max((expiry_date - ts).days, 0)
-        g = bs_price_greeks(spot, strike, dte_days / 365.0, iv, OPTIONS_DEMO_R, 'call')
+        g = bs_price_greeks(spot, strike, dte_days / 365.0, effective_iv(iv, spot, strike), OPTIONS_DEMO_R, 'call')
         intrinsic = max(spot - strike, 0.0)
         extrinsic = g['price'] - intrinsic
         pnl = (g['price'] - entry_premium) * 100.0

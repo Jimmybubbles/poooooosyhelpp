@@ -16,7 +16,7 @@ import pymysql
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
-from bs_pricing import bs_price_greeks
+from bs_pricing import bs_price_greeks, assumed_iv_for_price, effective_iv
 
 STARTING_BALANCE = 100_000.0
 CONTRACT_SIZE = 100  # shares per contract
@@ -105,7 +105,8 @@ def _mark_position(conn, ticker, option_type, strike, expiry_date, entry_premium
         # No price data — fall back to entry premium so it doesn't look broken
         cur_premium, delta, theta = entry_premium, None, None
     else:
-        g = bs_price_greeks(spot, strike, max(dte_days, 0) / 365.0, assumed_iv, RISK_FREE_RATE, kind)
+        iv = effective_iv(assumed_iv, spot, strike)
+        g = bs_price_greeks(spot, strike, max(dte_days, 0) / 365.0, iv, RISK_FREE_RATE, kind)
         cur_premium, delta, theta = g['price'], g['delta'], g['theta']
 
     cost = entry_premium * contracts * CONTRACT_SIZE
@@ -181,16 +182,22 @@ def get_options_history():
 
 
 def buy_option(ticker, option_type, strike, expiry_date, contracts, entry_premium, assumed_iv, reason):
+    """assumed_iv: pass None to auto-derive from the current underlying price."""
     ticker = ticker.upper()
     option_type = option_type.upper()
     strike = float(strike)
     contracts = int(contracts)
     entry_premium = float(entry_premium)
-    assumed_iv = float(assumed_iv)
     total_cost = entry_premium * contracts * CONTRACT_SIZE
 
     conn = get_connection()
     try:
+        if assumed_iv is None or assumed_iv == '':
+            spot = get_current_price(conn, ticker)
+            assumed_iv = assumed_iv_for_price(spot) if spot else 0.40
+        else:
+            assumed_iv = float(assumed_iv)
+
         with conn.cursor() as cur:
             cur.execute("SELECT cash FROM options_account WHERE id = 1")
             cash = float(cur.fetchone()[0])
