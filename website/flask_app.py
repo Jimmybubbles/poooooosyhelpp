@@ -67,7 +67,7 @@ from bs_pricing import bs_price_greeks, assumed_iv_for_price, strike_increment_f
 from db_options_picks import (init_tables as init_options_tables,
                               get_options_account, get_options_positions,
                               get_options_portfolio_value, get_options_history,
-                              buy_option, sell_option)
+                              buy_option, sell_option, reset_account as reset_options_account)
 from db_options_tracker import (init_tables as init_tracker_tables,
                                 create_tracker, get_trackers, delete_tracker,
                                 build_tracker_rows)
@@ -2041,6 +2041,12 @@ def options_picks_page():
       <a href="/how-it-works" style="color:#60a5fa">Options 101</a> for how the pricing works.
     </p>"""
 
+    reset_form = '' if not is_admin() else """
+    <form method="POST" action="/options-picks/reset" style="margin-bottom:20px"
+      onsubmit="return confirm('Reset the options account? This deletes ALL positions and trade history and restores cash to $100,000. This cannot be undone.')">
+      <button type="submit" class="btn" style="background:#3a1414;color:#f87171;padding:7px 14px;font-size:.82rem">Reset Account</button>
+    </form>"""
+
     add_form = '' if not is_admin() else """
     <section>
       <h2>Add New Options Trade</h2>
@@ -2214,7 +2220,7 @@ def options_picks_page():
     });
     </script>"""
 
-    content = err_html + msg_html + summary + note + add_form + pos_html + hist_html + sell_modal
+    content = err_html + msg_html + summary + note + reset_form + add_form + pos_html + hist_html + sell_modal
     return page_wrap('Options Picks', 'optionspicks', content)
 
 
@@ -2260,6 +2266,18 @@ def options_picks_sell(pick_id):
         return redirect(f'/options-picks?msg=Position+closed.+P%26L:+{sign}${result:.2f}')
     else:
         return redirect(f'/options-picks?err={result}')
+
+
+@app.route('/options-picks/reset', methods=['POST'])
+def options_picks_reset():
+    if not is_admin():
+        return redirect('/options-picks')
+
+    ok, err = reset_options_account()
+    if ok:
+        return redirect('/options-picks?msg=Account+reset+to+%24100%2C000')
+    else:
+        return redirect(f'/options-picks?err={err}')
 
 
 # ─── Options Tracker (cheapest OTM put/call, day-by-day to expiry) ────────────

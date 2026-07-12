@@ -264,3 +264,20 @@ def sell_option(pick_id, sell_premium, sell_reason=''):
         return False, str(e)
     finally:
         conn.close()
+
+
+def reset_account():
+    """Wipe all positions and trade history, restore cash to the starting balance."""
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM options_trades")
+            cur.execute("DELETE FROM options_picks")
+            cur.execute("UPDATE options_account SET cash = %s WHERE id = 1", (STARTING_BALANCE,))
+        conn.commit()
+        return True, None
+    except Exception as e:
+        conn.rollback()
+        return False, str(e)
+    finally:
+        conn.close()
