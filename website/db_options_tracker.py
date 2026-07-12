@@ -18,6 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
 from bs_pricing import bs_price_greeks, assumed_iv_for_price, strike_increment_for_price, effective_iv
+from db_options_data import get_real_quote
 
 RISK_FREE_RATE = 0.045
 CHEAP_FLOOR = 0.10      # $ premium threshold that counts as "cheap"
@@ -165,16 +166,27 @@ def build_tracker_rows(tracker):
             close = closes.get(d)
             dte_days = (tracker['expiry_date'] - d).days
             put_price = call_price = None
+            put_real  = get_real_quote(tracker['ticker'], tracker['expiry_date'], 'PUT',
+                                        tracker['put_strike'], snapshot_date=d)
+            call_real = get_real_quote(tracker['ticker'], tracker['expiry_date'], 'CALL',
+                                        tracker['call_strike'], snapshot_date=d)
+            if put_real is not None:
+                put_price = put_real['price']
+            if call_real is not None:
+                call_price = call_real['price']
             if close is not None:
-                put_iv  = effective_iv(tracker['assumed_iv'], close, tracker['put_strike'])
-                call_iv = effective_iv(tracker['assumed_iv'], close, tracker['call_strike'])
-                put_price = bs_price_greeks(close, tracker['put_strike'], max(dte_days, 0) / 365.0,
-                                             put_iv, RISK_FREE_RATE, 'put')['price']
-                call_price = bs_price_greeks(close, tracker['call_strike'], max(dte_days, 0) / 365.0,
-                                              call_iv, RISK_FREE_RATE, 'call')['price']
+                if put_price is None:
+                    put_iv = effective_iv(tracker['assumed_iv'], close, tracker['put_strike'])
+                    put_price = bs_price_greeks(close, tracker['put_strike'], max(dte_days, 0) / 365.0,
+                                                 put_iv, RISK_FREE_RATE, 'put')['price']
+                if call_price is None:
+                    call_iv = effective_iv(tracker['assumed_iv'], close, tracker['call_strike'])
+                    call_price = bs_price_greeks(close, tracker['call_strike'], max(dte_days, 0) / 365.0,
+                                                  call_iv, RISK_FREE_RATE, 'call')['price']
             rows.append({
                 'date': d.strftime('%d-%b'), 'close': close,
                 'put_price': put_price, 'call_price': call_price,
+                'put_real': put_real is not None, 'call_real': call_real is not None,
                 'is_today': d == today,
             })
         d += timedelta(days=1)

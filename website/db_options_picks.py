@@ -17,6 +17,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
 from bs_pricing import bs_price_greeks, assumed_iv_for_price, effective_iv
+from db_options_data import get_real_quote
 
 STARTING_BALANCE = 100_000.0
 CONTRACT_SIZE = 100  # shares per contract
@@ -101,13 +102,16 @@ def _mark_position(conn, ticker, option_type, strike, expiry_date, entry_premium
     dte_days = (expiry_date - date.today()).days
     kind = 'call' if option_type == 'CALL' else 'put'
 
-    if spot is None:
-        # No price data — fall back to entry premium so it doesn't look broken
-        cur_premium, delta, theta = entry_premium, None, None
+    real = get_real_quote(ticker, expiry_date, option_type, strike)
+    if real is not None:
+        cur_premium, delta, theta, source = real['price'], None, None, 'real'
+    elif spot is None:
+        # No price data at all — fall back to entry premium so it doesn't look broken
+        cur_premium, delta, theta, source = entry_premium, None, None, 'model'
     else:
         iv = effective_iv(assumed_iv, spot, strike)
         g = bs_price_greeks(spot, strike, max(dte_days, 0) / 365.0, iv, RISK_FREE_RATE, kind)
-        cur_premium, delta, theta = g['price'], g['delta'], g['theta']
+        cur_premium, delta, theta, source = g['price'], g['delta'], g['theta'], 'model'
 
     cost = entry_premium * contracts * CONTRACT_SIZE
     value = cur_premium * contracts * CONTRACT_SIZE
@@ -116,7 +120,7 @@ def _mark_position(conn, ticker, option_type, strike, expiry_date, entry_premium
 
     return {
         'spot': spot, 'dte': max(dte_days, 0), 'expired': dte_days < 0,
-        'current_premium': cur_premium, 'delta': delta, 'theta': theta,
+        'current_premium': cur_premium, 'delta': delta, 'theta': theta, 'price_source': source,
         'cost': cost, 'value': value, 'pnl': pnl, 'pnl_pct': pnl_pct,
     }
 

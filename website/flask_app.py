@@ -71,6 +71,8 @@ from db_options_picks import (init_tables as init_options_tables,
 from db_options_tracker import (init_tables as init_tracker_tables,
                                 create_tracker, get_trackers, delete_tracker,
                                 build_tracker_rows)
+from db_options_data import (init_tables as init_options_data_tables,
+                             refresh_all_relevant_chains)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -92,6 +94,7 @@ try:
     init_dividend_tables()
     init_options_tables()
     init_tracker_tables()
+    init_options_data_tables()
 except Exception:
     pass
 
@@ -1641,6 +1644,14 @@ def _run_refresh_job():
                 log(f"  {ticker}: ERROR — {e}\n")
 
         conn.close()
+
+        # ── Real options chains for tickers used on the options pages ──────────
+        log(f"\nOptions chains (real data, US-listed only):\n")
+        try:
+            refresh_all_relevant_chains(log=log)
+        except Exception as e:
+            log(f"  ERROR — {e}\n")
+
         set_last_refresh_date()
         log(f"\nDone: {datetime.now()}\n")
 
@@ -2101,6 +2112,9 @@ def options_picks_page():
             type_c = '#22c55e' if p['option_type'] == 'CALL' else '#ef4444'
             expired_badge = ' <span style="color:#f59e0b;font-size:.78rem">(expired)</span>' if p['expired'] else ''
             spot_str = f"${p['spot']:.2f}" if p['spot'] is not None else 'n/a'
+            source_badge = (' <span style="color:#22c55e;font-size:.7rem;font-weight:600" title="Real market quote">● LIVE</span>'
+                             if p.get('price_source') == 'real' else
+                             ' <span style="color:#666;font-size:.7rem" title="Black-Scholes estimate, no real quote available">○ modeled</span>')
             reason_html = f'<p style="color:#aaa;font-size:.83rem;margin-bottom:12px;line-height:1.5">{p["reason"]}</p>' if p['reason'] else ''
 
             if is_admin():
@@ -2129,7 +2143,7 @@ def options_picks_page():
                 <div><span style="color:#555">Underlying</span><br><strong>{spot_str}</strong></div>
                 <div><span style="color:#555">Days to Exp</span><br><strong>{p['dte']}</strong></div>
                 <div><span style="color:#555">Entry Premium</span><br><strong>${fmt_num(p['entry_premium'])}</strong></div>
-                <div><span style="color:#555">Current Premium</span><br><strong>${fmt_num(p['current_premium'])}</strong></div>
+                <div><span style="color:#555">Current Premium</span><br><strong>${fmt_num(p['current_premium'])}</strong>{source_badge}</div>
                 <div><span style="color:#555">Cost Basis</span><br><strong>${p['cost']:,.2f}</strong></div>
                 <div><span style="color:#555">Market Value</span><br><strong>${p['value']:,.2f}</strong></div>
                 <div><span style="color:#555">Expiry</span><br><strong>{p['expiry_date']}</strong></div>
@@ -2290,6 +2304,10 @@ def _tracker_table_html(tracker):
         close_str = f"${r['close']:.2f}" if r['close'] is not None else '—'
         put_str   = f"${r['put_price']:.2f}"  if r['put_price']  is not None else '—'
         call_str  = f"${r['call_price']:.2f}" if r['call_price'] is not None else '—'
+        if r.get('put_real'):
+            put_str += ' ●'
+        if r.get('call_real'):
+            call_str += ' ●'
         row_html += f"""<tr style="{hl}">
           <td style="color:#aaa">{r['date']}</td>
           <td style="background:#1f1320;color:#f9a8d4">${fmt_num(tracker['put_strike'])}</td>
@@ -2347,9 +2365,10 @@ def options_tracker_page():
     note = """
     <p class="note" style="margin-bottom:20px">
       Tracks the cheapest deep out-of-the-money put and call for a chosen ticker/expiry, day by
-      day. Prices are computed with Black-Scholes against the real closing price each trading day
-      &mdash; not real options market data. See <a href="/how-it-works" style="color:#60a5fa">Options 101</a>
-      for how the pricing works.
+      day. Prices marked <strong style="color:#4ade80">●</strong> are real market quotes (US-listed
+      tickers only, pulled when prices refresh); everything else is a Black-Scholes estimate against
+      the real closing price. See <a href="/how-it-works" style="color:#60a5fa">Options 101</a>
+      for how the modeled pricing works.
     </p>"""
 
     add_form = '' if not is_admin() else """
