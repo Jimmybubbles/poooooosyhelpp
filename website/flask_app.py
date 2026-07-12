@@ -63,6 +63,11 @@ from db_asx import (init_tables as init_asx_tables, ASX_200,
                     get_asx_portfolio_value, buy_asx_stock, sell_asx_stock,
                     get_asx_daily_changes, get_closed_asx_trades,
                     add_manual_closed_asx_trade, delete_closed_asx_trade)
+from bs_pricing import bs_price_greeks, assumed_iv_for_price, strike_increment_for_price
+from db_options_picks import (init_tables as init_options_tables,
+                              get_options_account, get_options_positions,
+                              get_options_portfolio_value, get_options_history,
+                              buy_option, sell_option)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -82,6 +87,7 @@ try:
     init_ask_tables()
     init_asx_tables()
     init_dividend_tables()
+    init_options_tables()
 except Exception:
     pass
 
@@ -806,6 +812,7 @@ def nav_html(active=''):
         {lnk('/sp500','S&amp;P 500','sp500')}
         {lnk('/russell','Russell / Small Caps','russell')}
         {lnk('/picks',"Jimmy's Picks",'picks')}
+        {lnk('/options-picks','Options Picks','optionspicks')}
         {lnk('/asx','ASX 200','asx')}
         {lnk('/asx/picks','ASX Picks','asxpicks')}
         {lnk('/dividend','Dividend Picks','dividend')}
@@ -1978,6 +1985,276 @@ def picks_sell(pick_id):
 @app.route('/picks/image/<filename>')
 def picks_image(filename):
     return send_from_directory(UPLOADS_DIR, filename)
+
+
+# ─── Options Picks (dummy $100k long-calls/puts paper account) ────────────────
+
+@app.route('/options-picks')
+def options_picks_page():
+    positions = get_options_positions()
+    history   = get_options_history()
+    cash      = get_options_account()
+    port_val  = get_options_portfolio_value(positions)
+    total_val = cash + port_val
+    total_pnl = total_val - 100_000.0
+
+    pnl_color = '#22c55e' if total_pnl >= 0 else '#ef4444'
+    pnl_sign  = '+' if total_pnl >= 0 else ''
+    open_pnl  = sum(p['pnl'] for p in positions)
+    open_color = '#22c55e' if open_pnl >= 0 else '#ef4444'
+    open_sign  = '+' if open_pnl >= 0 else ''
+
+    summary = f"""
+    <div class="grid4" style="margin-bottom:24px">
+      <div class="card">
+        <div class="stat-label">Cash Available</div>
+        <div class="stat-value" style="font-size:1.3rem">${cash:,.2f}</div>
+        <div class="stat-sub">of $100,000 starting balance</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Portfolio Value</div>
+        <div class="stat-value" style="font-size:1.3rem">${port_val:,.2f}</div>
+        <div class="stat-sub">{len(positions)} open position{'s' if len(positions)!=1 else ''}</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Total P&amp;L</div>
+        <div class="stat-value" style="font-size:1.3rem;color:{pnl_color}">{pnl_sign}${total_pnl:,.2f}</div>
+        <div class="stat-sub" style="color:{pnl_color}">{pnl_sign}{total_pnl/1000:.1f}% on $100k</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Open P&amp;L</div>
+        <div class="stat-value" style="font-size:1.3rem;color:{open_color}">{open_sign}${open_pnl:,.2f}</div>
+        <div class="stat-sub" style="color:{open_color}">unrealised, mark-to-model</div>
+      </div>
+    </div>"""
+
+    note = """
+    <p class="note" style="margin-bottom:20px">
+      Dummy paper account &mdash; not real options market data. Positions are marked to market
+      with Black-Scholes using the real underlying stock price and real time-to-expiry, with an
+      assumed flat implied volatility set when the trade was opened. See
+      <a href="/how-it-works" style="color:#60a5fa">Options 101</a> for how the pricing works.
+    </p>"""
+
+    add_form = '' if not is_admin() else """
+    <section>
+      <h2>Add New Options Trade</h2>
+      <form method="POST" action="/options-picks/buy">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Ticker *</label>
+            <input name="ticker" placeholder="e.g. AAPL" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Type *</label>
+            <select name="option_type" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+              <option value="CALL">Call</option>
+              <option value="PUT">Put</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Strike *</label>
+            <input name="strike" type="number" step="0.01" placeholder="e.g. 150.00" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Expiry Date *</label>
+            <input name="expiry_date" type="date" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Contracts *</label>
+            <input name="contracts" type="number" step="1" min="1" value="1" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Entry Premium ($/share) *</label>
+            <input name="entry_premium" type="number" step="0.01" placeholder="e.g. 4.50" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Assumed IV %</label>
+            <input name="assumed_iv" type="number" step="1" placeholder="e.g. 40" style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Thesis</label>
+          <textarea name="reason" rows="3" placeholder="Why this trade..." style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+        </div>
+        <button type="submit" class="btn btn-green">+ Add Trade</button>
+      </form>
+    </section>"""
+
+    pos_html = ''
+    if positions:
+        cards = ''
+        for p in positions:
+            pnl_c = '#22c55e' if p['pnl'] >= 0 else '#ef4444'
+            sign  = '+' if p['pnl'] >= 0 else ''
+            type_c = '#22c55e' if p['option_type'] == 'CALL' else '#ef4444'
+            expired_badge = ' <span style="color:#f59e0b;font-size:.78rem">(expired)</span>' if p['expired'] else ''
+            spot_str = f"${p['spot']:.2f}" if p['spot'] is not None else 'n/a'
+            reason_html = f'<p style="color:#aaa;font-size:.83rem;margin-bottom:12px;line-height:1.5">{p["reason"]}</p>' if p['reason'] else ''
+
+            if is_admin():
+                action_html = f"""
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn btn-amber" style="padding:7px 16px"
+                    onclick="openOptSellModal({p['id']},'{p['ticker']}','{p['option_type']}',{p['strike']},{p['current_premium']:.4f},'/options-picks/sell/{p['id']}')">Close</button>
+                  <a href="/chart/{p['ticker']}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">Chart</a>
+                </div>"""
+            else:
+                action_html = f'<a href="/chart/{p["ticker"]}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">View Chart</a>'
+
+            cards += f"""
+            <div class="card" style="margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+                <div>
+                  <a href="/chart/{p['ticker']}" style="font-size:1.3rem;font-weight:700;color:#60a5fa">{p['ticker']}</a>
+                  <span style="color:{type_c};font-weight:700;margin-left:8px">${fmt_num(p['strike'])} {p['option_type']}</span>
+                  <span style="color:#555;font-size:.78rem;margin-left:10px">opened {p['bought_date']}</span>{expired_badge}
+                </div>
+                <span style="font-size:1.1rem;font-weight:700;color:{pnl_c}">{sign}${p['pnl']:,.2f} ({sign}{p['pnl_pct']:.1f}%)</span>
+              </div>
+              {reason_html}
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px;font-size:.83rem">
+                <div><span style="color:#555">Contracts</span><br><strong>{p['contracts']}</strong></div>
+                <div><span style="color:#555">Underlying</span><br><strong>{spot_str}</strong></div>
+                <div><span style="color:#555">Days to Exp</span><br><strong>{p['dte']}</strong></div>
+                <div><span style="color:#555">Entry Premium</span><br><strong>${fmt_num(p['entry_premium'])}</strong></div>
+                <div><span style="color:#555">Current Premium</span><br><strong>${fmt_num(p['current_premium'])}</strong></div>
+                <div><span style="color:#555">Cost Basis</span><br><strong>${p['cost']:,.2f}</strong></div>
+                <div><span style="color:#555">Market Value</span><br><strong>${p['value']:,.2f}</strong></div>
+                <div><span style="color:#555">Expiry</span><br><strong>{p['expiry_date']}</strong></div>
+              </div>
+              {action_html}
+            </div>"""
+        pos_html = f'<section><h2>Open Positions ({len(positions)})</h2>{cards}</section>'
+    else:
+        pos_html = '<section><h2>Open Positions</h2><p class="note">No open options trades yet.</p></section>'
+
+    hist_html = ''
+    if history:
+        rows = ''
+        for t in history:
+            action_color = '#22c55e' if t['action'] == 'BUY' else '#ef4444'
+            type_c = '#22c55e' if t['option_type'] == 'CALL' else '#ef4444'
+            pnl_str = ''
+            if t['pnl'] is not None:
+                pc = '#22c55e' if t['pnl'] >= 0 else '#ef4444'
+                pnl_str = f'<span style="color:{pc}">{("+" if t["pnl"]>=0 else "")}${t["pnl"]:,.2f}</span>'
+            rows += f"""<tr>
+              <td>{t['trade_date']}</td>
+              <td><strong style="color:#60a5fa">{t['ticker']}</strong></td>
+              <td><span style="color:{type_c}">${fmt_num(t['strike'])} {t['option_type']}</span></td>
+              <td>{t['expiry_date']}</td>
+              <td><span style="color:{action_color};font-weight:700">{t['action']}</span></td>
+              <td>{t['contracts']}</td>
+              <td>${fmt_num(t['premium'])}</td>
+              <td>${t['total']:,.2f}</td>
+              <td>{pnl_str}</td>
+            </tr>"""
+        hist_html = f"""
+        <section>
+          <h2>Trade History</h2>
+          <style>
+            table{{width:100%;border-collapse:collapse;font-size:.82rem}}
+            th{{text-align:left;padding:8px 10px;color:#555;border-bottom:1px solid #2a2d3e;font-weight:500}}
+            td{{padding:8px 10px;border-bottom:1px solid #151820;white-space:nowrap}}
+            tr:hover td{{background:#1f2235}}
+          </style>
+          <div style="overflow-x:auto">
+          <table>
+            <tr><th>Date</th><th>Ticker</th><th>Contract</th><th>Expiry</th><th>Action</th><th>Contracts</th><th>Premium</th><th>Total</th><th>P&amp;L</th></tr>
+            {rows}
+          </table>
+          </div>
+        </section>"""
+
+    msg = request.args.get('msg', '')
+    msg_html = f'<div style="background:#1a2e1a;border:1px solid #22c55e;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#86efac">{msg}</div>' if msg else ''
+    err = request.args.get('err', '')
+    err_html = f'<div class="err-box">{err}</div>' if err else ''
+
+    sell_modal = """
+    <div id="opt-sell-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center">
+      <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px;width:100%;max-width:500px;margin:20px">
+        <h3 id="opt-sell-modal-title" style="margin:0 0 20px">Close Position</h3>
+        <form id="opt-sell-form" method="POST">
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Exit Premium ($/share) *</label>
+            <input id="opt-sell-price-input" name="sell_premium" type="number" step="0.01" required
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div style="margin-bottom:20px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Notes</label>
+            <textarea name="sell_reason" rows="3" placeholder="Took profit, thesis broke, expired worthless..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-amber" style="flex:1">Confirm Close</button>
+            <button type="button" class="btn" style="flex:1;background:#252839" onclick="closeOptSellModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+    function openOptSellModal(pickId, ticker, optType, strike, currentPremium, action) {
+      document.getElementById('opt-sell-modal-title').textContent = 'Close ' + ticker + ' $' + strike + ' ' + optType;
+      document.getElementById('opt-sell-price-input').value = currentPremium.toFixed(2);
+      document.getElementById('opt-sell-form').action = action;
+      document.getElementById('opt-sell-modal').style.display = 'flex';
+    }
+    function closeOptSellModal() {
+      document.getElementById('opt-sell-modal').style.display = 'none';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeOptSellModal();
+    });
+    </script>"""
+
+    content = err_html + msg_html + summary + note + add_form + pos_html + hist_html + sell_modal
+    return page_wrap('Options Picks', 'optionspicks', content)
+
+
+@app.route('/options-picks/buy', methods=['POST'])
+def options_picks_buy():
+    if not is_admin():
+        return redirect('/options-picks')
+
+    ticker        = request.form.get('ticker', '').strip().upper()
+    option_type   = request.form.get('option_type', 'CALL').strip().upper()
+    strike        = request.form.get('strike', 0)
+    expiry_date   = request.form.get('expiry_date', '').strip()
+    contracts     = request.form.get('contracts', 1)
+    entry_premium = request.form.get('entry_premium', 0)
+    reason        = request.form.get('reason', '').strip()
+    iv_input      = request.form.get('assumed_iv', '').strip()
+
+    try:
+        strike_val = float(strike)
+        assumed_iv = float(iv_input) / 100.0 if iv_input else assumed_iv_for_price(strike_val)
+        ok, result = buy_option(ticker, option_type, strike_val, expiry_date,
+                                 contracts, entry_premium, assumed_iv, reason)
+    except (ValueError, TypeError) as e:
+        ok, result = False, f"Invalid input: {e}"
+
+    if ok:
+        return redirect(f'/options-picks?msg=Opened+{contracts}x+{ticker}+${strike}+{option_type}')
+    else:
+        return redirect(f'/options-picks?err={result}')
+
+
+@app.route('/options-picks/sell/<int:pick_id>', methods=['POST'])
+def options_picks_sell(pick_id):
+    if not is_admin():
+        return redirect('/options-picks')
+
+    sell_premium = request.form.get('sell_premium', 0)
+    sell_reason  = request.form.get('sell_reason', '').strip()
+
+    ok, result = sell_option(pick_id, sell_premium, sell_reason)
+    if ok:
+        sign = '+' if result >= 0 else ''
+        return redirect(f'/options-picks?msg=Position+closed.+P%26L:+{sign}${result:.2f}')
+    else:
+        return redirect(f'/options-picks?err={result}')
 
 
 # ─── Ask Jimmy ────────────────────────────────────────────────────────────────
@@ -6734,42 +7011,6 @@ def russell_page():
 # Black-Scholes over real closing prices. Not real options market data —
 # there's no options feed in this app.
 
-def _norm_cdf(x):
-    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
-
-
-def _norm_pdf(x):
-    return math.exp(-0.5 * x * x) / math.sqrt(2.0 * math.pi)
-
-
-def bs_price_greeks(spot, strike, t_years, vol, r, kind='call'):
-    """Black-Scholes price + delta/gamma/theta/vega for a European option (no dividend)."""
-    if t_years <= 0 or vol <= 0:
-        intrinsic = max(spot - strike, 0.0) if kind == 'call' else max(strike - spot, 0.0)
-        delta = (1.0 if spot > strike else 0.0) if kind == 'call' else (-1.0 if spot < strike else 0.0)
-        return {'price': intrinsic, 'delta': delta, 'gamma': 0.0, 'theta': 0.0, 'vega': 0.0}
-
-    sqrt_t = math.sqrt(t_years)
-    d1 = (math.log(spot / strike) + (r + 0.5 * vol * vol) * t_years) / (vol * sqrt_t)
-    d2 = d1 - vol * sqrt_t
-
-    if kind == 'call':
-        price = spot * _norm_cdf(d1) - strike * math.exp(-r * t_years) * _norm_cdf(d2)
-        delta = _norm_cdf(d1)
-        theta = (-(spot * _norm_pdf(d1) * vol) / (2 * sqrt_t)
-                 - r * strike * math.exp(-r * t_years) * _norm_cdf(d2)) / 365.0
-    else:
-        price = strike * math.exp(-r * t_years) * _norm_cdf(-d2) - spot * _norm_cdf(-d1)
-        delta = _norm_cdf(d1) - 1.0
-        theta = (-(spot * _norm_pdf(d1) * vol) / (2 * sqrt_t)
-                 + r * strike * math.exp(-r * t_years) * _norm_cdf(-d2)) / 365.0
-
-    gamma = _norm_pdf(d1) / (spot * vol * sqrt_t)
-    vega = spot * _norm_pdf(d1) * sqrt_t / 100.0
-
-    return {'price': price, 'delta': delta, 'gamma': gamma, 'theta': theta, 'vega': vega}
-
-
 OPTIONS_DEMO_R             = 0.045   # assumed risk-free rate
 OPTIONS_DEMO_HOLD_DAYS     = 10      # ~2 trading weeks
 OPTIONS_DEMO_DTE_AT_ENTRY  = 45      # calendar days to expiration when the trade opens
@@ -6777,26 +7018,6 @@ CHEAP_PRICE_LOW            = 1.0
 CHEAP_PRICE_HIGH           = 100.0
 CHEAP_MIN_BARS             = 60      # enough history for the chart + 2-week walkthrough
 CHEAP_REFERENCE_COUNT      = 10
-
-
-def assumed_iv_for_price(price):
-    """Cheaper/smaller stocks tend to run hotter implied vol than mega-caps."""
-    if price >= 60:
-        return 0.35
-    if price >= 25:
-        return 0.45
-    return 0.60
-
-
-def strike_increment_for_price(price):
-    """Real chains list tighter strike spacing on cheaper stocks."""
-    if price < 10:
-        return 0.5
-    if price < 25:
-        return 1.0
-    if price < 50:
-        return 2.5
-    return 5.0
 
 
 def get_cheap_stock_rows(conn):
