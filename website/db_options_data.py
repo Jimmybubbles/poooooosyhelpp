@@ -1,10 +1,13 @@
 """
 Real Options Chain Data — Database operations
 ================================================
-Pulls real live options chains (yfinance) for tickers actually used on the
-options pages (open Options Picks positions + active Options Trackers),
-plus a curated watchlist of the most actively-traded options underlyings
-(so you can browse real chains on popular names before opening a position).
+Pulls real live options chains (yfinance) two ways:
+  1. Automatically, on each price refresh, for tickers with an open Options
+     Picks position or active Options Tracker (these need continuous tracking).
+  2. On demand, via the "Look Up Options Chain" button on a ticker's chart page
+     — fetches right then and caches the result, rather than blindly polling a
+     fixed watchlist of names nobody may be looking at.
+
 Keeps a rolling 10-day window of daily snapshots. yfinance only exposes
 today's live chain — there's no historical options data to backfill, so
 this log only starts accumulating from the day it's first run.
@@ -25,19 +28,9 @@ sys.path.insert(0, BASE_DIR)
 from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
 
 SNAPSHOT_RETENTION_DAYS = 10
-STRIKES_PER_SIDE = 6  # nearest N strikes to spot, each of calls/puts
-DEFAULT_WATCHLIST_DTE_DAYS = 14  # target expiry for watchlist tickers with no open position
-
-# Most actively-traded options underlyings — dominated by index ETFs and
-# mega-cap tech, fairly stable over time. Given real options data here (not
-# tied to any specific open position), so it always has a fresh chain.
-TOP_OPTIONS_TICKERS = [
-    'SPY', 'QQQ', 'IWM', 'DIA', 'XLF', 'XLE', 'XLK', 'SMH', 'ARKK', 'EEM',
-    'AAPL', 'TSLA', 'NVDA', 'AMZN', 'MSFT', 'META', 'GOOGL', 'AMD', 'NFLX', 'AVGO',
-    'PLTR', 'SOFI', 'F', 'BAC', 'NIO', 'RIVN', 'INTC', 'PYPL', 'DIS', 'BA',
-    'COIN', 'MARA', 'RIOT', 'CCL', 'UBER', 'LYFT', 'SNAP', 'PFE', 'T', 'XOM',
-    'WMT', 'GME', 'AMC', 'MU', 'CVNA', 'C', 'WFC', 'KO', 'PLUG', 'JPM',
-]
+STRIKES_PER_SIDE = 6         # background job: nearest N strikes to spot, each of calls/puts
+LOOKUP_STRIKES_PER_SIDE = 10  # on-demand lookup: a bit wider since it's just the one ticker
+DEFAULT_LOOKUP_DTE_DAYS = 14  # default target expiry when the caller doesn't specify one
 
 
 def get_connection():
@@ -73,22 +66,15 @@ def init_tables():
 
 
 def get_relevant_tickers_and_expiries(conn):
-    """(ticker, expiry_date) pairs from open Options Picks positions + Options Trackers,
-    plus the curated top-50 watchlist (with a default ~2-week target expiry) for any
-    watchlist ticker that doesn't already have a specific position/tracker driving it."""
+    """(ticker, expiry_date) pairs from open Options Picks positions + Options Trackers —
+    these need continuous tracking so they're refreshed automatically. Everything else is
+    fetched on demand via lookup_chain_on_demand() instead of blindly polling a watchlist."""
     pairs = set()
     with conn.cursor() as cur:
         cur.execute("SELECT DISTINCT ticker, expiry_date FROM options_picks WHERE status = 'open'")
         pairs.update(cur.fetchall())
         cur.execute("SELECT DISTINCT ticker, expiry_date FROM options_trackers")
         pairs.update(cur.fetchall())
-
-    existing_tickers = {p[0] for p in pairs}
-    default_expiry = date.today() + timedelta(days=DEFAULT_WATCHLIST_DTE_DAYS)
-    for ticker in TOP_OPTIONS_TICKERS:
-        if ticker not in existing_tickers:
-            pairs.add((ticker, default_expiry))
-
     return list(pairs)
 
 
@@ -110,8 +96,6 @@ def _get_spot_and_market(conn, ticker):
 
 def refresh_options_chain(conn, ticker, target_expiry, log=None):
     """Fetch the real chain nearest target_expiry and upsert today's snapshot for it."""
-    import yfinance as yf
-
     def _log(msg):
         if log:
             log(msg)
@@ -121,21 +105,41 @@ def refresh_options_chain(conn, ticker, target_expiry, log=None):
         _log(f"  {ticker}: no spot price in DB, skipping\n")
         return 0
     if market == 'ASX':
-        # yfinance's US options endpoint isn't reliable for ASX-listed names, and a bare
-        # ticker symbol risks silently matching an unrelated US-listed company — skip.
         _log(f"  {ticker}: ASX-listed, real options data not available — using modeled pricing\n")
         return 0
+
+    try:
+        nearest, chain, _expirations = _fetch_real_chain(ticker, target_expiry)
+    except _ChainFetchError as e:
+        _log(f"  {ticker}: {e}\n")
+        return 0
+
+    rows, _calls, _puts = _extract_rows(ticker, nearest, spot, chain, STRIKES_PER_SIDE)
+    if not rows:
+        _log(f"  {ticker}: chain for {nearest} had no usable rows\n")
+        return 0
+
+    _upsert_rows(conn, rows)
+    _log(f"  {ticker}: snapshotted {len(rows)} contracts (expiry {nearest})\n")
+    return len(rows)
+
+
+class _ChainFetchError(Exception):
+    pass
+
+
+def _fetch_real_chain(ticker, target_expiry):
+    """Shared yfinance lookup: find the real expiration nearest target_expiry and fetch
+    its chain. Raises _ChainFetchError with a human-readable reason on any failure."""
+    import yfinance as yf
 
     t = yf.Ticker(ticker)
     try:
         expirations = t.options
     except Exception as e:
-        _log(f"  {ticker}: could not fetch expirations — {e}\n")
-        return 0
-
+        raise _ChainFetchError(f"could not fetch expirations — {e}")
     if not expirations:
-        _log(f"  {ticker}: no listed options\n")
-        return 0
+        raise _ChainFetchError("no listed options")
 
     target = target_expiry if isinstance(target_expiry, date) else date.fromisoformat(str(target_expiry))
     nearest = min(expirations, key=lambda d: abs((date.fromisoformat(d) - target).days))
@@ -143,33 +147,43 @@ def refresh_options_chain(conn, ticker, target_expiry, log=None):
     try:
         chain = t.option_chain(nearest)
     except Exception as e:
-        _log(f"  {ticker}: could not fetch chain for {nearest} — {e}\n")
-        return 0
+        raise _ChainFetchError(f"could not fetch chain for {nearest} — {e}")
 
+    return nearest, chain, list(expirations)
+
+
+def _extract_rows(ticker, expiry, spot, chain, strikes_per_side):
+    """Pick the nearest N strikes each side of spot from a yfinance chain. Returns
+    (db_rows_for_upsert, calls_list, puts_list) — the two lists are plain dicts for
+    API/display use."""
     today = date.today()
-    rows = []
+    db_rows, calls_out, puts_out = [], [], []
     for option_type, df in (('CALL', chain.calls), ('PUT', chain.puts)):
         if df is None or df.empty:
             continue
         df = df.copy()
         df['dist'] = (df['strike'] - spot).abs()
-        nearest_strikes = df.nsmallest(STRIKES_PER_SIDE, 'dist')
+        nearest_strikes = df.nsmallest(strikes_per_side, 'dist').sort_values('strike')
         for _, r in nearest_strikes.iterrows():
-            rows.append((
-                ticker.upper(), today, nearest, option_type, float(r['strike']),
-                float(r['lastPrice']) if not _isnan(r.get('lastPrice')) else None,
-                float(r['bid']) if not _isnan(r.get('bid')) else None,
-                float(r['ask']) if not _isnan(r.get('ask')) else None,
-                float(r['impliedVolatility']) if not _isnan(r.get('impliedVolatility')) else None,
-                int(r['volume']) if not _isnan(r.get('volume')) else None,
-                int(r['openInterest']) if not _isnan(r.get('openInterest')) else None,
-                1 if bool(r.get('inTheMoney')) else 0,
-            ))
+            strike     = float(r['strike'])
+            last_price = float(r['lastPrice']) if not _isnan(r.get('lastPrice')) else None
+            bid        = float(r['bid']) if not _isnan(r.get('bid')) else None
+            ask        = float(r['ask']) if not _isnan(r.get('ask')) else None
+            iv         = float(r['impliedVolatility']) if not _isnan(r.get('impliedVolatility')) else None
+            vol        = int(r['volume']) if not _isnan(r.get('volume')) else None
+            oi         = int(r['openInterest']) if not _isnan(r.get('openInterest')) else None
+            itm        = bool(r.get('inTheMoney'))
 
-    if not rows:
-        _log(f"  {ticker}: chain for {nearest} had no usable rows\n")
-        return 0
+            db_rows.append((ticker.upper(), today, expiry, option_type, strike, last_price,
+                             bid, ask, iv, vol, oi, 1 if itm else 0))
+            entry = {'strike': strike, 'last_price': last_price, 'bid': bid, 'ask': ask,
+                     'implied_vol': iv, 'volume': vol, 'open_interest': oi, 'in_the_money': itm}
+            (calls_out if option_type == 'CALL' else puts_out).append(entry)
 
+    return db_rows, calls_out, puts_out
+
+
+def _upsert_rows(conn, rows):
     with conn.cursor() as cur:
         cur.executemany("""
             INSERT INTO options_chain_snapshots
@@ -182,8 +196,41 @@ def refresh_options_chain(conn, ticker, target_expiry, log=None):
                 open_interest = VALUES(open_interest), in_the_money = VALUES(in_the_money)
         """, rows)
     conn.commit()
-    _log(f"  {ticker}: snapshotted {len(rows)} contracts (expiry {nearest})\n")
-    return len(rows)
+
+
+def lookup_chain_on_demand(ticker, target_expiry_str=None):
+    """On-demand fetch + cache for the "Look Up Options Chain" button on a ticker's
+    chart page. Unlike the background job this always hits yfinance live (that's the
+    point — it's driven by what you're actually looking at right now) and returns the
+    full chain plus the other real expirations available, so the UI can offer a switch."""
+    ticker = ticker.upper()
+    conn = get_connection()
+    try:
+        spot, market = _get_spot_and_market(conn, ticker)
+        if spot is None:
+            return {'error': f'No price data for {ticker}'}
+        if market == 'ASX':
+            return {'error': 'Real options data is not available for ASX-listed tickers via this app.'}
+
+        target = date.fromisoformat(target_expiry_str) if target_expiry_str else \
+            date.today() + timedelta(days=DEFAULT_LOOKUP_DTE_DAYS)
+
+        try:
+            nearest, chain, expirations = _fetch_real_chain(ticker, target)
+        except _ChainFetchError as e:
+            return {'error': str(e)}
+
+        rows, calls_out, puts_out = _extract_rows(ticker, nearest, spot, chain, LOOKUP_STRIKES_PER_SIDE)
+        if rows:
+            _upsert_rows(conn, rows)
+
+        return {
+            'ticker': ticker, 'spot': spot, 'expiry': nearest,
+            'available_expirations': expirations,
+            'calls': calls_out, 'puts': puts_out,
+        }
+    finally:
+        conn.close()
 
 
 def _isnan(v):

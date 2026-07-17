@@ -73,7 +73,7 @@ from db_options_tracker import (init_tables as init_tracker_tables,
                                 create_tracker, get_trackers, delete_tracker,
                                 build_tracker_rows)
 from db_options_data import (init_tables as init_options_data_tables,
-                             refresh_all_relevant_chains)
+                             refresh_all_relevant_chains, lookup_chain_on_demand)
 from flask import session
 
 RESULTS_DIR = os.path.join(BASE_DIR, 'updated_Results_for_scan')
@@ -1342,9 +1342,86 @@ def chart_page(ticker):
       <div id="info-bar" style="display:flex;gap:28px;flex-wrap:wrap;font-size:.88rem"></div>
     </section>
 
+    <section style="padding:16px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        <button id="opt-lookup-btn" class="btn btn-blue" onclick="lookupOptionsChain()">Look Up Options Chain</button>
+        <select id="opt-expiry-select" style="display:none;background:#0a0c14;border:1px solid #2a2d3e;
+                border-radius:6px;color:#fff;padding:7px 10px;font-size:.85rem" onchange="lookupOptionsChain(this.value)"></select>
+        <span id="opt-lookup-status" style="color:#555;font-size:.8rem"></span>
+      </div>
+      <div id="opt-lookup-panel"></div>
+    </section>
+
     <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     <script>
     const ticker = "{ticker}";
+
+    function lookupOptionsChain(expiry) {{
+      const statusEl = document.getElementById('opt-lookup-status');
+      const btn = document.getElementById('opt-lookup-btn');
+      statusEl.textContent = 'Fetching real chain from the market…';
+      btn.disabled = true;
+      const url = '/api/options-lookup/' + ticker + (expiry ? ('?expiry=' + expiry) : '');
+      fetch(url)
+        .then(r => r.json())
+        .then(data => {{
+          btn.disabled = false;
+          if (data.error) {{ statusEl.textContent = 'Error: ' + data.error; return; }}
+          statusEl.textContent = 'Spot $' + data.spot.toFixed(2) + ' · expiry ' + data.expiry;
+
+          const sel = document.getElementById('opt-expiry-select');
+          sel.style.display = '';
+          sel.innerHTML = data.available_expirations.map(e =>
+            '<option value="' + e + '"' + (e === data.expiry ? ' selected' : '') + '>' + e + '</option>'
+          ).join('');
+
+          const rowHtml = (c, p) => {{
+            const cell = (x, color) => x == null ? '<td style="color:#444">—</td>' :
+              '<td style="color:' + color + '">' + x + '</td>';
+            return '<tr>' +
+              cell(c ? '$' + c.last_price?.toFixed(2) : null, '#22c55e') +
+              cell(c ? '$' + c.bid?.toFixed(2) : null, '#666') +
+              cell(c ? '$' + c.ask?.toFixed(2) : null, '#666') +
+              cell(c && c.volume != null ? c.volume : null, '#666') +
+              '<td style="font-weight:700">$' + (c ? c.strike : p.strike).toFixed(2) + '</td>' +
+              cell(p && p.volume != null ? p.volume : null, '#666') +
+              cell(p ? '$' + p.bid?.toFixed(2) : null, '#666') +
+              cell(p ? '$' + p.ask?.toFixed(2) : null, '#666') +
+              cell(p ? '$' + p.last_price?.toFixed(2) : null, '#ef4444') +
+              '</tr>';
+          }};
+
+          const strikes = Array.from(new Set([...data.calls, ...data.puts].map(x => x.strike))).sort((a,b) => a-b);
+          let rows = '';
+          strikes.forEach(k => {{
+            const c = data.calls.find(x => x.strike === k);
+            const p = data.puts.find(x => x.strike === k);
+            rows += rowHtml(c, p);
+          }});
+
+          document.getElementById('opt-lookup-panel').innerHTML = `
+            <p class="note" style="margin-bottom:10px">Real market quotes (yfinance), cached for use elsewhere on the site.</p>
+            <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:.85rem;min-width:600px">
+              <tr>
+                <th colspan="4" style="background:#062e17;color:#4ade80;padding:6px 10px;text-align:center">Calls</th>
+                <th></th>
+                <th colspan="4" style="background:#3b0f2e;color:#f9a8d4;padding:6px 10px;text-align:center">Puts</th>
+              </tr>
+              <tr style="color:#555;font-size:.75rem">
+                <th style="padding:6px 10px">Last</th><th>Bid</th><th>Ask</th><th>Vol</th>
+                <th style="padding:6px 10px">Strike</th>
+                <th>Vol</th><th>Bid</th><th>Ask</th><th style="padding:6px 10px">Last</th>
+              </tr>
+              ${{rows}}
+            </table>
+            </div>`;
+        }})
+        .catch(e => {{ btn.disabled = false; statusEl.textContent = 'Failed: ' + e; }});
+    }}
+    </script>
+    <script>
+    // keep the OHLCV/EMA loader below scoped separately
 
     fetch('/api/chart-data/' + ticker)
       .then(r => r.json())
@@ -1420,6 +1497,15 @@ def chart_page(ticker):
     </script>"""
 
     return page_wrap(f'Chart — {ticker}', '', content)
+
+
+@app.route('/api/options-lookup/<ticker>')
+def api_options_lookup(ticker):
+    expiry = request.args.get('expiry', '').strip() or None
+    try:
+        return jsonify(lookup_chain_on_demand(ticker, expiry))
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 @app.route('/api/chart-data/<ticker>')
