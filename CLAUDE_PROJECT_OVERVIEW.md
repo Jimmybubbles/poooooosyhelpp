@@ -27,8 +27,11 @@ website/                        ← git repo root's website/ subfolder = live ap
   db_hammer_scanner.py          ← Daily hammer candlestick scanner
   db_marubozu_scanner.py        ← Daily bullish Marubozu candlestick scanner
   db_extreme_scanner.py         ← TD Buy/Sell setup count + ADX Momentum Warning scanner
+  db_gapdown_scanner.py         ← 10%+ gap-down on above-avg volume, mean-reversion/gap-fill scanner
   EFI_Indicator.py              ← standalone indicator module used by db_efi_scanner.py
+  range_oscillator.py           ← Range Oscillator (Zeiierman) Pine→Python port, not wired into any page yet
   db_picks.py                   ← Jimmy's Picks portfolio: buys, sells, history
+  db_options_data.py            ← Options chain fetch/cache (on-demand lookup + open-position refresh)
   db_ask.py                     ← Member Q&A system (register, login, ask, answer)
   db_dividend.py                ← Dividend watchlist with per-stock thesis notes
   db_asx.py                     ← ASX 200 price data + ASX picks portfolio (separate `asx_prices` table)
@@ -85,6 +88,7 @@ Every scanner follows the same pattern:
 | Hammer | db_hammer_scanner.py | Daily | Long lower wick (2×+ body), close top 50%, bullish body, vol surge bonus |
 | Marubozu | db_marubozu_scanner.py | Daily | Body >= 75% of range, wicks <= 10%, bullish — clean momentum candle |
 | Extreme | db_extreme_scanner.py | Daily | TD Sequential-style setup count (fires at 8/9) OR ADX(8)/DI(8) momentum warning — either triggers, both shown for context, confluence bonus if same direction |
+| Gap Down | db_gapdown_scanner.py | Daily | Open gapped down 10%+ vs prior close on above-average volume; scores on volume confirmation, intraday recovery, and days the gap-day low has held |
 
 ---
 
@@ -95,22 +99,32 @@ together — no Jinja templates for the main pages (except `templates/` for a co
 of standalone chart pages). Use the `# ─── Section ─────` markers to navigate.
 
 - Lines 1–107:      imports, PythonAnywhere WSGI note, app init, BASE_DIR/REPO_DIR
-- Lines 108–850:    global helpers — sector performance, DB helpers, job system, shared CSS/nav
-- Lines 850–1054:   Dashboard (`/`)
-- Lines 1054–1307:  Channel scanner + results
-- Lines 1307–1453:  Chart page + chart data API
-- Lines 1453–1511:  Auth — `/login` (multi-password: ADMIN/JANG/HODAN), `/logout`, `/deploy-webhook` (auto-deploy)
-- Lines 1511–1982:  Data actions (daily update, initial download), log view, Jimmy's Picks portfolio
-- Lines 1982–2461:  Ask Jimmy Q&A, Range Level scanner
-- Lines 2461–3248:  ASX 200, ASX Picks
-- Lines 3248–3491:  Trade Journal
-- Lines 3491–4753:  Fader, Wick, Hammer, Marubozu scanners
-- Lines 4753–5124:  Extreme scanner (TD Buy/Sell + ADX Momentum Warning)
-- Lines 5124–5546:  Price Channel scanner
-- Lines 5546–6242:  Jang's Wicks, Semiconductors
-- Lines 6242–6850:  EFI scanner, Indexes & ETFs, How It Works
-- Lines 6850–7309:  Dividend Picks, Admin Analytics
-- Lines 7309–end:    Admin Hub (scanner buttons, job status, DB stats)
+- Lines 108–898:    global helpers — sector performance, DB helpers, job system, shared CSS/nav (incl. "Markets" dropdown)
+- Lines 898–1102:   Dashboard (`/`)
+- Lines 1102–1355:  Channel scanner + results
+- Lines 1355–1587:  Chart page + chart data API + on-demand options chain lookup (`/api/options-lookup/<ticker>`)
+- Lines 1587–1616:  Auth — `/login` (multi-password: ADMIN/JANG/HODAN), `/logout`
+- Lines 1616–1836:  `/deploy-webhook` (auto-deploy), data actions (daily update, initial download), log view, status
+- Lines 1836–2124:  Jimmy's Picks portfolio (buy/sell/image)
+- Lines 2124–2569:  Options Picks + Options Tracker
+- Lines 2569–2764:  Ask Jimmy Q&A
+- Lines 2764–3024:  Range Level scanner
+- Lines 3024–3525:  ASX 200
+- Lines 3525–3811:  ASX Picks
+- Lines 3811–4080:  Trade Journal
+- Lines 4080–4983:  Fader, Wick, Hammer scanners
+- Lines 4983–5343:  Gap Down scanner
+- Lines 5343–5702:  Marubozu scanner
+- Lines 5702–6073:  Extreme scanner (TD Buy/Sell + ADX Momentum Warning)
+- Lines 6073–6469:  Price Channel scanner
+- Lines 6469–6963:  Jang's Wicks
+- Lines 6963–7273:  Semiconductors, EFI scanner
+- Lines 7273–7768:  Indexes & ETFs (Dow/Nasdaq/S&P 500/Russell — all under the "Markets" nav dropdown now)
+- Lines 7768–7871:  legacy options demo API (superseded by the on-demand lookup at line 1531)
+- Lines 7871–8026:  Kids Corner (`/kids`) — candle-pattern learning page for beginners
+- Lines 8026–8199:  How It Works
+- Lines 8199–8593:  Dividend Picks
+- Lines 8593–end:    Admin Analytics, Admin Hub (scanner buttons, job status, DB stats)
 
 ### Key Helper Functions
 - `page_wrap(title, active, content, auto_refresh=False)` — returns a full HTML page with nav and CSS
@@ -136,11 +150,14 @@ of standalone chart pages). Use the `# ─── Section ─────` marker
 | `/hammer` | Hammer scanner results |
 | `/marubozu` | Marubozu scanner results |
 | `/extreme` | Extreme scanner results (TD Buy/Sell + ADX Momentum Warning) |
+| `/gapdown` | Gap Down scanner results |
+| `/kids` | Kids Corner — candle-pattern learning page (public) |
 | `/picks` | Jimmy's Picks portfolio |
 | `/asx-picks` | ASX picks portfolio |
 | `/ask` | Member Q&A |
 | `/dividend` | Dividend watchlist |
-| `/chart/<ticker>` | Full-page TradingView chart |
+| `/chart/<ticker>` | Full-page TradingView chart, incl. "Look Up Options Chain" button |
+| `/api/options-lookup/<ticker>` | JSON: live options chain for ticker (on-demand, all expirations), caches into `options_chain_snapshots` |
 | `/api/us-chart/<ticker>` | JSON: OHLCV + EMA5 + EMA26 (used by inline charts) |
 | `/api/channel-lines/<ticker>/<tf>` | JSON: channel trendline data for overlay |
 | `/api/asx-chart/<ticker>` | JSON: ASX OHLCV + EMA5 + EMA26 |
@@ -148,6 +165,7 @@ of standalone chart pages). Use the `# ─── Section ─────` marker
 | `/run-fader` | Trigger fader scan (admin) |
 | `/run-efi` | Trigger EFI scan (admin) |
 | `/run-wick` | Trigger wick scan (admin) |
+| `/run-gapdown` | Trigger Gap Down scan (admin) |
 | `/run-hammer` | Trigger hammer scan (admin) |
 | `/run-marubozu` | Trigger Marubozu scan (admin) |
 | `/run-extreme` | Trigger Extreme scan (admin) |
@@ -165,6 +183,9 @@ of standalone chart pages). Use the `# ─── Section ─────` marker
 - Charts use a custom `VerticalLine` primitive (paneViews → renderer → draw pattern — v4 API required)
 - TradingView watchlist export on each scanner page (copy tickers as comma-separated list)
 - Sortable columns on all scanner tables
+- Top nav has a "Markets" dropdown (click-to-toggle, click-outside-to-close) folding in Indexes & ETFs,
+  Nasdaq 100, Dow 30, S&P 500, Russell/Small Caps, and Semiconductors — highlights active if the
+  current page is any of the six
 
 ---
 
