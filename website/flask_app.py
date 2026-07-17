@@ -845,6 +845,7 @@ def nav_html(active=''):
         {lnk('/journal','Trade Journal','journal')}
         {lnk("/jangs-wicks","Jang's Wicks",'jangs-wicks')}
         {lnk('/ask','Ask Jimmy','ask')}
+        {lnk('/kids','Kids Corner','kids')}
         {admin_lnk}
       </nav>
       {badge}
@@ -7805,6 +7806,219 @@ def api_options_demo():
         return jsonify({'examples': examples, 'reference': reference_out})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+
+# ─── Kids Corner ────────────────────────────────────────────────────────────────
+# Candle-pattern learning page: a pattern description + 2-3 real historical
+# examples per pattern, pulled straight from the existing scanners' saved
+# results (no separate content pipeline needed). Patterns without a scanner
+# yet (Double Top, Tweezers, High-Low Levels) show a "coming soon" placeholder
+# until real detection logic exists for them.
+
+KIDS_PATTERNS = [
+    {
+        'key': 'hammer', 'emoji': '🔨', 'name': 'Hammer',
+        'blurb': "A little candle with a long tail hanging below it. Sellers pushed the price down during the day, but buyers stepped in and pushed it back up before the day ended.",
+        'lookfor': "Look for: a small body near the TOP of the candle, with a long wick underneath — at least twice as long as the body.",
+        'loader': 'hammer',
+    },
+    {
+        'key': 'marubozu', 'emoji': '🟩', 'name': 'Marubozu',
+        'blurb': "A big solid candle with barely any wicks at all. It means buyers were in control the whole day, from open to close, with barely a fight.",
+        'lookfor': "Look for: a big body that fills almost the whole candle, with tiny or no wicks on either end.",
+        'loader': 'marubozu',
+    },
+    {
+        'key': 'double_top', 'emoji': '⛰️', 'name': 'Double Top',
+        'blurb': "Price climbs up, comes back down, then climbs up again to about the same height — like two mountain peaks side by side. It can mean the price is struggling to break higher.",
+        'lookfor': None, 'loader': None,
+    },
+    {
+        'key': 'tweezers', 'emoji': '🥢', 'name': 'Tweezers',
+        'blurb': "Two candles in a row with almost the exact same high point (or the same low point) — like a pair of tweezers pinching the price at one level.",
+        'lookfor': None, 'loader': None,
+    },
+    {
+        'key': 'high_low_levels', 'emoji': '📏', 'name': 'High-Low Levels',
+        'blurb': "Prices often bounce off the same 'ceiling' or 'floor' again and again. Spotting those levels helps you guess what might happen when price gets there next time.",
+        'lookfor': None, 'loader': None,
+    },
+]
+
+
+def _kids_pattern_examples(loader_key, limit=3):
+    loaders = {'hammer': load_last_hammer_results, 'marubozu': load_last_marubozu_results}
+    date_keys = {'hammer': 'hammer_date', 'marubozu': 'marubozu_date'}
+    loader = loaders.get(loader_key)
+    if not loader:
+        return []
+    data = loader()
+    if not data or not data.get('results'):
+        return []
+    dk = date_keys[loader_key]
+    results = sorted(data['results'], key=lambda r: r['score'], reverse=True)
+    seen, examples = set(), []
+    for r in results:
+        if r['ticker'] in seen:
+            continue  # one example per ticker — more variety for kids to see
+        seen.add(r['ticker'])
+        examples.append({'ticker': r['ticker'], 'date': r[dk], 'score': r['score']})
+        if len(examples) >= limit:
+            break
+    return examples
+
+
+@app.route('/kids')
+def kids_page():
+    cards_html = ''
+    for p in KIDS_PATTERNS:
+        examples = _kids_pattern_examples(p['loader']) if p['loader'] else []
+
+        lookfor_html = f'<p style="color:#93c5fd;font-size:.85rem;margin-bottom:14px">{p["lookfor"]}</p>' if p['lookfor'] else ''
+
+        if p['loader'] and examples:
+            ex_buttons = ''
+            ex_panels = ''
+            for i, ex in enumerate(examples):
+                cid = f"{p['key']}-{i}"
+                ex_buttons += f"""<button class="kids-ex-btn" onclick="showKidsExample(event, '{cid}')">{ex['ticker']}</button>"""
+                ex_panels += f"""
+                <div id="kids-panel-{cid}" class="kids-ex-panel" style="display:none">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-weight:700;color:#fff">{ex['ticker']} — {ex['date']}</span>
+                    <a href="/chart/{ex['ticker']}" style="font-size:.78rem;color:#60a5fa">Open full chart →</a>
+                  </div>
+                  <div id="kids-chart-{cid}" style="height:280px;background:#0a0c14;border-radius:6px"></div>
+                </div>"""
+            examples_block = f"""
+              <div style="margin-bottom:10px">
+                <span style="font-size:.78rem;color:#666;margin-right:8px">Real examples:</span>
+                {ex_buttons}
+              </div>
+              {ex_panels}"""
+        elif p['loader']:
+            examples_block = '<p class="note">No real examples saved yet — run the scanner to find some!</p>'
+        else:
+            examples_block = '<p class="note">🚧 Still gathering great examples of this one — check back soon!</p>'
+
+        cards_html += f"""
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <span style="font-size:1.6rem">{p['emoji']}</span>
+            <span style="font-size:1.15rem;font-weight:700;color:#fff">{p['name']}</span>
+          </div>
+          <p style="color:#aaa;font-size:.9rem;line-height:1.6;margin-bottom:8px">{p['blurb']}</p>
+          {lookfor_html}
+          {examples_block}
+        </div>"""
+
+    content = f"""
+    <style>
+      .kids-ex-btn {{ background:#1e3a5f;border:1px solid #3b82f6;color:#93c5fd;padding:5px 14px;
+                     border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;margin-right:6px }}
+      .kids-ex-btn:hover {{ background:#2d4d75 }}
+      .kids-ex-btn.active {{ background:#3b82f6;color:#fff }}
+      .kids-ex-panel {{ background:#0d0f1a;border:1px solid #1e2235;border-radius:8px;padding:14px;margin-top:8px }}
+    </style>
+
+    <div style="text-align:center;margin-bottom:32px;padding:20px 0">
+      <h1 style="font-size:2rem;font-weight:800;margin-bottom:12px">🎓 Kids Corner</h1>
+      <p style="color:#888;font-size:1rem;max-width:560px;margin:0 auto;line-height:1.7">
+        Learn to read stock charts! Every pattern below is something real traders look
+        for — click a ticker under any pattern to see it happen on a real stock chart.
+      </p>
+    </div>
+
+    {cards_html}
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    class KidsPatternLineRenderer {{
+      constructor(time, color, chart) {{ this._time = time; this._color = color; this._chart = chart; }}
+      draw(target) {{
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {{
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        }});
+      }}
+    }}
+    class KidsPatternLinePaneView {{
+      constructor(time, color, chart) {{ this._renderer = new KidsPatternLineRenderer(time, color, chart); }}
+      renderer() {{ return this._renderer; }}
+      zOrder() {{ return 'normal'; }}
+    }}
+    class KidsPatternLine {{
+      constructor(time, color = '#f59e0b') {{ this._time = time; this._color = color; this._chart = null; this._views = []; }}
+      attached({{ chart }}) {{ this._chart = chart; this._views = [new KidsPatternLinePaneView(this._time, this._color, chart)]; }}
+      detached() {{ this._views = []; }}
+      paneViews() {{ return this._views; }}
+      updateAllViews() {{}}
+    }}
+
+    const kidsLoadedCharts = new Set();
+
+    function showKidsExample(evt, cid) {{
+      const panel = document.getElementById('kids-panel-' + cid);
+      const isOpen = panel.style.display !== 'none';
+      // Close all panels + reset button states for this pattern's group
+      const group = cid.substring(0, cid.lastIndexOf('-'));
+      document.querySelectorAll('[id^="kids-panel-' + group + '-"]').forEach(p => p.style.display = 'none');
+      document.querySelectorAll('.kids-ex-btn').forEach(b => {{
+        if (b.getAttribute('onclick').includes(group + '-')) b.classList.remove('active');
+      }});
+      if (isOpen) return;
+
+      panel.style.display = 'block';
+      evt.target.classList.add('active');
+
+      if (kidsLoadedCharts.has(cid)) return;
+      kidsLoadedCharts.add(cid);
+
+      const ticker = document.getElementById('kids-panel-' + cid).querySelector('span').textContent.split(' — ')[0];
+      const dateStr = document.getElementById('kids-panel-' + cid).querySelector('span').textContent.split(' — ')[1];
+
+      fetch('/api/us-chart/' + ticker)
+        .then(r => r.json())
+        .then(data => {{
+          if (data.error) {{ document.getElementById('kids-chart-' + cid).textContent = data.error; return; }}
+          const chart = LightweightCharts.createChart(document.getElementById('kids-chart-' + cid), {{
+            layout: {{ background: {{ color: '#0a0c14' }}, textColor: '#888' }},
+            grid: {{ vertLines: {{ color: '#1a1d2e' }}, horzLines: {{ color: '#1a1d2e' }} }},
+            rightPriceScale: {{ borderColor: '#2a2d3e' }},
+            timeScale: {{ borderColor: '#2a2d3e', timeVisible: true }},
+          }});
+          const candles = chart.addCandlestickSeries({{
+            upColor: '#22c55e', downColor: '#ef4444',
+            borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+            wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+          }});
+          candles.setData(data.ohlcv);
+          const targetMs = new Date(dateStr).getTime();
+          let snapDate = dateStr, minDiff = Infinity;
+          for (const bar of data.ohlcv) {{
+            const diff = Math.abs(new Date(bar.time).getTime() - targetMs);
+            if (diff < minDiff) {{ minDiff = diff; snapDate = bar.time; }}
+          }}
+          candles.attachPrimitive(new KidsPatternLine(snapDate));
+          const barCount = data.ohlcv.length;
+          chart.timeScale().setVisibleLogicalRange({{ from: Math.max(0, barCount - 60), to: barCount + 5 }});
+        }})
+        .catch(e => {{ document.getElementById('kids-chart-' + cid).textContent = 'Failed: ' + e; }});
+    }}
+    </script>"""
+
+    return page_wrap('Kids Corner', 'kids', content)
 
 
 # ─── How It Works — Options 101 ────────────────────────────────────────────────
