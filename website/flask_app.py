@@ -759,10 +759,17 @@ a:hover { text-decoration: underline; }
 header { background: #1a1d2e; border-bottom: 1px solid #2a2d3e;
          padding: 14px 28px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 header h1 { font-size: 1.1rem; font-weight: 700; color: #fff; }
-nav { display: flex; gap: 6px; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; }
 nav a { padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 500;
         color: #aaa; background: #252839; }
 nav a:hover, nav a.active { background: #3b82f6; color: #fff; text-decoration: none; }
+.nav-dropdown { position: relative; }
+.nav-dropdown-menu { display: none; position: absolute; top: calc(100% + 6px); left: 0;
+                      background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 8px;
+                      padding: 6px; min-width: 180px; flex-direction: column; gap: 2px;
+                      box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 100; }
+.nav-dropdown-menu.open { display: flex; }
+.nav-dropdown-menu a { white-space: nowrap; }
 .badge { font-size: 0.72rem; padding: 3px 10px; border-radius: 20px;
          font-weight: 600; color: #fff; margin-left: auto; }
 main { padding: 28px; max-width: 1200px; margin: 0 auto; }
@@ -808,17 +815,27 @@ def nav_html(active=''):
         auth_btn = '<a href="/ask/login" style="font-size:.78rem;padding:5px 12px;background:#252839;border-radius:6px;color:#aaa">Login</a>'
     admin_lnk = f'<span style="width:1px;background:#2a2d3e;align-self:stretch;margin:0 4px"></span>{lnk("/admin","Admin","admin")}' if is_admin() else ''
 
+    markets_keys = ('indexes', 'nasdaq', 'dow', 'sp500', 'russell', 'semiconductors')
+    markets_active = 'active' if active in markets_keys else ''
+    markets_menu = (
+        lnk('/indexes', 'Indexes & ETFs', 'indexes') +
+        lnk('/nasdaq', 'Nasdaq 100', 'nasdaq') +
+        lnk('/dow', 'Dow 30', 'dow') +
+        lnk('/sp500', 'S&amp;P 500', 'sp500') +
+        lnk('/russell', 'Russell / Small Caps', 'russell') +
+        lnk('/semiconductors', 'Semiconductors', 'semiconductors')
+    )
+
     return f"""
     <header>
       <h1>Stock Manager</h1>
       <nav>
         {lnk('/','Dashboard','home')}
         {lnk('/how-it-works','How It Works','howitworks')}
-        {lnk('/indexes','Indexes & ETFs','indexes')}
-        {lnk('/nasdaq','Nasdaq 100','nasdaq')}
-        {lnk('/dow','Dow 30','dow')}
-        {lnk('/sp500','S&amp;P 500','sp500')}
-        {lnk('/russell','Russell / Small Caps','russell')}
+        <div class="nav-dropdown">
+          <a href="javascript:void(0)" class="{markets_active}" onclick="toggleNavDropdown(event, this)">Markets ▾</a>
+          <div class="nav-dropdown-menu">{markets_menu}</div>
+        </div>
         {lnk('/picks',"Jimmy's Picks",'picks')}
         {lnk('/options-picks','Options Picks','optionspicks')}
         {lnk('/options-tracker','Options Tracker','optionstracker')}
@@ -827,13 +844,24 @@ def nav_html(active=''):
         {lnk('/dividend','Dividend Picks','dividend')}
         {lnk('/journal','Trade Journal','journal')}
         {lnk("/jangs-wicks","Jang's Wicks",'jangs-wicks')}
-        {lnk('/semiconductors','Semiconductors','semiconductors')}
         {lnk('/ask','Ask Jimmy','ask')}
         {admin_lnk}
       </nav>
       {badge}
       {auth_btn}
-    </header>"""
+    </header>
+    <script>
+    function toggleNavDropdown(e, btn) {{
+      e.stopPropagation();
+      const menu = btn.nextElementSibling;
+      const isOpen = menu.classList.contains('open');
+      document.querySelectorAll('.nav-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+      if (!isOpen) menu.classList.add('open');
+    }}
+    document.addEventListener('click', () => {{
+      document.querySelectorAll('.nav-dropdown-menu.open').forEach(m => m.classList.remove('open'));
+    }});
+    </script>"""
 
 
 def page_wrap(title, active, content, auto_refresh=False):
