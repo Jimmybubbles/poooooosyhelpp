@@ -761,18 +761,28 @@ header { background: #1a1d2e; border-bottom: 1px solid #2a2d3e;
 header h1 { font-size: 1.1rem; font-weight: 700; color: #fff; }
 nav { display: flex; gap: 6px; flex-wrap: wrap; }
 nav a { padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 500;
-        color: #aaa; background: #252839; }
+        color: #aaa; background: #252839; transition: background .15s ease, color .15s ease; }
 nav a:hover, nav a.active { background: #3b82f6; color: #fff; text-decoration: none; }
 .nav-dropdown { position: relative; }
-.nav-dropdown-menu { display: none; position: absolute; top: calc(100% + 6px); left: 0;
+.nav-dropdown-menu { display: flex; position: absolute; top: calc(100% + 6px); left: 0;
                       background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 8px;
                       padding: 6px; min-width: 180px; flex-direction: column; gap: 2px;
-                      box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 100; }
-.nav-dropdown-menu.open { display: flex; }
+                      box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 100;
+                      opacity: 0; transform: translateY(-4px); pointer-events: none;
+                      transition: opacity .15s ease, transform .15s ease; }
+.nav-dropdown-menu.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
 .nav-dropdown-menu a { white-space: nowrap; }
 .badge { font-size: 0.72rem; padding: 3px 10px; border-radius: 20px;
-         font-weight: 600; color: #fff; margin-left: auto; }
-main { padding: 28px; max-width: 1200px; margin: 0 auto; }
+         font-weight: 600; color: #fff; margin-left: auto; transition: background .2s ease; }
+#scan-progress-bar { position: relative; height: 3px; width: 100%; overflow: hidden;
+                      background: #1a1d2e; }
+#scan-progress-bar::after { content: ''; position: absolute; top: 0; left: -40%;
+                            height: 100%; width: 40%;
+                            background: linear-gradient(90deg, transparent, #3b82f6, #22c55e, transparent);
+                            animation: scanbar 1.2s linear infinite; }
+@keyframes scanbar { 0% { left: -40%; } 100% { left: 100%; } }
+main { padding: 28px; max-width: 1200px; margin: 0 auto; animation: fadeIn .18s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .card { background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 8px; padding: 20px; }
 .grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 14px; margin-bottom: 24px; }
 .stat-label { font-size: 0.72rem; color: #666; text-transform: uppercase; letter-spacing:.05em; margin-bottom: 5px; }
@@ -802,8 +812,9 @@ def nav_html(active=''):
     with _job_lock:
         running = _job_running
         jname = _job_name
-    badge = f'<span class="badge" style="background:#f59e0b">⚙ {jname}</span>' if running else \
-            '<span class="badge" style="background:#22c55e">● Idle</span>'
+    badge = f'<span id="job-badge" class="badge" style="background:#f59e0b">⚙ {jname}</span>' if running else \
+            '<span id="job-badge" class="badge" style="background:#22c55e">● Idle</span>'
+    progress_bar_style = 'display:block' if running else 'display:none'
     def lnk(href, label, key):
         cls = 'active' if active == key else ''
         return f'<a href="{href}" class="{cls}">{label}</a>'
@@ -831,6 +842,7 @@ def nav_html(active=''):
       <h1>Stock Manager</h1>
       <nav>
         {lnk('/','Dashboard','home')}
+        {lnk('/signals','Signals','signals')}
         {lnk('/how-it-works','How It Works','howitworks')}
         <div class="nav-dropdown">
           <a href="javascript:void(0)" class="{markets_active}" onclick="toggleNavDropdown(event, this)">Markets ▾</a>
@@ -851,6 +863,7 @@ def nav_html(active=''):
       {badge}
       {auth_btn}
     </header>
+    <div id="scan-progress-bar" style="{progress_bar_style}"></div>
     <script>
     function toggleNavDropdown(e, btn) {{
       e.stopPropagation();
@@ -862,6 +875,25 @@ def nav_html(active=''):
     document.addEventListener('click', () => {{
       document.querySelectorAll('.nav-dropdown-menu.open').forEach(m => m.classList.remove('open'));
     }});
+    (function() {{
+      function applyStatus(s) {{
+        var badge = document.getElementById('job-badge');
+        var bar = document.getElementById('scan-progress-bar');
+        if (!badge) return;
+        if (s.running) {{
+          badge.textContent = '⚙ ' + s.job;
+          badge.style.background = '#f59e0b';
+          if (bar) bar.style.display = 'block';
+        }} else {{
+          badge.textContent = '● Idle';
+          badge.style.background = '#22c55e';
+          if (bar) bar.style.display = 'none';
+        }}
+      }}
+      setInterval(function() {{
+        fetch('/status').then(function(r) {{ return r.json(); }}).then(applyStatus).catch(function() {{}});
+      }}, 5000);
+    }})();
     </script>"""
 
 
@@ -876,19 +908,53 @@ def page_wrap(title, active, content, auto_refresh=False):
     active: nav link key (e.g. 'picks', 'admin', 'results') — highlighted in nav.
     auto_refresh: set True on log/status pages that should poll while a job runs.
     """
-    refresh = '<meta http-equiv="refresh" content="5">' if auto_refresh else ''
+    poll_script = ''
+    if auto_refresh:
+        # Poll /status instead of a hard <meta refresh> reload — only swap the
+        # page in once, in place, the moment the job finishes (no repeated
+        # full-page flashes/scroll resets while it's still running).
+        poll_script = """
+    <script>
+    (function() {
+      var iv = setInterval(function() {
+        fetch('/status').then(function(r) { return r.json(); }).then(function(s) {
+          if (!s.running) {
+            clearInterval(iv);
+            fetch(location.href).then(function(r) { return r.text(); }).then(function(html) {
+              var doc = new DOMParser().parseFromString(html, 'text/html');
+              var newMain = doc.querySelector('main');
+              var curMain = document.querySelector('main');
+              if (newMain && curMain) {
+                curMain.innerHTML = newMain.innerHTML;
+                curMain.querySelectorAll('script').forEach(function(oldScript) {
+                  var newScript = document.createElement('script');
+                  for (var i = 0; i < oldScript.attributes.length; i++) {
+                    var a = oldScript.attributes[i];
+                    newScript.setAttribute(a.name, a.value);
+                  }
+                  newScript.textContent = oldScript.textContent;
+                  oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+              }
+              document.title = doc.title;
+            });
+          }
+        }).catch(function() {});
+      }, 2000);
+    })();
+    </script>"""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title} — Stock Manager</title>
-{refresh}
 <style>{BASE_CSS}</style>
 </head>
 <body>
 {nav_html(active)}
 <main>{content}</main>
+{poll_script}
 </body>
 </html>"""
 
@@ -8019,6 +8085,141 @@ def kids_page():
     </script>"""
 
     return page_wrap('Kids Corner', 'kids', content)
+
+
+# ─── Signals — public results feed ─────────────────────────────────────────────
+# Aggregates the current top 2-3 picks from every scanner onto one public page
+# (no admin login required) with a plain-English reason built from that row's
+# real values. Scores aren't comparable across scanners (Fader's R:R vs
+# Marubozu's body% vs EFI's qualitative color), so this is grouped by scanner
+# rather than one mixed leaderboard.
+
+def _price_channel_daily_results():
+    data = load_last_price_channel_results()
+    if not data:
+        return None
+    return data.get('daily', {}).get('results')
+
+
+SIGNAL_FEED_SPECS = [
+    {
+        'key': 'fader', 'label': 'Fader',
+        'loader': load_last_fader_results, 'top_n': 3,
+        'sort': lambda r: r['rr'],
+        'reasoning': lambda r: (
+            f"Channel coiled and the fader signal turned bullish — price ${r['price']:.2f} "
+            f"sitting at {r['position_pct']:.1f}% of its range, targeting ${r['L75']:.2f} "
+            f"with a stop near ${r['L0']:.2f} ({r['rr']:.1f}x reward:risk)."),
+    },
+    {
+        'key': 'hammer', 'label': 'Hammer',
+        'loader': load_last_hammer_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"Hammer on {r['hammer_date']}: wick {r['wick_ratio']}x the body, closed at "
+            f"{r['close_pct']}% of the day's range" +
+            (", with a volume surge" if r.get('vol_surge') else '') + '.'),
+    },
+    {
+        'key': 'marubozu', 'label': 'Marubozu',
+        'loader': load_last_marubozu_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"Marubozu on {r['marubozu_date']}: {r['body_pct']}% solid body, wicks "
+            f"{r['upper_wick_pct']}%/{r['lower_wick_pct']}% — clean momentum candle" +
+            (", with a volume surge" if r.get('vol_surge') else '') + '.'),
+    },
+    {
+        'key': 'extreme', 'label': 'Extreme (TD + ADX)',
+        'loader': load_last_extreme_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"{r['direction'].title()} setup on {r['signal_date']} — TD Buy count "
+            f"{r['td_buy_count']}, TD Sell count {r['td_sell_count']}" +
+            (f", ADX momentum warning {r['adx_signal']:+.1f}" if r.get('adx_signal') is not None else '') + '.'),
+    },
+    {
+        'key': 'gapdown', 'label': 'Gap Down',
+        'loader': load_last_gapdown_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"Gapped down {r['gap_pct']}% on {r['gap_date']}, now {r['fill_pct']}% filled, "
+            f"closed at {r['close_pct']}% of the day's range" +
+            (", recovered intraday" if r.get('recovered_intraday') else '') + '.'),
+    },
+    {
+        'key': 'wick', 'label': 'Wick',
+        'loader': load_last_wick_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"Long lower wick week of {r['wick_date']}: {r['wick_ratio']}x the body, held "
+            f"{r['weeks_held']} weeks, closed at {r['close_pct']}% of the week's range."),
+    },
+    {
+        'key': 'efi', 'label': 'EFI (Elder Force Index)',
+        'loader': load_last_efi_results, 'top_n': 3,
+        'sort': lambda r: abs(r['histogram']),
+        'reasoning': lambda r: (
+            f"Force Index turned {r['fi_color']} at ${r['price']:.2f} — normalized price "
+            f"{r['norm_price']:+.4f}, histogram {r['histogram']:+.4f}."),
+    },
+    {
+        'key': 'channel', 'label': 'Channel Squeeze',
+        'loader': load_last_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            "Compressed on both daily & weekly timeframes" if r['score'] == 2
+            else "Compressed on the daily timeframe") + " — EMA5/EMA26 squeezed inside ATR.",
+    },
+    {
+        'key': 'price-channel', 'label': 'Price Channel',
+        'loader': _price_channel_daily_results, 'top_n': 3, 'raw_results': True,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"Ascending channel — price ${r['current']:,.2f} between ${r['lower']:,.2f} support "
+            f"and ${r['upper']:,.2f} resistance (R² {r['r2']}), tested {r['low_touches']}x "
+            f"low / {r['high_touches']}x high."),
+    },
+]
+
+
+def _signal_section(spec):
+    try:
+        loaded = spec['loader']()
+    except Exception:
+        loaded = None
+    results = loaded if spec.get('raw_results') else (loaded or {}).get('results')
+    if not results:
+        return f'<section><h2>{spec["label"]}</h2><p class="note">No signals yet — check back after the next scan.</p></section>'
+
+    top = sorted(results, key=spec['sort'], reverse=True)[:spec['top_n']]
+    cards = ''
+    for r in top:
+        try:
+            reason = spec['reasoning'](r)
+        except Exception:
+            continue
+        cards += f"""
+        <div class="card" style="margin-bottom:10px;padding:16px">
+          <a href="/chart/{r['ticker']}" style="font-weight:700;font-size:1.05rem">{r['ticker']}</a>
+          <p style="color:#aaa;font-size:.85rem;line-height:1.5;margin-top:6px">{reason}</p>
+        </div>"""
+    if not cards:
+        cards = '<p class="note">No signals yet — check back after the next scan.</p>'
+    return f'<section><h2>{spec["label"]}</h2>{cards}</section>'
+
+
+@app.route('/signals')
+def signals_page():
+    content = f"""
+    <div style="margin-bottom:24px">
+      <p class="note" style="font-size:.85rem">
+        Current top picks across every scanner, refreshed each time a scan runs.
+      </p>
+    </div>
+    {''.join(_signal_section(s) for s in SIGNAL_FEED_SPECS)}
+    """
+    return page_wrap('Signals', 'signals', content)
 
 
 # ─── How It Works — Options 101 ────────────────────────────────────────────────
