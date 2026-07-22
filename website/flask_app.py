@@ -781,6 +781,19 @@ nav a:hover, nav a.active { background: #3b82f6; color: #fff; text-decoration: n
                             background: linear-gradient(90deg, transparent, #3b82f6, #22c55e, transparent);
                             animation: scanbar 1.2s linear infinite; }
 @keyframes scanbar { 0% { left: -40%; } 100% { left: 100%; } }
+#scan-corner-alert { position: fixed; top: 16px; right: 16px; z-index: 9999;
+                      background: #78350f; border: 1px solid #f59e0b; color: #fde68a;
+                      padding: 12px 20px; border-radius: 10px; font-size: 0.95rem; font-weight: 700;
+                      box-shadow: 0 8px 28px rgba(0,0,0,.5); display: none;
+                      align-items: center; gap: 10px; animation: cornerPulse 1.6s ease-in-out infinite; }
+#scan-corner-alert .dot { width: 10px; height: 10px; border-radius: 50%; background: #f59e0b;
+                           animation: pulse 1.2s ease-in-out infinite; flex-shrink: 0; }
+@keyframes cornerPulse { 0%,100% { box-shadow: 0 8px 28px rgba(245,158,11,.15); }
+                         50%     { box-shadow: 0 8px 28px rgba(245,158,11,.55); } }
+@keyframes pulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+@media (max-width: 640px) {
+  #scan-corner-alert { top: auto; bottom: 16px; right: 16px; left: 16px; font-size: 0.85rem; }
+}
 main { padding: 28px; max-width: 1200px; margin: 0 auto; animation: fadeIn .18s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .card { background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 8px; padding: 20px; }
@@ -864,6 +877,9 @@ def nav_html(active=''):
       {auth_btn}
     </header>
     <div id="scan-progress-bar" style="{progress_bar_style}"></div>
+    <div id="scan-corner-alert" style="{'display:flex' if running else 'display:none'}">
+      <span class="dot"></span><span id="scan-corner-text">⚙ {jname} running…</span>
+    </div>
     <script>
     function toggleNavDropdown(e, btn) {{
       e.stopPropagation();
@@ -876,18 +892,31 @@ def nav_html(active=''):
       document.querySelectorAll('.nav-dropdown-menu.open').forEach(m => m.classList.remove('open'));
     }});
     (function() {{
+      // A single "not running" read can be a fluke (slow response, dropped
+      // request, momentary hiccup on a busy scan thread) — require 2 in a
+      // row before we ever flip the display to idle, so a real still-running
+      // scan can't get flashed as finished from one bad poll.
+      var notRunningStreak = 0;
       function applyStatus(s) {{
         var badge = document.getElementById('job-badge');
         var bar = document.getElementById('scan-progress-bar');
+        var corner = document.getElementById('scan-corner-alert');
+        var cornerText = document.getElementById('scan-corner-text');
         if (!badge) return;
         if (s.running) {{
+          notRunningStreak = 0;
           badge.textContent = '⚙ ' + s.job;
           badge.style.background = '#f59e0b';
           if (bar) bar.style.display = 'block';
+          if (corner) corner.style.display = 'flex';
+          if (cornerText) cornerText.textContent = '⚙ ' + s.job + ' running…';
         }} else {{
+          notRunningStreak++;
+          if (notRunningStreak < 2) return;
           badge.textContent = '● Idle';
           badge.style.background = '#22c55e';
           if (bar) bar.style.display = 'none';
+          if (corner) corner.style.display = 'none';
         }}
       }}
       setInterval(function() {{
@@ -916,29 +945,31 @@ def page_wrap(title, active, content, auto_refresh=False):
         poll_script = """
     <script>
     (function() {
+      var notRunningStreak = 0;
       var iv = setInterval(function() {
         fetch('/status').then(function(r) { return r.json(); }).then(function(s) {
-          if (!s.running) {
-            clearInterval(iv);
-            fetch(location.href).then(function(r) { return r.text(); }).then(function(html) {
-              var doc = new DOMParser().parseFromString(html, 'text/html');
-              var newMain = doc.querySelector('main');
-              var curMain = document.querySelector('main');
-              if (newMain && curMain) {
-                curMain.innerHTML = newMain.innerHTML;
-                curMain.querySelectorAll('script').forEach(function(oldScript) {
-                  var newScript = document.createElement('script');
-                  for (var i = 0; i < oldScript.attributes.length; i++) {
-                    var a = oldScript.attributes[i];
-                    newScript.setAttribute(a.name, a.value);
-                  }
-                  newScript.textContent = oldScript.textContent;
-                  oldScript.parentNode.replaceChild(newScript, oldScript);
-                });
-              }
-              document.title = doc.title;
-            });
-          }
+          if (s.running) { notRunningStreak = 0; return; }
+          notRunningStreak++;
+          if (notRunningStreak < 2) return;
+          clearInterval(iv);
+          fetch(location.href).then(function(r) { return r.text(); }).then(function(html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var newMain = doc.querySelector('main');
+            var curMain = document.querySelector('main');
+            if (newMain && curMain) {
+              curMain.innerHTML = newMain.innerHTML;
+              curMain.querySelectorAll('script').forEach(function(oldScript) {
+                var newScript = document.createElement('script');
+                for (var i = 0; i < oldScript.attributes.length; i++) {
+                  var a = oldScript.attributes[i];
+                  newScript.setAttribute(a.name, a.value);
+                }
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+              });
+            }
+            document.title = doc.title;
+          });
         }).catch(function() {});
       }, 2000);
     })();
