@@ -1892,7 +1892,7 @@ def run_refresh():
     if not is_admin():
         return redirect('/')
     start_refresh_job()
-    return redirect('/')
+    return redirect('/admin')
 
 
 @app.route('/run-daily')
@@ -1900,7 +1900,7 @@ def run_daily():
     if not is_admin():
         return redirect('/')
     start_script_job(os.path.join(BASE_DIR, 'db_daily_update.py'), 'Daily Update')
-    return redirect('/')
+    return redirect('/admin')
 
 
 @app.route('/run-initial')
@@ -1908,7 +1908,7 @@ def run_initial():
     if not is_admin():
         return redirect('/')
     start_script_job(os.path.join(BASE_DIR, 'db_initial_download.py'), 'Initial Download')
-    return redirect('/')
+    return redirect('/admin')
 
 
 # ─── Log view ─────────────────────────────────────────────────────────────────
