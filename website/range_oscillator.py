@@ -94,7 +94,7 @@ def _blend_hex(hex_color, opacity):
 def compute_range_oscillator(high, low, close,
                               length=DEFAULT_LENGTH, mult=DEFAULT_MULT,
                               levels=DEFAULT_LEVELS, heat_thresh=DEFAULT_HEAT_THRESH,
-                              heat_lookback=HEAT_LOOKBACK):
+                              heat_lookback=HEAT_LOOKBACK, skip_heatmap=False):
     """
     high, low, close: pandas Series, same index, chronological order.
 
@@ -106,8 +106,13 @@ def compute_range_oscillator(high, low, close,
       trend_dir  - 1 (bullish) / -1 (bearish) / 0 (undefined, start of series)
       breakout   - 'up' / 'down' / None
       touches    - how many of the last `heat_lookback` bars had an oscillator
-                   reading in the same heat level as this bar
+                   reading in the same heat level as this bar (None if skip_heatmap)
       color      - hex color approximating the Pine plot color at this bar
+                   (always just breakout/transition color if skip_heatmap)
+
+    skip_heatmap: the heatmap (touches/color) is only needed for chart display —
+    it's the most expensive part (a per-bar windowed loop) and irrelevant for
+    scanning purely for breakouts, so scanners can skip it entirely.
     """
     atr_2000  = _atr(high, low, close, 2000)
     atr_200   = _atr(high, low, close, 200)
@@ -147,6 +152,21 @@ def compute_range_oscillator(high, low, close,
     # find which band today's reading falls closest to.
     touches = np.full(len(close), np.nan)
     colors  = [None] * len(close)
+
+    if skip_heatmap:
+        colors = [TRANSITION] * len(close)
+        for i in range(len(close)):
+            b = breakout.iloc[i]
+            if b == 'up':
+                colors[i] = STRONG_BULLISH
+            elif b == 'down':
+                colors[i] = STRONG_BEARISH
+        return pd.DataFrame({
+            'osc': osc, 'ma': ma, 'range_atr': range_atr,
+            'trend_dir': trend_dir, 'breakout': breakout,
+            'touches': touches, 'color': colors,
+        }, index=close.index)
+
     osc_vals = osc.to_numpy()
 
     for t in range(len(close)):
