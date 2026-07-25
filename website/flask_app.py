@@ -46,6 +46,7 @@ from db_marubozu_scanner import run_marubozu_scan, load_last_marubozu_results
 from db_extreme_scanner import run_extreme_scan, load_last_extreme_results
 from db_range_oscillator_scanner import run_range_oscillator_scan, load_last_range_oscillator_results
 from db_swing_scanner import run_swing_scan, load_last_swing_results
+from db_higher_low_scanner import run_higher_low_scan, load_last_higher_low_results
 from db_price_channel_scanner import (
     run_price_channel_scan, load_last_price_channel_results,
     get_ticker_daily, resample_weekly, resample_monthly,
@@ -6364,6 +6365,263 @@ def swing_page():
     return page_wrap('Swing Low Scanner', 'swing', content, auto_refresh=(running and jname == 'Swing Scan'))
 
 
+# ─── Weekly Higher-Low Scanner (Leviathan Swing Points, 3-dot shape) ─────────
+
+def _run_higher_low_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Higher Low Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_higher_low_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_higher_low_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Higher Low Scan'
+    threading.Thread(target=_run_higher_low_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-higher-low')
+def run_higher_low():
+    if not is_admin():
+        return redirect('/admin')
+    start_higher_low_scan()
+    return redirect('/higher-low')
+
+
+@app.route('/higher-low')
+def higher_low_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_higher_low_results()
+
+    if running and jname == 'Higher Low Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-higher-low" class="btn btn-blue">▶ Run Higher Low Scan</a>'
+
+    def score_color(s):
+        if s >= 6:  return '#22c55e'
+        if s >= 3:  return '#f59e0b'
+        return '#555'
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc = r['score']
+            reclaim_icon = '✓ Reclaimed A' if r.get('reclaimed_a') else '— below A'
+            reclaim_col  = '#22c55e' if r.get('reclaimed_a') else '#888'
+            vol_icon = ' ⚡' if r.get('vol_surge') else ''
+            rows_html += f"""
+            <tr class="hl-row" data-ticker="{r['ticker']}" data-b-date="{r['b_date']}" data-c-date="{r['c_date']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">🟢 {r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['a_date']} @ ${r['a_price']:,.2f}</td>
+              <td style="color:#ef4444">{r['b_date']} @ ${r['b_price']:,.2f} (-{r['flush_pct']:.1f}%)</td>
+              <td style="color:#22c55e">{r['c_date']} @ ${r['c_price']:,.2f} (+{r['recover_pct']:.1f}%)</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td style="color:{reclaim_col}">{reclaim_icon}</td>
+              <td style="color:#555">{vol_icon if vol_icon else '—'}</td>
+              <td style="color:#fff;font-weight:600">${r['current_price']:,.4f}</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // LightweightCharts v4 vertical line primitive — paneViews() → renderer() → draw()
+    class HLLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
+      }
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+    class HLLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new HLLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class HLLine {
+      constructor(time, color) {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new HLLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
+    }
+
+    document.querySelectorAll('.hl-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker = row.dataset.ticker;
+        const bDate  = row.dataset.bDate;
+        const cDate  = row.dataset.cDate;
+        const existId = 'hldrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.hl-drop').forEach(d => d.remove());
+        document.querySelectorAll('.hl-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'hl-drop';
+        drop.innerHTML = `<td colspan="8" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="hls-${ticker}">Loading...</span>
+          </div>
+          <div id="hlm-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="hlv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('hls-' + ticker).textContent = data.error; return; }
+            document.getElementById('hls-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('hlm-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            function snapTo(dateStr) {
+              const ms = new Date(dateStr).getTime();
+              let snap = dateStr, minDiff = Infinity;
+              for (const bar of data.ohlcv) {
+                const diff = Math.abs(new Date(bar.time).getTime() - ms);
+                if (diff < minDiff) { minDiff = diff; snap = bar.time; }
+              }
+              return snap;
+            }
+            candles.attachPrimitive(new HLLine(snapTo(bDate), '#ef4444'));
+            candles.attachPrimitive(new HLLine(snapTo(cDate), '#22c55e'));
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, barCount - 180), to: barCount + 5 });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('hlv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('hls-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Weekly Higher-Low Scanner — Leviathan Swing Points</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Finds the 3-dot "higher low" shape on the weekly chart: a swing low (A),
+        then an obvious flush below it (B, at least 3% deeper), then a later
+        swing low confirming back above the flush (C) — one final shakeout
+        before the uptrend structure resumes. Red marker = the flush (B),
+        green marker = the confirming higher low (C). Only shows patterns
+        where C confirmed within the last 12 weeks.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Higher Low Scan" else ''}
+
+    <section>
+      <style>
+        .hl-table {{ width:100%; border-collapse:collapse; font-size:.88rem; }}
+        .hl-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                       border-bottom:1px solid #2a2d3e; font-weight:500; }}
+        .hl-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .hl-table .hl-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .hl-table .hl-row.active td {{ background:#1a2235; }}
+        .hl-drop td {{ padding:0 !important; }}
+      </style>
+
+      <table class="hl-table">
+        <thead><tr>
+          <th>Ticker</th>
+          <th>A (prior low)</th>
+          <th>B (flush)</th>
+          <th>C (higher low)</th>
+          <th style="text-align:center">Score</th>
+          <th>Structure</th>
+          <th>Vol</th>
+          <th>Current</th>
+        </tr></thead>
+        <tbody id="hl-tbody">
+          {rows_html if rows_html else '<tr><td colspan="8" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    {chart_js}"""
+
+    return page_wrap('Higher Low Scanner', 'higher-low', content,
+                      auto_refresh=(running and jname == 'Higher Low Scan'))
+
+
 # ─── Extreme Scanner (TD Buy/Sell + ADX Momentum Warning) ────────────────────
 
 def _run_extreme_scan_job():
@@ -8827,6 +9085,17 @@ SIGNAL_FEED_SPECS = [
             f"liquidity zone {'still unfilled' if not r.get('filled') else 'already filled'}" +
             (", with a volume surge" if r.get('vol_surge') else '') + '.'),
     },
+    {
+        'key': 'higher-low', 'label': 'Weekly Higher Low',
+        'loader': load_last_higher_low_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"Higher-low shape confirmed {r['c_date']}: flushed {r['flush_pct']:.1f}% below the "
+            f"{r['a_date']} low, then bounced {r['recover_pct']:.1f}% to print a new low that's "
+            f"actually higher" +
+            (" — and reclaimed above the prior low entirely" if r.get('reclaimed_a') else '') +
+            (", with a volume surge" if r.get('vol_surge') else '') + '.'),
+    },
 ]
 
 
@@ -9541,6 +9810,7 @@ def admin_hub():
     pchan_btn    = job_btn('▶ Run Channel Scan', '/run-channels')
     rangeosc_btn = job_btn('▶ Run Range Oscillator Scan', '/run-range-oscillator')
     swing_btn    = job_btn('▶ Run Swing Scan', '/run-swing')
+    higherlow_btn = job_btn('▶ Run Higher Low Scan', '/run-higher-low')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
 
@@ -9562,6 +9832,7 @@ def admin_hub():
     pchan_last    = load_last_price_channel_results()
     rangeosc_last = load_last_range_oscillator_results()
     swing_last    = load_last_swing_results()
+    higherlow_last = load_last_higher_low_results()
 
     def scan_summary(last, results_url):
         if not last:
@@ -9690,6 +9961,10 @@ def admin_hub():
             <div class="btn-row" style="margin-bottom:6px">{swing_btn}</div>
             {scan_summary(swing_last, '/swing')}
           </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{higherlow_btn}</div>
+            {scan_summary(higherlow_last, '/higher-low')}
+          </div>
         </div>
       </div>
     </div>
@@ -9711,6 +9986,7 @@ def admin_hub():
         <a href="/channels" class="btn btn-blue" style="font-size:.82rem">Channel Scanner</a>
         <a href="/range-oscillator" class="btn btn-blue" style="font-size:.82rem">Range Oscillator Scanner</a>
         <a href="/swing" class="btn btn-blue" style="font-size:.82rem">Swing Low Scanner</a>
+        <a href="/higher-low" class="btn btn-blue" style="font-size:.82rem">Higher Low Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
       </div>
