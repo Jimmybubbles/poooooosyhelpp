@@ -79,7 +79,10 @@ def get_ticker_daily(conn, ticker):
     for col in ['open', 'high', 'low', 'close']:
         df[col] = pd.to_numeric(df[col], errors='coerce')
     df['volume'] = pd.to_numeric(df['volume'], errors='coerce').fillna(0).astype(int)
-    return df.dropna(subset=['open', 'high', 'low', 'close'])
+    df = df.dropna(subset=['open', 'high', 'low', 'close'])
+    # Drop degenerate zero/negative-price rows (bad data, e.g. index tickers
+    # like ^TNX) — a $0 low would otherwise divide-by-zero downstream.
+    return df[(df[['open', 'high', 'low', 'close']] > 0).all(axis=1)]
 
 
 def find_higher_low_patterns(low_zones, min_flush_pct=MIN_FLUSH_PCT):
