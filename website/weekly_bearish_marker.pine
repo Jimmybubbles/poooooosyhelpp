@@ -1,0 +1,102 @@
+// Draws a full-height vertical line on whatever chart/timeframe this is applied
+// to (intended for the daily chart) marking every WEEKLY "strong bearish"
+// breakdown from the Range Oscillator (Zeiierman) — see rangetest.pine for the
+// full oscillator this condition is lifted from: close < ma - rangeATR, where
+// `ma` is a volatility-weighted moving average and `rangeATR` is ATR(2000,
+// falling back to ATR(200)) * mult.
+//
+// Non-repainting, per TradingView's own documented pattern (Concepts >
+// Repainting): pull the weekly value with the [1] historical offset AND
+// lookahead = barmerge.lookahead_on together — that specific combination is
+// required. [1] alone with lookahead_off looks fine on historical bars but
+// lags an extra bar on realtime ones; lookahead_on alone without [1] would
+// be genuine repainting/lookahead. The two only work correctly paired.
+//
+// Debug confirmed wBreakDn itself is correct (background/marker debug lined
+// up exactly with the oscillator's own red spikes). The line is drawn on a
+// simple rising-edge check on that already-proven series (wBreakDn just
+// turned true) rather than tracking confirmed-week timestamps separately —
+// simpler, and avoids a gating mechanism that wasn't advancing correctly.
+//@version=6
+indicator('Weekly Strong Bearish Marker', overlay = true, max_lines_count = 500, max_labels_count = 500)
+
+// ~~ Inputs {
+length     = input.int(26, minval = 1, step = 1, title = 'Minimum Range Length', group = 'Range Oscillator')
+mult       = input.float(5, minval = 0.1, step = 0.1, title = 'Range Width Multiplier', group = 'Range Oscillator')
+
+showLine   = input.bool(true, title = 'Show Extreme-Start Line (red)', group = 'Extreme Start')
+lineColor  = input.color(color.rgb(255, 0, 0), title = 'Line Color', group = 'Extreme Start')
+lineWidth  = input.int(2, minval = 1, maxval = 5, title = 'Line Width', group = 'Extreme Start')
+lineStyle  = input.string('Dashed', title = 'Line Style', options = ['Solid', 'Dashed', 'Dotted'], group = 'Extreme Start')
+showLabel  = input.bool(true, title = 'Show "W" Label', group = 'Extreme Start')
+
+showExitLine  = input.bool(true, title = 'Show Extreme-End Line', group = 'Extreme End')
+exitLineColor = input.color(color.rgb(120, 255, 120), title = 'Line Color', group = 'Extreme End')
+exitLineWidth = input.int(2, minval = 1, maxval = 5, title = 'Line Width', group = 'Extreme End')
+exitLineStyle = input.string('Dashed', title = 'Line Style', options = ['Solid', 'Dashed', 'Dotted'], group = 'Extreme End')
+showExitLabel = input.bool(true, title = 'Show Label', group = 'Extreme End')
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+lineStyleResolved     = lineStyle == 'Solid' ? line.style_solid : lineStyle == 'Dotted' ? line.style_dotted : line.style_dashed
+exitLineStyleResolved = exitLineStyle == 'Solid' ? line.style_solid : exitLineStyle == 'Dotted' ? line.style_dotted : line.style_dashed
+
+// ~~ Weekly breakdown — computed with plain, unshifted references. The [1]
+// offset that makes this non-repainting is applied once, at the call site
+// below, matching TradingView's documented wrapper pattern exactly. {
+f_weeklyBreakdown() =>
+    atrRaw   = nz(ta.atr(2000), ta.atr(200))
+    rangeATR = atrRaw * mult
+
+    sumWeightedClose = 0.0
+    sumWeights = 0.0
+    for i = 0 to length - 1 by 1
+        delta = math.abs(close[i] - close[i + 1])
+        w = close[i + 1] != 0 ? delta / close[i + 1] : 0.0
+        sumWeightedClose := sumWeightedClose + close[i] * w
+        sumWeights := sumWeights + w
+    ma = sumWeights != 0 ? sumWeightedClose / sumWeights : na
+
+    breakDn = not na(ma) and close < ma - rangeATR
+    breakDn
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+wBreakDn = request.security(syminfo.tickerid, 'W', f_weeklyBreakdown()[1], lookahead = barmerge.lookahead_on)
+
+// ~~ Rising edge — the bar where wBreakDn first turns true, i.e. the first
+// bar (daily or weekly) that "sees" the newly confirmed breakdown week.
+// bar_index[1]/high[1]/low[1] is that breakdown week's own actual last bar
+// (the day/bar before this one), not "today". {
+freshBreakdown = wBreakDn and not wBreakDn[1]
+
+if freshBreakdown and showLine
+    line.new(bar_index[1], low[1], bar_index[1], high[1], extend = extend.both, color = lineColor, width = lineWidth, style = lineStyleResolved)
+    if showLabel
+        label.new(bar_index[1], high[1], 'W', style = label.style_label_down, color = color.new(lineColor, 0), textcolor = color.white, size = size.small)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Falling edge — mirror of the above: the bar where wBreakDn drops back
+// to false after being true, i.e. the weekly extreme has stopped confirming
+// as of the most recently closed week. Same non-repainting mechanics, same
+// bar_index[1] positioning — just the opposite transition. {
+extremeEnding = not wBreakDn and wBreakDn[1]
+
+if extremeEnding and showExitLine
+    line.new(bar_index[1], low[1], bar_index[1], high[1], extend = extend.both, color = exitLineColor, width = exitLineWidth, style = exitLineStyleResolved)
+    if showExitLabel
+        label.new(bar_index[1], low[1], 'W exit', style = label.style_label_up, color = color.new(exitLineColor, 0), textcolor = color.black, size = size.small)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Alerts — lets these be used as a scanner via TradingView's Alert system
+// (per symbol, or "Any alert() function call" across a watchlist) rather
+// than only eyeballed on one chart at a time. {
+alertcondition(freshBreakdown, title = 'Weekly Strong Bearish Breakdown', message = '{{ticker}}: fresh weekly strong bearish breakdown confirmed')
+alertcondition(extremeEnding, title = 'Weekly Strong Bearish Extreme Ending', message = '{{ticker}}: weekly strong bearish extreme has stopped confirming — possible reversal setup')
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
+
+// ~~ Optional debug overlay (off by default) — same markers used to confirm
+// wBreakDn itself was correct; flip on if either line ever looks off again {
+showDebug = input.bool(false, title = 'Show debug markers', group = 'Debug')
+bgcolor(showDebug and wBreakDn ? color.new(color.red, 70) : na)
+plotchar(showDebug and wBreakDn, title = 'wBreakDn debug', char = '▼', location = location.top, color = color.red, size = size.tiny)
+plotchar(showDebug and extremeEnding, title = 'extremeEnding debug', char = '▲', location = location.bottom, color = color.green, size = size.tiny)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}
