@@ -55,7 +55,8 @@ from db_price_channel_scanner import (
 )
 from db_picks import (init_tables, get_account, get_positions, get_portfolio_value,
                       get_history, buy_stock, sell_stock, get_daily_changes,
-                      get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR)
+                      get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR,
+                      STYLES)
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
                     submit_question, answer_question, get_questions, get_username,
                     get_user_stats)
@@ -866,6 +867,7 @@ def nav_html(active=''):
           <div class="nav-dropdown-menu">{markets_menu}</div>
         </div>
         {lnk('/picks',"Jimmy's Picks",'picks')}
+        {lnk('/app','📱 App','mobileapp')}
         {lnk('/options-picks','Options Picks','optionspicks')}
         {lnk('/options-tracker','Options Tracker','optionstracker')}
         {lnk('/asx','ASX 200','asx')}
@@ -2009,6 +2011,12 @@ def picks_page():
             <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Target / Take Profit</label>
             <input name="target_price" type="number" step="0.0001" placeholder="e.g. 200.00" style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
           </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Trading Style *</label>
+            <select name="style" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+              """ + ''.join(f'<option value="{key}">{label}</option>' for key, label in STYLES.items()) + """
+            </select>
+          </div>
         </div>
         <div style="margin-bottom:12px">
           <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why I think it will go up</label>
@@ -2022,11 +2030,21 @@ def picks_page():
       </form>
     </section>"""
 
+    # Style filter tabs
+    style_filter = request.args.get('style', 'all')
+    filtered_positions = positions if style_filter == 'all' else [p for p in positions if p['style'] == style_filter]
+    tab_defs = [('all', 'All')] + list(STYLES.items())
+    tabs_html = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">'
+    for key, label in tab_defs:
+        active = 'background:#3b82f6;color:#fff' if key == style_filter else 'background:#1a1d2e;color:#aaa'
+        tabs_html += f'<a href="/picks?style={key}" style="padding:6px 14px;border-radius:20px;font-size:.82rem;text-decoration:none;{active}">{label}</a>'
+    tabs_html += '</div>'
+
     # Open positions
     pos_html = ''
     if positions:
         cards = ''
-        for p in positions:
+        for p in filtered_positions:
             pnl_c  = '#22c55e' if p['pnl'] >= 0 else '#ef4444'
             sign   = '+' if p['pnl'] >= 0 else ''
             tgt    = f"${fmt_num(p['target_price'])}" if p['target_price'] else '—'
@@ -2034,6 +2052,8 @@ def picks_page():
             if p['target_price']:
                 up = (p['target_price'] - p['current_price']) / p['current_price'] * 100
                 upside = f"<span style='color:#60a5fa;font-size:.78rem'>({up:+.1f}% to target)</span>"
+
+            style_badge = f'<span style="font-size:.72rem;color:#a78bfa;background:#a78bfa18;padding:2px 8px;border-radius:4px;margin-left:8px">{STYLES.get(p["style"], p["style"])}</span>'
 
             img_html = ''
             if p['image_path']:
@@ -2063,6 +2083,7 @@ def picks_page():
                 <div>
                   <a href="/chart/{p['ticker']}" style="font-size:1.3rem;font-weight:700;color:#60a5fa">{p['ticker']}</a>
                   <span style="color:#555;font-size:.78rem;margin-left:10px">bought {p['bought_date']}</span>
+                  {style_badge}
                 </div>
                 <span style="font-size:1.1rem;font-weight:700;color:{pnl_c}">{sign}${p['pnl']:,.2f} ({sign}{p['pnl_pct']:.1f}%)</span>
               </div>
@@ -2079,7 +2100,10 @@ def picks_page():
               </div>
               {action_html}
             </div>"""
-        pos_html = f'<section><h2>Open Positions ({len(positions)})</h2>{cards}</section>'
+        if filtered_positions:
+            pos_html = f'<section><h2>Open Positions ({len(filtered_positions)})</h2>{cards}</section>'
+        else:
+            pos_html = '<section><h2>Open Positions</h2><p class="note">No open positions for this style.</p></section>'
     else:
         pos_html = '<section><h2>Open Positions</h2><p class="note">No open positions yet. Add your first pick above!</p></section>'
 
@@ -2163,7 +2187,7 @@ def picks_page():
     });
     </script>"""
 
-    content = err_html + msg_html + summary + add_form + pos_html + hist_html + sell_modal
+    content = err_html + msg_html + summary + add_form + tabs_html + pos_html + hist_html + sell_modal
     return page_wrap("Jimmy's Picks", 'picks', content)
 
 
@@ -2174,6 +2198,7 @@ def picks_buy():
     buy_price  = float(request.form.get('buy_price', 0))
     target     = request.form.get('target_price', '').strip()
     reason     = request.form.get('reason', '').strip()
+    style      = request.form.get('style', 'swing_pullback').strip()
     target_val = float(target) if target else None
 
     # Handle image upload
@@ -2185,7 +2210,7 @@ def picks_buy():
         os.makedirs(UPLOADS_DIR, exist_ok=True)
         file.save(os.path.join(UPLOADS_DIR, image_filename))
 
-    ok, result = buy_stock(ticker, shares, buy_price, target_val, reason, image_filename)
+    ok, result = buy_stock(ticker, shares, buy_price, target_val, reason, image_filename, style)
     if ok:
         return redirect(f'/picks?msg=Bought+{shares}+shares+of+{ticker}+at+${buy_price:.4f}')
     else:
@@ -2218,6 +2243,130 @@ def picks_sell(pick_id):
 @app.route('/picks/image/<filename>')
 def picks_image(filename):
     return send_from_directory(UPLOADS_DIR, filename)
+
+
+@app.route('/service-worker.js')
+def service_worker():
+    # Served from root (not /static/) so its scope covers the whole site, not just /static/.
+    resp = send_from_directory(os.path.join(BASE_DIR, 'static'), 'service-worker.js')
+    resp.headers['Service-Worker-Allowed'] = '/'
+    return resp
+
+
+@app.route('/app')
+def picks_app():
+    """Installable mobile PWA view — read-only picks grouped by trading style.
+    Posting/editing picks stays on the desktop /picks page."""
+    positions = get_positions()
+    cash      = get_account()
+    port_val  = get_portfolio_value(positions)
+    total_pnl = (cash + port_val) - 100_000.0
+
+    daily_changes = get_daily_changes([p['ticker'] for p in positions])
+    daily_pnl_total = sum(
+        p['shares'] * (daily_changes[p['ticker']][0] - daily_changes[p['ticker']][1])
+        for p in positions if p['ticker'] in daily_changes
+    )
+
+    active_style = request.args.get('style', 'swing_pullback')
+    if active_style not in STYLES:
+        active_style = 'swing_pullback'
+
+    pnl_color  = '#22c55e' if total_pnl >= 0 else '#ef4444'
+    pnl_sign   = '+' if total_pnl >= 0 else ''
+    dpnl_color = '#22c55e' if daily_pnl_total >= 0 else '#ef4444'
+    dpnl_sign  = '+' if daily_pnl_total >= 0 else ''
+
+    summary_html = f"""
+    <div class="app-summary">
+      <div><div class="app-summary-label">Total P&amp;L</div><div class="app-summary-value" style="color:{pnl_color}">{pnl_sign}${total_pnl:,.2f}</div></div>
+      <div><div class="app-summary-label">Today</div><div class="app-summary-value" style="color:{dpnl_color}">{dpnl_sign}${daily_pnl_total:,.2f}</div></div>
+      <div><div class="app-summary-label">Cash</div><div class="app-summary-value">${cash:,.0f}</div></div>
+    </div>"""
+
+    style_positions = [p for p in positions if p['style'] == active_style]
+    if style_positions:
+        cards_html = ''
+        for p in style_positions:
+            pnl_c = '#22c55e' if p['pnl'] >= 0 else '#ef4444'
+            sign  = '+' if p['pnl'] >= 0 else ''
+            tgt   = f"${fmt_num(p['target_price'])}" if p['target_price'] else '—'
+            img_html = f'<img src="/picks/image/{p["image_path"]}" class="app-card-img">' if p['image_path'] else ''
+            reason_html = f'<p class="app-card-reason">{p["reason"]}</p>' if p['reason'] else ''
+            cards_html += f"""
+            <div class="app-card">
+              <div class="app-card-top">
+                <div>
+                  <a href="/chart/{p['ticker']}" class="app-card-ticker">{p['ticker']}</a>
+                  <span class="app-card-date">bought {p['bought_date']}</span>
+                </div>
+                <span class="app-card-pnl" style="color:{pnl_c}">{sign}${p['pnl']:,.2f} ({sign}{p['pnl_pct']:.1f}%)</span>
+              </div>
+              {img_html}
+              {reason_html}
+              <div class="app-card-stats">
+                <div><span>Entry</span><strong>${fmt_num(p['buy_price'])}</strong></div>
+                <div><span>Current</span><strong>${fmt_num(p['current_price'])}</strong></div>
+                <div><span>Target</span><strong>{tgt}</strong></div>
+              </div>
+            </div>"""
+    else:
+        cards_html = '<p class="app-empty">No open picks in this style yet.</p>'
+
+    tabs_html = ''
+    for key, label in STYLES.items():
+        short = label.split('—')[0].strip()
+        active_cls = 'active' if key == active_style else ''
+        tabs_html += f'<a href="/app?style={key}" class="app-tab {active_cls}">{short}</a>'
+
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jimmy Trader Picks</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0a0c14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JT Picks">
+<link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+<style>
+  * {{ box-sizing:border-box }}
+  body {{ margin:0;background:#0a0c14;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding-bottom:76px }}
+  header {{ padding:16px;text-align:center;border-bottom:1px solid #1a1d2e }}
+  header h1 {{ margin:0;font-size:1.1rem }}
+  .app-summary {{ display:flex;justify-content:space-around;padding:14px 8px;border-bottom:1px solid #1a1d2e }}
+  .app-summary-label {{ font-size:.7rem;color:#666;text-transform:uppercase;letter-spacing:.03em }}
+  .app-summary-value {{ font-size:1rem;font-weight:700;margin-top:2px }}
+  .app-tabbar {{ position:fixed;bottom:0;left:0;right:0;display:flex;background:#12141f;border-top:1px solid #1a1d2e;padding:6px env(safe-area-inset-right) calc(6px + env(safe-area-inset-bottom)) env(safe-area-inset-left) }}
+  .app-tab {{ flex:1;text-align:center;padding:10px 4px;color:#666;text-decoration:none;font-size:.78rem;font-weight:600;border-radius:8px }}
+  .app-tab.active {{ color:#fff;background:#1f3a8a33 }}
+  main {{ padding:14px }}
+  .app-card {{ background:#12141f;border:1px solid #1a1d2e;border-radius:12px;padding:14px;margin-bottom:12px }}
+  .app-card-top {{ display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px }}
+  .app-card-ticker {{ font-size:1.15rem;font-weight:700;color:#60a5fa;text-decoration:none }}
+  .app-card-date {{ display:block;font-size:.7rem;color:#555;margin-top:2px }}
+  .app-card-pnl {{ font-size:1rem;font-weight:700;white-space:nowrap }}
+  .app-card-img {{ width:100%;border-radius:8px;margin-bottom:10px;border:1px solid #1a1d2e }}
+  .app-card-reason {{ font-size:.83rem;color:#aaa;line-height:1.5;margin:0 0 10px }}
+  .app-card-stats {{ display:flex;gap:14px;font-size:.8rem }}
+  .app-card-stats span {{ display:block;color:#555;font-size:.7rem }}
+  .app-empty {{ text-align:center;color:#666;padding:40px 0;font-size:.9rem }}
+</style>
+</head>
+<body>
+<header><h1>Jimmy Trader Picks</h1></header>
+{summary_html}
+<main>{cards_html}</main>
+<nav class="app-tabbar">{tabs_html}</nav>
+<script>
+if ('serviceWorker' in navigator) {{
+  window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js'));
+}}
+</script>
+</body>
+</html>"""
 
 
 # ─── Options Picks (dummy $100k long-calls/puts paper account) ────────────────

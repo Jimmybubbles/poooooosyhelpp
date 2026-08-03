@@ -16,6 +16,12 @@ from db_config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT
 STARTING_BALANCE = 100_000.0
 UPLOADS_DIR = os.path.join(BASE_DIR, 'uploads')
 
+STYLES = {
+    'swing_pullback': 'Swing — Pullback in Uptrend',
+    'range_breakout': 'Range — Breakout Potential',
+    'long_term':      'Long-Term — Per Annum Growth',
+}
+
 
 def get_connection():
     return pymysql.connect(
@@ -46,7 +52,8 @@ def init_tables():
                 reason       TEXT,
                 image_path   VARCHAR(500),
                 bought_date  DATETIME       NOT NULL,
-                status       VARCHAR(10)    DEFAULT 'open'
+                status       VARCHAR(10)    DEFAULT 'open',
+                style        VARCHAR(30)    NOT NULL DEFAULT 'swing_pullback'
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
 
@@ -67,6 +74,7 @@ def init_tables():
             "ALTER TABLE jimmy_trades ADD COLUMN sell_reason TEXT",
             "ALTER TABLE jimmy_trades ADD COLUMN sell_image VARCHAR(500)",
             "ALTER TABLE jimmy_trades ADD COLUMN pick_id INT",
+            "ALTER TABLE jimmy_picks ADD COLUMN style VARCHAR(30) NOT NULL DEFAULT 'swing_pullback'",
         ]:
             try:
                 cur.execute(col_sql)
@@ -131,7 +139,7 @@ def get_positions():
     with conn.cursor() as cur:
         cur.execute("""
             SELECT id, ticker, shares, buy_price, target_price,
-                   reason, image_path, bought_date
+                   reason, image_path, bought_date, style
             FROM jimmy_picks
             WHERE status = 'open'
             ORDER BY bought_date DESC
@@ -158,6 +166,7 @@ def get_positions():
             'reason':       r[5] or '',
             'image_path':   r[6] or '',
             'bought_date':  str(r[7])[:10],
+            'style':        r[8] or 'swing_pullback',
             'current_price': cur_price,
             'cost':         cost,
             'value':        value,
@@ -196,7 +205,7 @@ def get_history():
     } for r in rows]
 
 
-def buy_stock(ticker, shares, buy_price, target_price, reason, image_filename):
+def buy_stock(ticker, shares, buy_price, target_price, reason, image_filename, style='swing_pullback'):
     total_cost = shares * buy_price
     conn = get_connection()
     try:
@@ -208,9 +217,10 @@ def buy_stock(ticker, shares, buy_price, target_price, reason, image_filename):
 
             cur.execute("UPDATE jimmy_account SET cash = cash - %s WHERE id = 1", (total_cost,))
             cur.execute("""
-                INSERT INTO jimmy_picks (ticker, shares, buy_price, target_price, reason, image_path, bought_date)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (ticker.upper(), shares, buy_price, target_price or None, reason, image_filename, datetime.now()))
+                INSERT INTO jimmy_picks (ticker, shares, buy_price, target_price, reason, image_path, bought_date, style)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (ticker.upper(), shares, buy_price, target_price or None, reason, image_filename, datetime.now(),
+                  style if style in STYLES else 'swing_pullback'))
             pick_id = conn.insert_id()
             cur.execute("""
                 INSERT INTO jimmy_trades (ticker, action, shares, price, total, trade_date, notes)
@@ -266,7 +276,8 @@ def get_closed_trades():
             SELECT
                 p.id, p.ticker, p.shares, p.buy_price, p.reason,
                 p.image_path, p.bought_date,
-                t.price, t.pnl, t.trade_date, t.sell_reason, t.sell_image
+                t.price, t.pnl, t.trade_date, t.sell_reason, t.sell_image,
+                p.style
             FROM jimmy_picks p
             LEFT JOIN jimmy_trades t ON t.pick_id = p.id AND t.action = 'SELL'
             WHERE p.status = 'closed'
@@ -296,6 +307,7 @@ def get_closed_trades():
             'sell_reason': r[10] or '',
             'sell_image':  r[11] or '',
             'market':      'US',
+            'style':       r[12] or 'swing_pullback',
         })
     return trades
 
