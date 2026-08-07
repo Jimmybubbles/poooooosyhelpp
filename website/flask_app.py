@@ -6919,6 +6919,14 @@ def doublebottom_page():
 
     last = load_last_doublebottom_results()
 
+    # Guard against stale results saved by the old (pre-gap-down) schema —
+    # rendering would otherwise KeyError on the new field names. Drop any
+    # rows that don't look like the current schema instead of crashing.
+    if last and last.get('results'):
+        fresh_results = [r for r in last['results'] if 'gap_date' in r]
+        if len(fresh_results) != len(last['results']):
+            last = dict(last, results=fresh_results, total=len(fresh_results))
+
     if running and jname == 'Gap Down Double Bottom Scan':
         run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
     elif running:
