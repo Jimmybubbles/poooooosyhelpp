@@ -6872,12 +6872,12 @@ def higher_low_page():
                       auto_refresh=(running and jname == 'Higher Low Scan'))
 
 
-# ─── Daily Double Bottom Scanner ─────────────────────────────────────────────
+# ─── Gap Down Double Bottom Scanner ───────────────────────────────────────────
 
 def _run_doublebottom_scan_job():
     global _job_running, _job_name
     with open(LOG_FILE, 'w') as f:
-        f.write(f"=== Double Bottom Scan ===\nStarted: {datetime.now()}\n\n")
+        f.write(f"=== Gap Down Double Bottom Scan ===\nStarted: {datetime.now()}\n\n")
     try:
         run_doublebottom_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
     except Exception as e:
@@ -6895,7 +6895,7 @@ def start_doublebottom_scan():
         if _job_running:
             return False
         _job_running = True
-        _job_name    = 'Double Bottom Scan'
+        _job_name    = 'Gap Down Double Bottom Scan'
     threading.Thread(target=_run_doublebottom_scan_job, daemon=True).start()
     return True
 
@@ -6919,17 +6919,20 @@ def doublebottom_page():
 
     last = load_last_doublebottom_results()
 
-    if running and jname == 'Double Bottom Scan':
+    if running and jname == 'Gap Down Double Bottom Scan':
         run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
     elif running:
         run_btn = '<span class="btn btn-off">Another job running</span>'
     else:
-        run_btn = '<a href="/run-doublebottom" class="btn btn-blue">▶ Run Double Bottom Scan</a>'
+        run_btn = '<a href="/run-doublebottom" class="btn btn-blue">▶ Run Gap Down Double Bottom Scan</a>'
 
     def score_color(s):
         if s >= 55: return '#22c55e'
         if s >= 40: return '#f59e0b'
         return '#555'
+
+    def tier_color(label):
+        return {'10%+': '#b91c1c', '7.5%+': '#ef4444', '5%+': '#f59e0b', '2.5%+': '#60a5fa'}.get(label, '#555')
 
     rows_html = ''
     if last and last.get('results'):
@@ -6937,23 +6940,28 @@ def doublebottom_page():
             sc = r['score']
             touches = r['touches']
             touch_badge = f"{touches}× bottom" if touches == 2 else f"{touches}× bottoms 🔥"
-            vol_icon = ' ⚡' if r.get('vol_confirmed') else ''
+            vol_icon = ' ⚡' if r.get('vol_surge') else ''
+            recov_icon = ' ↩' if r.get('recovered_intraday') else ''
             bottoms_json = json.dumps([b['date'] for b in r['bottoms']])
             rows_html += f"""
             <tr class="db-row" data-ticker="{r['ticker']}" data-bottoms='{bottoms_json}'
-                data-neckline-date="{r['neckline_date']}">
+                data-neckline-date="{r['neckline_date']}" data-gap-pct="{r['gap_pct']}">
               <td><strong style="color:#60a5fa;font-size:1rem">🟢 {r['ticker']}</strong></td>
-              <td style="color:#aaa">{r['first_bottom_date']} @ ${r['first_bottom_price']:,.2f}</td>
-              <td style="color:#22c55e">{r['second_bottom_date']} @ ${r['second_bottom_price']:,.2f}</td>
+              <td style="color:#ef4444">
+                {r['gap_date']}
+                <span style="background:{tier_color(r['gap_tier'])};color:#fff;padding:1px 7px;
+                             border-radius:10px;font-size:.72rem;font-weight:700;margin-left:4px">{r['gap_pct']:.1f}%</span>
+              </td>
+              <td style="color:#aaa">${r['gap_low']:,.2f}</td>
+              <td style="color:#22c55e">{r['first_bottom_date']} @ ${r['first_bottom_price']:,.2f}</td>
               <td style="color:#f59e0b">${r['neckline']:,.2f} (+{r['neckline_pct']:.0f}%)</td>
               <td style="color:#aaa">{touch_badge}</td>
               <td style="text-align:center">
                 <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
                              border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
               </td>
-              <td style="color:#555">{vol_icon if vol_icon else '—'}</td>
+              <td style="color:#555">{vol_icon}{recov_icon if vol_icon or recov_icon else '—'}</td>
               <td style="color:#fff;font-weight:600">${r['price']:,.4f}</td>
-              <td style="color:#888">{r['range']} ({r['position_pct']}%)</td>
               <td style="color:#888">1:{r['rr']}</td>
             </tr>"""
 
@@ -7086,21 +7094,22 @@ def doublebottom_page():
 
     content = f"""
     <section style="margin-bottom:20px">
-      <h2>Daily Double Bottom Scanner</h2>
+      <h2>Gap Down Double Bottom Scanner</h2>
       <p style="font-size:.88rem;color:#888;margin-bottom:16px">
-        Finds double (and triple/quadruple+) bottom setups: price sitting in the
-        0-25% zone of its dollar-range bucket, with the current low matching an
-        earlier confirmed swing low (within 4%) and a neckline peak between them
-        of at least 8%. Green markers = confirmed bottom touches, amber marker =
-        the neckline peak. Scored mainly on how many times price has retested
-        the same support — a triple or quadruple bottom scores well above a
-        plain double bottom.
+        Finds stocks that gapped down in the last day/week to a price that
+        matches an earlier confirmed double-bottom support — the gap landed
+        almost exactly on a level the stock already proved as support once
+        before. Price must also sit in the 0-25% zone of its dollar-range
+        bucket, and the neckline between the two lows must clear 8%+. Green
+        markers = confirmed bottom touches (prior support + the gap low),
+        amber marker = the neckline peak. Use the tier buttons to filter by
+        gap size.
       </p>
       <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
       <p class="note">{scan_info}</p>
     </section>
 
-    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Double Bottom Scan" else ''}
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Gap Down Double Bottom Scan" else ''}
 
     <section>
       <style>
@@ -7111,19 +7120,31 @@ def doublebottom_page():
         .db-table .db-row:hover td {{ background:#1f2235; cursor:pointer; }}
         .db-table .db-row.active td {{ background:#1a2235; }}
         .db-drop td {{ padding:0 !important; }}
+        .db-filter-btn {{ background:#1a1d2e; border:1px solid #2a2d3e; color:#888;
+                          padding:6px 16px; border-radius:6px; cursor:pointer; font-size:.82rem; }}
+        .db-filter-btn.active {{ background:#1e3a5f; border-color:#3b82f6; color:#60a5fa; font-weight:600; }}
       </style>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span style="color:#666;font-size:.78rem;margin-right:2px">Gap size:</span>
+        <button class="db-filter-btn active" id="db-t25" onclick="setGapFilter(2.5)">2.5%+</button>
+        <button class="db-filter-btn"        id="db-t50" onclick="setGapFilter(5)">5%+</button>
+        <button class="db-filter-btn"        id="db-t75" onclick="setGapFilter(7.5)">7.5%+</button>
+        <button class="db-filter-btn"        id="db-t100" onclick="setGapFilter(10)">10%+</button>
+        <span id="db-count" style="color:#555;font-size:.78rem;margin-left:4px"></span>
+      </div>
 
       <table class="db-table">
         <thead><tr>
           <th>Ticker</th>
-          <th>1st Bottom</th>
-          <th>2nd Bottom</th>
+          <th>Gap</th>
+          <th>Gap Low</th>
+          <th>Prior Bottom</th>
           <th>Neckline</th>
           <th>Touches</th>
           <th style="text-align:center">Score</th>
-          <th>Vol</th>
+          <th>Vol/Recov</th>
           <th>Current</th>
-          <th>Zone</th>
           <th>R:R</th>
         </tr></thead>
         <tbody id="db-tbody">
@@ -7131,10 +7152,30 @@ def doublebottom_page():
         </tbody>
       </table>
     </section>
+    <script>
+    const DB_TIER_IDS = {{ 2.5: 'db-t25', 5: 'db-t50', 7.5: 'db-t75', 10: 'db-t100' }};
+    function setGapFilter(tier) {{
+      document.querySelectorAll('.db-filter-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(DB_TIER_IDS[tier]).classList.add('active');
+      let visible = 0;
+      document.querySelectorAll('.db-row').forEach(r => {{
+        const gapPct = parseFloat(r.dataset.gapPct);
+        const show = gapPct <= -tier;
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
+        if (!show) {{
+          const drop = document.getElementById('dbdrop-' + r.dataset.ticker);
+          if (drop) {{ drop.remove(); r.classList.remove('active'); }}
+        }}
+      }});
+      document.getElementById('db-count').textContent = visible + ' signal' + (visible !== 1 ? 's' : '');
+    }}
+    setGapFilter(2.5);
+    </script>
     {chart_js}"""
 
-    return page_wrap('Double Bottom Scanner', 'doublebottom', content,
-                      auto_refresh=(running and jname == 'Double Bottom Scan'))
+    return page_wrap('Gap Down Double Bottom Scanner', 'doublebottom', content,
+                      auto_refresh=(running and jname == 'Gap Down Double Bottom Scan'))
 
 
 # ─── Weekly Extreme-Exit Scanner (Range Oscillator cooling off) ─────────────
@@ -9880,15 +9921,16 @@ SIGNAL_FEED_SPECS = [
             (", extreme was sustained 2+ weeks" if r.get('sustained') else '') + '.'),
     },
     {
-        'key': 'doublebottom', 'label': 'Double Bottom',
+        'key': 'doublebottom', 'label': 'Gap Down Double Bottom',
         'loader': load_last_doublebottom_results, 'top_n': 3,
         'sort': lambda r: r['score'],
         'reasoning': lambda r: (
-            f"{r['touches']}x confirmed bottom near ${r['second_bottom_price']:.2f} "
-            f"(first touch {r['first_bottom_date']}), neckline at ${r['neckline']:.2f} "
-            f"(+{r['neckline_pct']:.0f}%), price ${r['price']:.2f} sitting at "
+            f"Gapped down {r['gap_pct']}% on {r['gap_date']} to ${r['gap_low']:.2f}, matching "
+            f"the {r['first_bottom_date']} low ({r['touches']}x confirmed touches) — neckline at "
+            f"${r['neckline']:.2f} (+{r['neckline_pct']:.0f}%), price ${r['price']:.2f} sitting at "
             f"{r['position_pct']}% of its range" +
-            (", with a volume surge on the bottom" if r.get('vol_confirmed') else '') + '.'),
+            (", with a volume surge on the gap" if r.get('vol_surge') else '') +
+            (", recovered intraday" if r.get('recovered_intraday') else '') + '.'),
     },
 ]
 
@@ -10609,7 +10651,7 @@ def admin_hub():
     swing_btn    = job_btn('▶ Run Swing Scan', '/run-swing')
     higherlow_btn = job_btn('▶ Run Higher Low Scan', '/run-higher-low')
     extremeexit_btn = job_btn('▶ Run Extreme Exit Scan', '/run-extreme-exit')
-    doublebottom_btn = job_btn('▶ Run Double Bottom Scan', '/run-doublebottom')
+    doublebottom_btn = job_btn('▶ Run Gap Down Double Bottom Scan', '/run-doublebottom')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
     daily_update_note = (
@@ -10804,7 +10846,7 @@ def admin_hub():
         <a href="/swing" class="btn btn-blue" style="font-size:.82rem">Swing Low Scanner</a>
         <a href="/higher-low" class="btn btn-blue" style="font-size:.82rem">Higher Low Scanner</a>
         <a href="/extreme-exit" class="btn btn-blue" style="font-size:.82rem">Extreme Exit Scanner</a>
-        <a href="/doublebottom" class="btn btn-blue" style="font-size:.82rem">Double Bottom Scanner</a>
+        <a href="/doublebottom" class="btn btn-blue" style="font-size:.82rem">Gap Down Double Bottom Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
       </div>
