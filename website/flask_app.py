@@ -58,6 +58,9 @@ from db_picks import (init_tables, get_account, get_positions, get_portfolio_val
                       get_history, buy_stock, sell_stock, get_daily_changes,
                       get_closed_trades, add_manual_closed_trade, delete_closed_trade, UPLOADS_DIR,
                       STYLES)
+from db_ideas import (init_tables as init_ideas_tables, post_idea, get_open_ideas,
+                      get_closed_ideas, close_idea, delete_idea, get_system_summary,
+                      IDEA_NOTIONAL)
 from db_ask import (init_tables as init_ask_tables, register_user, login_user,
                     submit_question, answer_question, get_questions, get_username,
                     get_user_stats)
@@ -96,6 +99,7 @@ def is_admin():
 # Init tables on startup
 try:
     init_tables()
+    init_ideas_tables()
     init_ask_tables()
     init_asx_tables()
     init_dividend_tables()
@@ -869,6 +873,7 @@ def nav_html(active=''):
           <div class="nav-dropdown-menu">{markets_menu}</div>
         </div>
         {lnk('/picks',"Jimmy's Picks",'picks')}
+        {lnk('/ideas',"Jimmy's Ideas",'ideas')}
         {lnk('/app','📱 App','mobileapp')}
         {lnk('/options-picks','Options Picks','optionspicks')}
         {lnk('/options-tracker','Options Tracker','optionstracker')}
@@ -2345,6 +2350,292 @@ def picks_image(filename):
     return send_from_directory(UPLOADS_DIR, filename)
 
 
+# ─── Jimmy's Ideas ($10k-per-idea call tracker, 3 systems) ───────────────────
+
+@app.route('/ideas')
+def ideas_page():
+    open_ideas   = get_open_ideas()
+    closed_ideas = get_closed_ideas()
+    summary      = get_system_summary()
+
+    daily_changes = get_daily_changes([i['ticker'] for i in open_ideas])
+    for i in open_ideas:
+        if i['ticker'] in daily_changes:
+            today, prev = daily_changes[i['ticker']]
+            i['daily_pnl'] = i['shares'] * (today - prev)
+            i['daily_pct'] = ((today - prev) / prev * 100) if prev else 0
+        else:
+            i['daily_pnl'] = 0.0
+            i['daily_pct'] = 0.0
+
+    # Per-system summary cards
+    sys_cards = ''
+    for key, label in STYLES.items():
+        s = summary[key]
+        c = '#22c55e' if s['total_pnl'] >= 0 else '#ef4444'
+        sign = '+' if s['total_pnl'] >= 0 else ''
+        wr = f"{s['win_rate']:.0f}% win rate" if s['win_rate'] is not None else 'no closed ideas yet'
+        sys_cards += f"""
+        <div class="card">
+          <div class="stat-label">{label}</div>
+          <div class="stat-value" style="font-size:1.3rem;color:{c}">{sign}${s['total_pnl']:,.2f}</div>
+          <div class="stat-sub">{s['open']} open &middot; {s['closed']} closed &middot; {wr}</div>
+        </div>"""
+    summary_html = f'<div class="grid4" style="margin-bottom:24px">{sys_cards}</div>'
+
+    # Add new idea form (admin only) — no shares field, always sized at $10k
+    add_form = '' if not is_admin() else f"""
+    <section>
+      <h2>Post New Idea</h2>
+      <p class="note" style="margin-bottom:12px">Every idea is sized as a fixed ${IDEA_NOTIONAL:,.0f} hypothetical buy-in — no shares to enter, just the entry price.</p>
+      <form method="POST" action="/ideas/post" enctype="multipart/form-data">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px">
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Ticker *</label>
+            <input name="ticker" placeholder="e.g. AAPL" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Entry Price (USD) *</label>
+            <input name="buy_price" type="number" step="0.0001" placeholder="e.g. 150.00" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div>
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">System *</label>
+            <select name="style" required style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+              """ + ''.join(f'<option value="{key}">{label}</option>' for key, label in STYLES.items()) + """
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why this idea</label>
+          <textarea name="reason" rows="3" placeholder="Gap down onto prior support, channel bottom..." style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Chart Screenshot</label>
+          <input name="chart_image" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+        </div>
+        <button type="submit" class="btn btn-green">+ Post Idea</button>
+      </form>
+    </section>"""
+
+    # System filter tabs
+    style_filter = request.args.get('style', 'all')
+    filtered_open = open_ideas if style_filter == 'all' else [i for i in open_ideas if i['style'] == style_filter]
+    tab_defs = [('all', 'All')] + list(STYLES.items())
+    tabs_html = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">'
+    for key, label in tab_defs:
+        active = 'background:#3b82f6;color:#fff' if key == style_filter else 'background:#1a1d2e;color:#aaa'
+        tabs_html += f'<a href="/ideas?style={key}" style="padding:6px 14px;border-radius:20px;font-size:.82rem;text-decoration:none;{active}">{label}</a>'
+    tabs_html += '</div>'
+
+    # Open ideas
+    if open_ideas:
+        cards = ''
+        for i in filtered_open:
+            pnl_c = '#22c55e' if i['pnl'] >= 0 else '#ef4444'
+            sign  = '+' if i['pnl'] >= 0 else ''
+            style_badge = f'<span style="font-size:.72rem;color:#a78bfa;background:#a78bfa18;padding:2px 8px;border-radius:4px;margin-left:8px">{STYLES.get(i["style"], i["style"])}</span>'
+
+            img_html = ''
+            if i['image_path']:
+                img_html = f'<img src="/ideas/image/{i["image_path"]}" style="width:100%;border-radius:6px;margin-bottom:12px;border:1px solid #2a2d3e">'
+            reason_html = f'<p style="color:#aaa;font-size:.83rem;margin-bottom:12px;line-height:1.5">{i["reason"]}</p>' if i['reason'] else ''
+
+            if is_admin():
+                action_html = f"""
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button class="btn btn-amber" style="padding:7px 16px"
+                    onclick="openIdeaCloseModal({i['id']},'{i['ticker']}',{i['current_price']:.4f},'/ideas/close/{i['id']}')">Close</button>
+                  <a href="/chart/{i['ticker']}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">Chart</a>
+                </div>"""
+            else:
+                action_html = f'<a href="/chart/{i["ticker"]}" class="btn btn-blue" style="padding:7px 14px;font-size:.82rem">View Chart</a>'
+
+            dc   = i['daily_pnl']
+            dc_c = '#22c55e' if dc >= 0 else '#ef4444'
+            dc_s = '+' if dc >= 0 else ''
+            daily_badge = f'<span style="font-size:.78rem;font-weight:600;color:{dc_c};background:{dc_c}18;padding:2px 8px;border-radius:4px">{dc_s}${dc:,.2f} today ({dc_s}{i["daily_pct"]:.2f}%)</span>'
+
+            cards += f"""
+            <div class="card" style="margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+                <div>
+                  <a href="/chart/{i['ticker']}" style="font-size:1.3rem;font-weight:700;color:#60a5fa">{i['ticker']}</a>
+                  <span style="color:#555;font-size:.78rem;margin-left:10px">posted {i['posted_date']}</span>
+                  {style_badge}
+                </div>
+                <span style="font-size:1.1rem;font-weight:700;color:{pnl_c}">{sign}${i['pnl']:,.2f} ({sign}{i['pnl_pct']:.1f}%)</span>
+              </div>
+              <div style="margin-bottom:12px">{daily_badge}</div>
+              {img_html}
+              {reason_html}
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px;font-size:.83rem">
+                <div><span style="color:#555">${IDEA_NOTIONAL:,.0f} buy-in</span><br><strong>{fmt_num(i['shares'])} sh</strong></div>
+                <div><span style="color:#555">Entry</span><br><strong>${fmt_num(i['buy_price'])}</strong></div>
+                <div><span style="color:#555">Current</span><br><strong>${fmt_num(i['current_price'])}</strong></div>
+                <div><span style="color:#555">Worth Now</span><br><strong>${i['value']:,.2f}</strong></div>
+              </div>
+              {action_html}
+            </div>"""
+        if filtered_open:
+            pos_html = f'<section><h2>Open Ideas ({len(filtered_open)})</h2>{cards}</section>'
+        else:
+            pos_html = '<section><h2>Open Ideas</h2><p class="note">No open ideas for this system.</p></section>'
+    else:
+        pos_html = '<section><h2>Open Ideas</h2><p class="note">No ideas posted yet.</p></section>'
+
+    # Closed ideas — the track record
+    filtered_closed = closed_ideas if style_filter == 'all' else [i for i in closed_ideas if i['style'] == style_filter]
+    hist_html = ''
+    if filtered_closed:
+        rows = ''
+        for i in filtered_closed:
+            pnl_c = '#22c55e' if i['pnl'] >= 0 else '#ef4444'
+            sign  = '+' if i['pnl'] >= 0 else ''
+            del_btn = f'<a href="/ideas/delete/{i["id"]}" onclick="return confirm(\'Delete this closed idea?\')" style="color:#555;font-size:.78rem">delete</a>' if is_admin() else ''
+            rows += f"""<tr>
+              <td>{i['posted_date']} → {i['sell_date']}</td>
+              <td><strong style="color:#60a5fa">{i['ticker']}</strong></td>
+              <td>{STYLES.get(i['style'], i['style'])}</td>
+              <td>${fmt_num(i['buy_price'])}</td>
+              <td>${fmt_num(i['sell_price'])}</td>
+              <td style="color:{pnl_c};font-weight:700">{sign}${i['pnl']:,.2f} ({sign}{i['pnl_pct']:.1f}%)</td>
+              <td>{del_btn}</td>
+            </tr>"""
+        hist_html = f"""
+        <section>
+          <h2>Closed Ideas ({len(filtered_closed)})</h2>
+          <style>
+            table{{width:100%;border-collapse:collapse;font-size:.83rem}}
+            th{{text-align:left;padding:8px 10px;color:#555;border-bottom:1px solid #2a2d3e;font-weight:500}}
+            td{{padding:8px 10px;border-bottom:1px solid #151820}}
+            tr:hover td{{background:#1f2235}}
+          </style>
+          <table>
+            <tr><th>Posted → Closed</th><th>Ticker</th><th>System</th><th>Entry</th><th>Exit</th><th>P&amp;L</th><th></th></tr>
+            {rows}
+          </table>
+        </section>"""
+
+    msg = request.args.get('msg', '')
+    msg_html = f'<div style="background:#1a2e1a;border:1px solid #22c55e;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#86efac">{msg}</div>' if msg else ''
+    err = request.args.get('err', '')
+    err_html = f'<div class="err-box">{err}</div>' if err else ''
+
+    close_modal = """
+    <div id="idea-close-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center">
+      <div style="background:#13151f;border:1px solid #2a2d3e;border-radius:12px;padding:28px;width:100%;max-width:500px;margin:20px">
+        <h3 id="idea-close-modal-title" style="margin:0 0 20px">Close Idea</h3>
+        <form id="idea-close-form" method="POST" enctype="multipart/form-data">
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Exit Price *</label>
+            <input id="idea-close-price-input" name="sell_price" type="number" step="0.0001" required
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.9rem">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Why closed</label>
+            <textarea name="sell_reason" rows="4" placeholder="Target hit, thesis broke, stop out..."
+              style="width:100%;padding:8px 10px;background:#0a0c14;border:1px solid #2a2d3e;border-radius:6px;color:#fff;font-size:.88rem;resize:vertical"></textarea>
+          </div>
+          <div style="margin-bottom:20px">
+            <label style="font-size:.78rem;color:#666;display:block;margin-bottom:4px">Chart Screenshot</label>
+            <input name="sell_chart" type="file" accept="image/*" style="color:#aaa;font-size:.85rem">
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-amber" style="flex:1">Confirm Close</button>
+            <button type="button" class="btn" style="flex:1;background:#252839" onclick="closeIdeaCloseModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+    function openIdeaCloseModal(ideaId, ticker, currentPrice, action) {
+      document.getElementById('idea-close-modal-title').textContent = 'Close ' + ticker;
+      document.getElementById('idea-close-price-input').value = currentPrice;
+      document.getElementById('idea-close-form').action = action;
+      document.getElementById('idea-close-modal').style.display = 'flex';
+    }
+    function closeIdeaCloseModal() {
+      document.getElementById('idea-close-modal').style.display = 'none';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeIdeaCloseModal();
+    });
+    </script>"""
+
+    content = err_html + msg_html + summary_html + add_form + tabs_html + pos_html + hist_html + close_modal
+    return page_wrap("Jimmy's Ideas", 'ideas', content)
+
+
+@app.route('/ideas/post', methods=['POST'])
+def ideas_post():
+    if not is_admin():
+        return redirect('/ideas')
+    ticker    = request.form.get('ticker', '').strip().upper()
+    buy_price = request.form.get('buy_price', 0)
+    style     = request.form.get('style', 'swing_pullback').strip()
+    reason    = request.form.get('reason', '').strip()
+
+    image_filename = ''
+    file = request.files.get('chart_image')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        image_filename = f"idea_{ticker}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, image_filename))
+
+    try:
+        buy_price = float(buy_price)
+    except (TypeError, ValueError):
+        return redirect('/ideas?err=Invalid+entry+price')
+
+    ok, result = post_idea(ticker, buy_price, style, reason, image_filename)
+    if ok:
+        return redirect(f'/ideas?msg=Posted+{ticker}+idea+at+${buy_price:.4f}')
+    else:
+        return redirect(f'/ideas?err={result}')
+
+
+@app.route('/ideas/close/<int:idea_id>', methods=['POST'])
+def ideas_close(idea_id):
+    if not is_admin():
+        return redirect('/ideas')
+    sell_price  = request.form.get('sell_price', 0)
+    sell_reason = request.form.get('sell_reason', '').strip()
+
+    sell_image = ''
+    file = request.files.get('sell_chart')
+    if file and file.filename:
+        ext = os.path.splitext(file.filename)[1].lower()
+        sell_image = f"idea_close_{idea_id}_{uuid.uuid4().hex[:8]}{ext}"
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+        file.save(os.path.join(UPLOADS_DIR, sell_image))
+
+    try:
+        sell_price = float(sell_price)
+    except (TypeError, ValueError):
+        return redirect('/ideas?err=Invalid+exit+price')
+
+    ok, result = close_idea(idea_id, sell_price, sell_reason, sell_image)
+    if ok:
+        sign = '+' if result >= 0 else ''
+        return redirect(f'/ideas?msg=Idea+closed.+P%26L:+{sign}${result:.2f}')
+    else:
+        return redirect(f'/ideas?err={result}')
+
+
+@app.route('/ideas/delete/<int:idea_id>')
+def ideas_delete(idea_id):
+    if not is_admin():
+        return redirect('/ideas')
+    delete_idea(idea_id)
+    return redirect('/ideas?msg=Idea+deleted')
+
+
+@app.route('/ideas/image/<filename>')
+def ideas_image(filename):
+    return send_from_directory(UPLOADS_DIR, filename)
+
+
 @app.route('/service-worker.js')
 def service_worker():
     # Served from root (not /static/) so its scope covers the whole site, not just /static/.
@@ -2355,17 +2646,22 @@ def service_worker():
 
 @app.route('/app')
 def picks_app():
-    """Installable mobile PWA view — read-only picks grouped by trading style.
-    Posting/editing picks stays on the desktop /picks page."""
-    positions = get_positions()
-    cash      = get_account()
-    port_val  = get_portfolio_value(positions)
-    total_pnl = (cash + port_val) - 100_000.0
+    """
+    Installable mobile PWA view — read-only trade ideas grouped by system
+    (swing pullback / range breakout / long-term). Each idea is a fixed
+    $10k hypothetical buy-in, so the P&L shown is exactly what a member's
+    P&L would have been had they put $10k into that idea when it was
+    posted. Posting/closing ideas stays on the desktop /ideas page.
+    """
+    open_ideas   = get_open_ideas()
+    closed_ideas = get_closed_ideas()
 
-    daily_changes = get_daily_changes([p['ticker'] for p in positions])
+    total_pnl = sum(i['pnl'] for i in open_ideas) + sum(i['pnl'] for i in closed_ideas)
+
+    daily_changes = get_daily_changes([i['ticker'] for i in open_ideas])
     daily_pnl_total = sum(
-        p['shares'] * (daily_changes[p['ticker']][0] - daily_changes[p['ticker']][1])
-        for p in positions if p['ticker'] in daily_changes
+        i['shares'] * (daily_changes[i['ticker']][0] - daily_changes[i['ticker']][1])
+        for i in open_ideas if i['ticker'] in daily_changes
     )
 
     active_style = request.args.get('style', 'swing_pullback')
@@ -2381,37 +2677,54 @@ def picks_app():
     <div class="app-summary">
       <div><div class="app-summary-label">Total P&amp;L</div><div class="app-summary-value" style="color:{pnl_color}">{pnl_sign}${total_pnl:,.2f}</div></div>
       <div><div class="app-summary-label">Today</div><div class="app-summary-value" style="color:{dpnl_color}">{dpnl_sign}${daily_pnl_total:,.2f}</div></div>
-      <div><div class="app-summary-label">Cash</div><div class="app-summary-value">${cash:,.0f}</div></div>
+      <div><div class="app-summary-label">Open Ideas</div><div class="app-summary-value">{len(open_ideas)}</div></div>
     </div>"""
 
-    style_positions = [p for p in positions if p['style'] == active_style]
-    if style_positions:
+    style_open   = [i for i in open_ideas if i['style'] == active_style]
+    style_closed = [i for i in closed_ideas if i['style'] == active_style]
+
+    if style_open:
         cards_html = ''
-        for p in style_positions:
-            pnl_c = '#22c55e' if p['pnl'] >= 0 else '#ef4444'
-            sign  = '+' if p['pnl'] >= 0 else ''
-            tgt   = f"${fmt_num(p['target_price'])}" if p['target_price'] else '—'
-            img_html = f'<img src="/picks/image/{p["image_path"]}" class="app-card-img">' if p['image_path'] else ''
-            reason_html = f'<p class="app-card-reason">{p["reason"]}</p>' if p['reason'] else ''
+        for i in style_open:
+            pnl_c = '#22c55e' if i['pnl'] >= 0 else '#ef4444'
+            sign  = '+' if i['pnl'] >= 0 else ''
+            img_html = f'<img src="/ideas/image/{i["image_path"]}" class="app-card-img">' if i['image_path'] else ''
+            reason_html = f'<p class="app-card-reason">{i["reason"]}</p>' if i['reason'] else ''
             cards_html += f"""
             <div class="app-card">
               <div class="app-card-top">
                 <div>
-                  <a href="/chart/{p['ticker']}" class="app-card-ticker">{p['ticker']}</a>
-                  <span class="app-card-date">bought {p['bought_date']}</span>
+                  <a href="/chart/{i['ticker']}" class="app-card-ticker">{i['ticker']}</a>
+                  <span class="app-card-date">posted {i['posted_date']}</span>
                 </div>
-                <span class="app-card-pnl" style="color:{pnl_c}">{sign}${p['pnl']:,.2f} ({sign}{p['pnl_pct']:.1f}%)</span>
+                <span class="app-card-pnl" style="color:{pnl_c}">{sign}${i['pnl']:,.2f} ({sign}{i['pnl_pct']:.1f}%)</span>
               </div>
               {img_html}
               {reason_html}
               <div class="app-card-stats">
-                <div><span>Entry</span><strong>${fmt_num(p['buy_price'])}</strong></div>
-                <div><span>Current</span><strong>${fmt_num(p['current_price'])}</strong></div>
-                <div><span>Target</span><strong>{tgt}</strong></div>
+                <div><span>Entry</span><strong>${fmt_num(i['buy_price'])}</strong></div>
+                <div><span>Current</span><strong>${fmt_num(i['current_price'])}</strong></div>
+                <div><span>$10k Now Worth</span><strong>${i['value']:,.2f}</strong></div>
               </div>
             </div>"""
     else:
-        cards_html = '<p class="app-empty">No open picks in this style yet.</p>'
+        cards_html = '<p class="app-empty">No open ideas in this system yet.</p>'
+
+    closed_html = ''
+    if style_closed:
+        rows = ''
+        for i in style_closed:
+            pnl_c = '#22c55e' if i['pnl'] >= 0 else '#ef4444'
+            sign  = '+' if i['pnl'] >= 0 else ''
+            rows += f"""
+            <div class="app-closed-row">
+              <div>
+                <span class="app-closed-ticker">{i['ticker']}</span>
+                <span class="app-closed-date">{i['posted_date']} → {i['sell_date']}</span>
+              </div>
+              <span style="color:{pnl_c};font-weight:700">{sign}${i['pnl']:,.2f} ({sign}{i['pnl_pct']:.1f}%)</span>
+            </div>"""
+        closed_html = f'<h2 class="app-section-h">Track Record</h2><div class="app-closed-list">{rows}</div>'
 
     tabs_html = ''
     for key, label in STYLES.items():
@@ -2424,7 +2737,7 @@ def picks_app():
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Jimmy Trader Picks</title>
+<title>Jimmy Trader Ideas</title>
 <link rel="manifest" href="/static/manifest.json">
 <meta name="theme-color" content="#0a0c14">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2436,6 +2749,7 @@ def picks_app():
   body {{ margin:0;background:#0a0c14;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding-bottom:76px }}
   header {{ padding:16px;text-align:center;border-bottom:1px solid #1a1d2e }}
   header h1 {{ margin:0;font-size:1.1rem }}
+  header p {{ margin:4px 0 0;font-size:.72rem;color:#555 }}
   .app-summary {{ display:flex;justify-content:space-around;padding:14px 8px;border-bottom:1px solid #1a1d2e }}
   .app-summary-label {{ font-size:.7rem;color:#666;text-transform:uppercase;letter-spacing:.03em }}
   .app-summary-value {{ font-size:1rem;font-weight:700;margin-top:2px }}
@@ -2443,6 +2757,7 @@ def picks_app():
   .app-tab {{ flex:1;text-align:center;padding:10px 4px;color:#666;text-decoration:none;font-size:.78rem;font-weight:600;border-radius:8px }}
   .app-tab.active {{ color:#fff;background:#1f3a8a33 }}
   main {{ padding:14px }}
+  .app-section-h {{ font-size:.85rem;color:#888;margin:20px 0 10px }}
   .app-card {{ background:#12141f;border:1px solid #1a1d2e;border-radius:12px;padding:14px;margin-bottom:12px }}
   .app-card-top {{ display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px }}
   .app-card-ticker {{ font-size:1.15rem;font-weight:700;color:#60a5fa;text-decoration:none }}
@@ -2453,12 +2768,17 @@ def picks_app():
   .app-card-stats {{ display:flex;gap:14px;font-size:.8rem }}
   .app-card-stats span {{ display:block;color:#555;font-size:.7rem }}
   .app-empty {{ text-align:center;color:#666;padding:40px 0;font-size:.9rem }}
+  .app-closed-list {{ background:#12141f;border:1px solid #1a1d2e;border-radius:12px;overflow:hidden }}
+  .app-closed-row {{ display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:.85rem;border-bottom:1px solid #1a1d2e }}
+  .app-closed-row:last-child {{ border-bottom:none }}
+  .app-closed-ticker {{ font-weight:700;color:#60a5fa;margin-right:8px }}
+  .app-closed-date {{ font-size:.7rem;color:#555 }}
 </style>
 </head>
 <body>
-<header><h1>Jimmy Trader Picks</h1></header>
+<header><h1>Jimmy Trader Ideas</h1><p>${IDEA_NOTIONAL:,.0f} per idea &middot; what your P&amp;L would have been</p></header>
 {summary_html}
-<main>{cards_html}</main>
+<main>{cards_html}{closed_html}</main>
 <nav class="app-tabbar">{tabs_html}</nav>
 <script>
 if ('serviceWorker' in navigator) {{
