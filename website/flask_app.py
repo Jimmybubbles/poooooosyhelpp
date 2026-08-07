@@ -124,6 +124,7 @@ LOG_FILE = os.path.join(BASE_DIR, 'last_run.log')
 _job_lock   = threading.Lock()
 _job_running = False
 _job_name    = ''
+_job_auto    = False   # True if the current job was auto-triggered (vs. an admin button click)
 
 
 # ─── Sector performance helper ────────────────────────────────────────────────
@@ -1769,6 +1770,32 @@ def already_refreshed_today():
     return get_last_refresh_date() == date.today().isoformat()
 
 
+# Full daily update (db_daily_update.py — all ~3,400 tickers) is tracked
+# separately from the picks-only refresh above, since it's a distinct,
+# much heavier job. Used by the auto-update-on-open check below.
+DAILY_UPDATE_DATE_FILE = os.path.join(BASE_DIR, 'last_daily_update_date.txt')
+
+
+def get_last_daily_update_date():
+    """Return the date string of the last successful full daily update, or None."""
+    try:
+        with open(DAILY_UPDATE_DATE_FILE) as f:
+            return f.read().strip()
+    except Exception:
+        return None
+
+
+def set_last_daily_update_date():
+    from datetime import date
+    with open(DAILY_UPDATE_DATE_FILE, 'w') as f:
+        f.write(date.today().isoformat())
+
+
+def already_daily_updated_today():
+    from datetime import date
+    return get_last_daily_update_date() == date.today().isoformat()
+
+
 def _run_refresh_job():
     """Update prices only for tickers with open positions (US + ASX). Fast."""
     global _job_running, _job_name
@@ -1902,11 +1929,83 @@ def run_refresh():
     return redirect('/admin')
 
 
+def _run_daily_update_job():
+    """
+    Run db_daily_update.py (full ~3,400-ticker refresh) as a subprocess,
+    same mechanics as _run_script, but marks today as done on a clean exit
+    so already_daily_updated_today() reflects it — used both by the manual
+    'Run Daily Update' button and the auto-update-on-open check.
+    """
+    global _job_running, _job_name, _job_auto
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Daily Update ===\nStarted: {datetime.now()}\n\n")
+    try:
+        proc = subprocess.Popen(
+            [PYTHON, '-u', os.path.join(BASE_DIR, 'db_daily_update.py')],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, cwd=BASE_DIR
+        )
+        with open(LOG_FILE, 'a') as f:
+            for line in proc.stdout:
+                f.write(line)
+                f.flush()
+        proc.wait()
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nFinished: {datetime.now()}\nExit code: {proc.returncode}\n")
+        if proc.returncode == 0:
+            set_last_daily_update_date()
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+            _job_auto    = False
+
+
+def start_daily_update_job(auto=False):
+    global _job_running, _job_name, _job_auto
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Daily Update'
+        _job_auto    = auto
+    threading.Thread(target=_run_daily_update_job, daemon=True).start()
+    return True
+
+
+def maybe_auto_daily_update():
+    """
+    Auto-update-on-open check: if an admin is logged in, no job is already
+    running, and the full daily update hasn't completed yet today, kick it
+    off in the background — same job as the manual 'Run Daily Update'
+    button, just triggered by opening a page instead of clicking. Silent,
+    best-effort: never raises, never blocks the request.
+    """
+    try:
+        if not is_admin():
+            return
+        with _job_lock:
+            running = _job_running
+        if running or already_daily_updated_today():
+            return
+        start_daily_update_job(auto=True)
+    except Exception:
+        pass
+
+
+@app.before_request
+def _auto_daily_update_check():
+    maybe_auto_daily_update()
+
+
 @app.route('/run-daily')
 def run_daily():
     if not is_admin():
         return redirect('/')
-    start_script_job(os.path.join(BASE_DIR, 'db_daily_update.py'), 'Daily Update')
+    start_daily_update_job()
     return redirect('/admin')
 
 
@@ -10473,12 +10572,15 @@ def admin_hub():
         return redirect('/')
 
     with _job_lock:
-        running = _job_running
-        jname   = _job_name
+        running   = _job_running
+        jname     = _job_name
+        job_auto  = _job_auto
 
-    stats           = get_db_stats()
-    last_refresh    = get_last_refresh_date()
-    refreshed_today = already_refreshed_today()
+    stats                  = get_db_stats()
+    last_refresh           = get_last_refresh_date()
+    refreshed_today        = already_refreshed_today()
+    last_daily_update      = get_last_daily_update_date()
+    daily_updated_today    = already_daily_updated_today()
     s               = get_user_stats()
 
     # ── Button states ─────────────────────────────────────────────────────────
@@ -10510,10 +10612,15 @@ def admin_hub():
     doublebottom_btn = job_btn('▶ Run Double Bottom Scan', '/run-doublebottom')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
+    daily_update_note = (
+        f'Full daily update last ran: {last_daily_update}' if last_daily_update
+        else 'Full daily update has not run today'
+    )
 
     # ── Job status bar ────────────────────────────────────────────────────────
     if running:
-        status_bar = f'<div style="background:#78350f;color:#fcd34d;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">⚙ {jname} is running… <a href="/log-view" style="color:#fcd34d;margin-left:12px">View log →</a></div>'
+        auto_tag = ' (auto-triggered on page load)' if job_auto else ''
+        status_bar = f'<div style="background:#78350f;color:#fcd34d;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">⚙ {jname} is running{auto_tag}… <a href="/log-view" style="color:#fcd34d;margin-left:12px">View log →</a></div>'
     else:
         status_bar = '<div style="background:#052e16;color:#86efac;padding:12px 18px;border-radius:8px;margin-bottom:24px;font-weight:600">● All jobs idle</div>'
 
@@ -10583,6 +10690,7 @@ def admin_hub():
         <div class="stat-label">Latest Data</div>
         <div class="stat-value" style="font-size:1.2rem">{stats['latest']}</div>
         <div class="stat-sub">{refresh_note}</div>
+        <div class="stat-sub" style="color:{'#4ade80' if daily_updated_today else '#f59e0b'}">{daily_update_note}</div>
       </div>
       <div class="card">
         <div class="stat-label">Registered Users</div>
@@ -10606,6 +10714,7 @@ def admin_hub():
           {initial_btn}
         </div>
         <p class="note" style="margin-top:10px">Initial download takes 1–2 hours for all tickers.</p>
+        <p class="note">Daily Update also auto-runs the first time you (logged in as admin) load any page each day, if it hasn't run yet.</p>
       </div>
 
       <!-- Scanners -->
