@@ -48,6 +48,7 @@ from db_range_oscillator_scanner import run_range_oscillator_scan, load_last_ran
 from db_swing_scanner import run_swing_scan, load_last_swing_results
 from db_higher_low_scanner import run_higher_low_scan, load_last_higher_low_results
 from db_extreme_exit_scanner import run_extreme_exit_scan, load_last_extreme_exit_results
+from db_doublebottom_scanner import run_doublebottom_scan, load_last_doublebottom_results
 from db_price_channel_scanner import (
     run_price_channel_scan, load_last_price_channel_results,
     get_ticker_daily, resample_weekly, resample_monthly,
@@ -6772,6 +6773,271 @@ def higher_low_page():
                       auto_refresh=(running and jname == 'Higher Low Scan'))
 
 
+# ─── Daily Double Bottom Scanner ─────────────────────────────────────────────
+
+def _run_doublebottom_scan_job():
+    global _job_running, _job_name
+    with open(LOG_FILE, 'w') as f:
+        f.write(f"=== Double Bottom Scan ===\nStarted: {datetime.now()}\n\n")
+    try:
+        run_doublebottom_scan(log_callback=lambda m: open(LOG_FILE, 'a').write(m))
+    except Exception as e:
+        with open(LOG_FILE, 'a') as f:
+            f.write(f"\nERROR: {e}\n")
+    finally:
+        with _job_lock:
+            _job_running = False
+            _job_name    = ''
+
+
+def start_doublebottom_scan():
+    global _job_running, _job_name
+    with _job_lock:
+        if _job_running:
+            return False
+        _job_running = True
+        _job_name    = 'Double Bottom Scan'
+    threading.Thread(target=_run_doublebottom_scan_job, daemon=True).start()
+    return True
+
+
+@app.route('/run-doublebottom')
+def run_doublebottom():
+    if not is_admin():
+        return redirect('/admin')
+    start_doublebottom_scan()
+    return redirect('/doublebottom')
+
+
+@app.route('/doublebottom')
+def doublebottom_page():
+    if not is_admin():
+        return redirect('/')
+
+    with _job_lock:
+        running = _job_running
+        jname   = _job_name
+
+    last = load_last_doublebottom_results()
+
+    if running and jname == 'Double Bottom Scan':
+        run_btn = '<span class="btn btn-off">⏳ Scanning…</span>'
+    elif running:
+        run_btn = '<span class="btn btn-off">Another job running</span>'
+    else:
+        run_btn = '<a href="/run-doublebottom" class="btn btn-blue">▶ Run Double Bottom Scan</a>'
+
+    def score_color(s):
+        if s >= 55: return '#22c55e'
+        if s >= 40: return '#f59e0b'
+        return '#555'
+
+    rows_html = ''
+    if last and last.get('results'):
+        for r in last['results']:
+            sc = r['score']
+            touches = r['touches']
+            touch_badge = f"{touches}× bottom" if touches == 2 else f"{touches}× bottoms 🔥"
+            vol_icon = ' ⚡' if r.get('vol_confirmed') else ''
+            bottoms_json = json.dumps([b['date'] for b in r['bottoms']])
+            rows_html += f"""
+            <tr class="db-row" data-ticker="{r['ticker']}" data-bottoms='{bottoms_json}'
+                data-neckline-date="{r['neckline_date']}">
+              <td><strong style="color:#60a5fa;font-size:1rem">🟢 {r['ticker']}</strong></td>
+              <td style="color:#aaa">{r['first_bottom_date']} @ ${r['first_bottom_price']:,.2f}</td>
+              <td style="color:#22c55e">{r['second_bottom_date']} @ ${r['second_bottom_price']:,.2f}</td>
+              <td style="color:#f59e0b">${r['neckline']:,.2f} (+{r['neckline_pct']:.0f}%)</td>
+              <td style="color:#aaa">{touch_badge}</td>
+              <td style="text-align:center">
+                <span style="background:{score_color(sc)};color:#fff;padding:3px 10px;
+                             border-radius:12px;font-weight:700;font-size:.85rem">{sc}</span>
+              </td>
+              <td style="color:#555">{vol_icon if vol_icon else '—'}</td>
+              <td style="color:#fff;font-weight:600">${r['price']:,.4f}</td>
+              <td style="color:#888">{r['range']} ({r['position_pct']}%)</td>
+              <td style="color:#888">1:{r['rr']}</td>
+            </tr>"""
+
+    scan_info = ''
+    if last:
+        scan_info = (f"Last scan: {last['scan_date']} &nbsp;·&nbsp; "
+                     f"{last['total']} signals from {last['tickers_scanned']} tickers")
+
+    chart_js = """
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+    // LightweightCharts v4 vertical line primitive — paneViews() → renderer() → draw()
+    class DBLineRenderer {
+      constructor(time, color, chart) {
+        this._time = time; this._color = color; this._chart = chart;
+      }
+      draw(target) {
+        const x = this._chart.timeScale().timeToCoordinate(this._time);
+        if (x === null) return;
+        target.useBitmapCoordinateSpace(scope => {
+          const ctx = scope.context;
+          const xb = Math.round(x * scope.horizontalPixelRatio);
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xb, 0);
+          ctx.lineTo(xb, scope.bitmapSize.height);
+          ctx.strokeStyle = this._color;
+          ctx.lineWidth = Math.round(2 * scope.horizontalPixelRatio);
+          ctx.setLineDash([6, 4]);
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+    }
+    class DBLinePaneView {
+      constructor(time, color, chart) {
+        this._renderer = new DBLineRenderer(time, color, chart);
+      }
+      renderer() { return this._renderer; }
+      zOrder()   { return 'normal'; }
+    }
+    class DBLine {
+      constructor(time, color) {
+        this._time = time; this._color = color;
+        this._chart = null; this._views = [];
+      }
+      attached({ chart }) {
+        this._chart = chart;
+        this._views = [new DBLinePaneView(this._time, this._color, chart)];
+      }
+      detached()       { this._views = []; }
+      paneViews()      { return this._views; }
+      updateAllViews() {}
+    }
+
+    document.querySelectorAll('.db-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ticker      = row.dataset.ticker;
+        const bottomDates = JSON.parse(row.dataset.bottoms);
+        const necklineDate = row.dataset.necklineDate;
+        const existId = 'dbdrop-' + ticker;
+        const exist = document.getElementById(existId);
+        if (exist) { exist.remove(); row.classList.remove('active'); return; }
+        document.querySelectorAll('.db-drop').forEach(d => d.remove());
+        document.querySelectorAll('.db-row.active').forEach(r => r.classList.remove('active'));
+        row.classList.add('active');
+        const drop = document.createElement('tr');
+        drop.id = existId; drop.className = 'db-drop';
+        drop.innerHTML = `<td colspan="10" style="background:#080a10;padding:16px 20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="color:#fff;font-weight:700;font-size:1rem">${ticker}</span>
+            <span style="color:#555;font-size:.75rem" id="dbs-${ticker}">Loading...</span>
+          </div>
+          <div id="dbm-${ticker}" style="height:420px;background:#0a0c14;border-radius:6px"></div>
+          <div id="dbv-${ticker}" style="height:65px;background:#0a0c14;border-radius:6px;margin-top:3px"></div>
+        </td>`;
+        row.parentNode.insertBefore(drop, row.nextSibling);
+        fetch('/api/us-chart/' + ticker)
+          .then(r => r.json())
+          .then(data => {
+            if (data.error) { document.getElementById('dbs-' + ticker).textContent = data.error; return; }
+            document.getElementById('dbs-' + ticker).textContent = data.bars + ' bars · ' + data.date_range;
+            const chart = LightweightCharts.createChart(document.getElementById('dbm-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: true },
+              crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            });
+            const candles = chart.addCandlestickSeries({
+              upColor: '#22c55e', downColor: '#ef4444',
+              borderUpColor: '#22c55e', borderDownColor: '#ef4444',
+              wickUpColor: '#22c55e', wickDownColor: '#ef4444',
+            });
+            candles.setData(data.ohlcv);
+            function snapTo(dateStr) {
+              const ms = new Date(dateStr).getTime();
+              let snap = dateStr, minDiff = Infinity;
+              for (const bar of data.ohlcv) {
+                const diff = Math.abs(new Date(bar.time).getTime() - ms);
+                if (diff < minDiff) { minDiff = diff; snap = bar.time; }
+              }
+              return snap;
+            }
+            // Green dashed line at every confirmed bottom touch, amber at the neckline peak
+            bottomDates.forEach(d => candles.attachPrimitive(new DBLine(snapTo(d), '#22c55e')));
+            candles.attachPrimitive(new DBLine(snapTo(necklineDate), '#f59e0b'));
+            const ema5  = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1, title: 'EMA5' });
+            const ema26 = chart.addLineSeries({ color: '#f59e0b', lineWidth: 1, title: 'EMA26' });
+            ema5.setData(data.ema5); ema26.setData(data.ema26);
+            const barCount = data.ohlcv.length;
+            chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, barCount - 180), to: barCount + 5 });
+            chart.priceScale('right').applyOptions({ scaleMargins: { top: 0.12, bottom: 0.18 } });
+            const vc = LightweightCharts.createChart(document.getElementById('dbv-' + ticker), {
+              layout: { background: { color: '#0a0c14' }, textColor: '#888' },
+              grid: { vertLines: { color: '#1a1d2e' }, horzLines: { color: '#1a1d2e' } },
+              rightPriceScale: { borderColor: '#2a2d3e' },
+              timeScale: { borderColor: '#2a2d3e', timeVisible: false },
+            });
+            const vs = vc.addHistogramSeries({ priceFormat: { type: 'volume' }, priceScaleId: '' });
+            vs.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: 0 } });
+            vs.setData(data.volume); vc.timeScale().fitContent();
+            chart.timeScale().subscribeVisibleLogicalRangeChange(r => vc.timeScale().setVisibleLogicalRange(r));
+            vc.timeScale().subscribeVisibleLogicalRangeChange(r => chart.timeScale().setVisibleLogicalRange(r));
+          })
+          .catch(e => { document.getElementById('dbs-' + ticker).textContent = 'Failed: ' + e; });
+      });
+    });
+    </script>"""
+
+    content = f"""
+    <section style="margin-bottom:20px">
+      <h2>Daily Double Bottom Scanner</h2>
+      <p style="font-size:.88rem;color:#888;margin-bottom:16px">
+        Finds double (and triple/quadruple+) bottom setups: price sitting in the
+        0-25% zone of its dollar-range bucket, with the current low matching an
+        earlier confirmed swing low (within 4%) and a neckline peak between them
+        of at least 8%. Green markers = confirmed bottom touches, amber marker =
+        the neckline peak. Scored mainly on how many times price has retested
+        the same support — a triple or quadruple bottom scores well above a
+        plain double bottom.
+      </p>
+      <div class="btn-row" style="margin-bottom:8px">{run_btn}</div>
+      <p class="note">{scan_info}</p>
+    </section>
+
+    {'<section><h2>Log</h2><pre>' + get_log().replace("<","&lt;") + '</pre></section>' if running and jname == "Double Bottom Scan" else ''}
+
+    <section>
+      <style>
+        .db-table {{ width:100%; border-collapse:collapse; font-size:.88rem; }}
+        .db-table th {{ text-align:left; padding:10px 14px; color:#777; font-size:.78rem;
+                       border-bottom:1px solid #2a2d3e; font-weight:500; }}
+        .db-table td {{ padding:10px 14px; border-bottom:1px solid #151820; vertical-align:middle; }}
+        .db-table .db-row:hover td {{ background:#1f2235; cursor:pointer; }}
+        .db-table .db-row.active td {{ background:#1a2235; }}
+        .db-drop td {{ padding:0 !important; }}
+      </style>
+
+      <table class="db-table">
+        <thead><tr>
+          <th>Ticker</th>
+          <th>1st Bottom</th>
+          <th>2nd Bottom</th>
+          <th>Neckline</th>
+          <th>Touches</th>
+          <th style="text-align:center">Score</th>
+          <th>Vol</th>
+          <th>Current</th>
+          <th>Zone</th>
+          <th>R:R</th>
+        </tr></thead>
+        <tbody id="db-tbody">
+          {rows_html if rows_html else '<tr><td colspan="10" style="color:#555;padding:20px">No results yet — run the scan.</td></tr>'}
+        </tbody>
+      </table>
+    </section>
+    {chart_js}"""
+
+    return page_wrap('Double Bottom Scanner', 'doublebottom', content,
+                      auto_refresh=(running and jname == 'Double Bottom Scan'))
+
+
 # ─── Weekly Extreme-Exit Scanner (Range Oscillator cooling off) ─────────────
 
 def _run_extreme_exit_scan_job():
@@ -9514,6 +9780,17 @@ SIGNAL_FEED_SPECS = [
             (f" and is still climbing (osc {r['osc_now']:+.1f})" if r.get('osc_now') is not None else '') +
             (", extreme was sustained 2+ weeks" if r.get('sustained') else '') + '.'),
     },
+    {
+        'key': 'doublebottom', 'label': 'Double Bottom',
+        'loader': load_last_doublebottom_results, 'top_n': 3,
+        'sort': lambda r: r['score'],
+        'reasoning': lambda r: (
+            f"{r['touches']}x confirmed bottom near ${r['second_bottom_price']:.2f} "
+            f"(first touch {r['first_bottom_date']}), neckline at ${r['neckline']:.2f} "
+            f"(+{r['neckline_pct']:.0f}%), price ${r['price']:.2f} sitting at "
+            f"{r['position_pct']}% of its range" +
+            (", with a volume surge on the bottom" if r.get('vol_confirmed') else '') + '.'),
+    },
 ]
 
 
@@ -10230,6 +10507,7 @@ def admin_hub():
     swing_btn    = job_btn('▶ Run Swing Scan', '/run-swing')
     higherlow_btn = job_btn('▶ Run Higher Low Scan', '/run-higher-low')
     extremeexit_btn = job_btn('▶ Run Extreme Exit Scan', '/run-extreme-exit')
+    doublebottom_btn = job_btn('▶ Run Double Bottom Scan', '/run-doublebottom')
 
     refresh_note = f'Last updated: {last_refresh}' if last_refresh else 'Not updated today'
 
@@ -10253,6 +10531,7 @@ def admin_hub():
     swing_last    = load_last_swing_results()
     higherlow_last = load_last_higher_low_results()
     extremeexit_last = load_last_extreme_exit_results()
+    doublebottom_last = load_last_doublebottom_results()
 
     def scan_summary(last, results_url):
         if not last:
@@ -10389,6 +10668,10 @@ def admin_hub():
             <div class="btn-row" style="margin-bottom:6px">{extremeexit_btn}</div>
             {scan_summary(extremeexit_last, '/extreme-exit')}
           </div>
+          <div>
+            <div class="btn-row" style="margin-bottom:6px">{doublebottom_btn}</div>
+            {scan_summary(doublebottom_last, '/doublebottom')}
+          </div>
         </div>
       </div>
     </div>
@@ -10412,6 +10695,7 @@ def admin_hub():
         <a href="/swing" class="btn btn-blue" style="font-size:.82rem">Swing Low Scanner</a>
         <a href="/higher-low" class="btn btn-blue" style="font-size:.82rem">Higher Low Scanner</a>
         <a href="/extreme-exit" class="btn btn-blue" style="font-size:.82rem">Extreme Exit Scanner</a>
+        <a href="/doublebottom" class="btn btn-blue" style="font-size:.82rem">Double Bottom Scanner</a>
         <a href="/log-view" class="btn btn-blue" style="font-size:.82rem">Full Log</a>
         <a href="/ask"     class="btn btn-blue" style="font-size:.82rem">Ask Jimmy (Q&amp;A)</a>
       </div>
